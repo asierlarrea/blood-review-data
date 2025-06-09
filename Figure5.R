@@ -20,7 +20,7 @@ for (pkg in required_packages) {
 }
 
 # Load data with error handling
-data_file <- "cell_type.csv"
+data_file <- "boxplot.csv"
 if (!file.exists(data_file)) {
   stop(paste("Error: File", data_file, "not found in current directory."))
 }
@@ -93,20 +93,19 @@ p <- ggplot(long_data, aes(x = cell_type, y = intensity, fill = cell_type)) +
   # Add protein counts as text labels
   geom_text(data = summary_stats, 
             aes(x = cell_type, y = 10^1, label = protein_count, fill = NULL),
-            color = "black", size = 3.2, fontface = "bold") +
+            color = "black", size = 3.5, fontface = "bold") +
   
   # Add database count labels
   geom_text(data = database_count,
-            aes(x = cell_type, y = 10^0.3, label = db_label, fill = NULL),
-            color = "darkblue", size = 2.8, angle = 0) +
+            aes(x = cell_type, y = 10^0.5, label = db_label, fill = NULL),
+            color = "black", size = 3.5) +
   
   # Formatting
-  scale_y_log10(labels = scales::trans_format("log10", 
-                                                   scales::math_format(10^.x))) +
+  scale_y_log10() +
   scale_fill_discrete(name = "Cell Type") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 10),
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 10),
     axis.text.y = element_text(size = 10),
     axis.title = element_text(size = 12, face = "bold"),
     plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
@@ -119,10 +118,29 @@ p <- ggplot(long_data, aes(x = cell_type, y = intensity, fill = cell_type)) +
     y = "Log₁₀(Z-score)", 
     title = "Protein Intensity Distribution by Cell Type",
     subtitle = paste("Numbers show protein counts;", 
-                     "blue labels indicate database coverage")
+                     "labels indicate database coverage")
   )
 
-# Display the plot
+# Create output directory if it doesn't exist
+output_dir <- "plots"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# === Save as TIFF ===
+tiff_file <- file.path(output_dir, "boxplot_celltypes.tiff")
+cat("Saving plot to:", tiff_file, "\n")
+
+tiff(tiff_file, width = 14, height = 8, units = "in", res = 600, compression = "lzw")
+
+# Generate the plot for saving
+print(p)
+
+# Close TIFF device
+dev.off()
+cat("Plot saved successfully!\n")
+
+# === Display plot in R console/RStudio ===
 print(p)
 
 # Print detailed summary statistics
@@ -138,4 +156,3 @@ cat("Cell types analyzed:", length(unique(long_data$cell_type)), "\n")
 cat("Intensity range: 10^", 
     round(log10(min(long_data$intensity, na.rm = TRUE)), 2), 
     " to 10^", round(log10(max(long_data$intensity, na.rm = TRUE)), 2), "\n")
-

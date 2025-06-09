@@ -26,7 +26,7 @@ if (!require(grid, quietly = TRUE)) {
 }
 
 # Load data with error handling
-data_file <- "combined_proteome.csv"
+data_file <- "plasma_upset.csv"
 if (!file.exists(data_file)) {
   stop(paste("Error: File", data_file, "not found in current directory."))
 }
@@ -55,7 +55,19 @@ if (length(missing_cols) > 0) {
              paste(missing_cols, collapse = ", ")))
 }
 
-# Create UpSet plot
+# Create output directory if it doesn't exist
+output_dir <- "plots"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# === Save as TIFF ===
+tiff_file <- file.path(output_dir, "upset_plot.tiff")
+cat("Saving plot to:", tiff_file, "\n")
+
+tiff(tiff_file, width = 12, height = 8, units = "in", res = 600, compression = "lzw")
+
+# Generate the plot for saving
 upset(
   plot_df, 
   sets = set_vars,
@@ -71,7 +83,32 @@ upset(
   shade.color = shade_col
 )
 
-# Add plot title
+# Add title to saved plot
+grid.text("UpSet Plot of Plasma Proteins", 
+          x = 0.7, y = 0.95, 
+          gp = gpar(fontsize = 12, fontface = "bold"))
+
+# Close TIFF device
+dev.off()
+cat("Plot saved successfully!\n")
+
+# === Display plot in R console/RStudio ===
+upset(
+  plot_df, 
+  sets = set_vars,
+  mainbar.y.label = "Identified proteins",
+  sets.x.label = "Proteins by database",
+  order.by = "freq", 
+  point.size = 2,
+  line.size = 1,
+  text.scale = text_scale,
+  main.bar.color = main_bar_col,
+  sets.bar.color = sets_bar_col,
+  matrix.color = matrix_col,
+  shade.color = shade_col
+)
+
+# Add title to displayed plot
 grid.text("UpSet Plot of Plasma Proteins", 
           x = 0.7, y = 0.95, 
           gp = gpar(fontsize = 12, fontface = "bold"))

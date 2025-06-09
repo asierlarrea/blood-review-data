@@ -21,7 +21,7 @@ if (!require(scales, quietly = TRUE)) {
 }
 
 # Load data with error handling
-data_file <- "cell_types.csv"
+data_file <- "bubble.csv"
 if (!file.exists(data_file)) {
   stop(paste("Error: File", data_file, "not found in current directory."))
 }
@@ -70,7 +70,26 @@ p <- ggplot(proteomics_data, aes(x = Database,
         legend.position = "right") +
   guides(color = "none")  # Hide color legend since it's redundant with x-axis
 
-# Display the plot
+# Create output directory if it doesn't exist
+output_dir <- "plots"
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
+
+# === Save as TIFF ===
+tiff_file <- file.path(output_dir, "cell_types_plot.tiff")
+cat("Saving plot to:", tiff_file, "\n")
+
+tiff(tiff_file, width = 10, height = 8, units = "in", res = 600, compression = "lzw")
+
+# Generate the plot for saving
+print(p)
+
+# Close TIFF device
+dev.off()
+cat("Plot saved successfully!\n")
+
+# === Display plot in R console/RStudio ===
 print(p)
 
 # Print summary statistics
@@ -86,4 +105,5 @@ top_5 <- proteomics_data[order(proteomics_data$Protein.count,
                                decreasing = TRUE), ][1:5, ]
 cat("\nTop 5 highest protein counts:\n")
 print(top_5[, c("Database", "Cell.type", "Protein.count")])
+
 
