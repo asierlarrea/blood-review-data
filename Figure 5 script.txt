@@ -5,7 +5,7 @@ library(dplyr)
 library(readr)
 
 # === Step 1: Load data ===
-datos <- read_csv("path//cell type.csv")
+datos <- read_csv("boxplot.csv")
 
 # === Step 2: Convert intensity columns to numeric ===
 datos <- datos %>% 
@@ -41,6 +41,28 @@ datos_texto <- data.frame(
   n = c(17966, 16144, 12229, 12345, 5349, 856, 10797, 9540, 6714, 7636, 8200, 8691)
 )
 
+# === Save as TIFF ===
+tiff("C:\\Users\\HP zBook 15v\\Desktop\\boxplot_celltypes.tiff", 
+     width = 12, height = 6, units = "in", res = 300)
+
+# === Plot to TIFF ===
+ggplot(datos_largos, aes(x = Tipo_Celular, y = Intensidad, fill = Tipo_Celular)) +
+  geom_boxplot() +
+  geom_text(data = datos_texto, 
+            aes(x = Tipo_Celular, y = 10^1, label = n),
+            color = "black", size = 3.5) +
+  geom_text(data = conteo_eventos,
+            aes(x = Tipo_Celular, y = 10^0.5, label = source_db),
+            color = "black", size = 3.5) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_log10() +
+  labs(x = " ", y = "Log(Zscore)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# === Close TIFF device ===
+dev.off()
+
 # === Optionally display in RStudio ===
 p <- ggplot(datos_largos, aes(x = Tipo_Celular, y = Intensidad, fill = Tipo_Celular)) +
   geom_boxplot() +
@@ -57,4 +79,3 @@ p <- ggplot(datos_largos, aes(x = Tipo_Celular, y = Intensidad, fill = Tipo_Celu
   theme(legend.position = "none")
 
 print(p)
-

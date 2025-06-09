@@ -1,8 +1,5 @@
-# Set working directory
-setwd("path")
-
 # Load data
-plot_df <- read.csv("path//combined_proteome.csv")
+plot_df <- read.csv("plasma upset.csv")
 plot_df <- as.data.frame(plot_df)
 
 # Define variables
@@ -17,6 +14,28 @@ shade <- c("wheat4")
 library(UpSetR)
 library(ggplot2)
 library(grid)
+
+# === Save as TIFF ===
+tiff("C:\\Users\\HP zBook 15v\\Desktop\\upset_plot.tiff", width = 10, height = 6, units = "in", res = 300)
+
+# Generate the plot (for saving)
+upset(
+  plot_df, 
+  sets = set_vars,
+  mainbar.y.label = "Identified proteins",
+  sets.x.label = "Proteins by database",
+  order.by = "freq", 
+  point.size = 2,
+  line.size = 1,
+  text.scale = text_scale,
+  main.bar.color = main_bar_col,
+  sets.bar.color = sets_bar_col,
+  matrix.color = matrix_col,
+  shade.color = shade
+)
+
+# Close TIFF device
+#dev.off()
 
 # === Show the plot in RStudio viewer ===
 upset(

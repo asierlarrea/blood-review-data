@@ -1,8 +1,8 @@
 # Set working directory (optional if using full paths)
-setwd("path")
+setwd("C:\\Users\\HP zBook 15v\\Desktop")
 
 # Load data
-plot_df <- read.csv("path//cell_type.csv")
+plot_df <- read.csv("C:\\Users\\HP zBook 15v\\Desktop\\R\\data\\Review\\upset_cell_type.csv")
 
 # Define sets
 set_vars <- c("CD8", "CD4", "Platelet", "NK", "Monocyte", "Erythrocyte", 
@@ -20,6 +20,35 @@ library(UpSetR)
 library(ggplot2)
 library(grid)
 
+# === Save as TIFF ===
+tiff("C:\\Users\\HP zBook 15v\\Desktop\\upset_cell_types_plot.tiff", 
+     width = 10, height = 6, units = "in", res = 300)
+
+# Generate the UpSet plot
+upset(
+  plot_df, 
+  sets = set_vars,
+  mainbar.y.label = "Proteins",
+  sets.x.label = "Proteins by database",
+  order.by = "freq", 
+  point.size = 2,
+  line.size = 1,
+  text.scale = text_scale,
+  main.bar.color = main_bar_col,
+  sets.bar.color = sets_bar_col,
+  matrix.color = matrix_col,
+  shade.color = shade
+)
+
+# Add the title
+grid.text("Cell type proteome comparison", 
+          x = 0.7, y = 0.95, 
+          gp = gpar(fontsize = 10, fontface = "bold"))
+
+# Close the TIFF device
+dev.off()
+
+# === Optional: Show it again in RStudio ===
 # (Re-run if you want to view it again interactively)
 upset(
   plot_df, 
