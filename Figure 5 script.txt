@@ -1,0 +1,60 @@
+# === Load libraries ===
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(readr)
+
+# === Step 1: Load data ===
+datos <- read_csv("path//cell type.csv")
+
+# === Step 2: Convert intensity columns to numeric ===
+datos <- datos %>% 
+  mutate(across(starts_with("Intensity_"), ~parse_number(as.character(.))))
+
+# === Step 3: Pivot to long format ===
+datos_largos <- datos %>% 
+  pivot_longer(cols = starts_with("Intensity_"), 
+               names_to = "Tipo_Celular", 
+               values_to = "Intensidad") %>%
+  mutate(Tipo_Celular = gsub("Intensity_", "", Tipo_Celular),  
+         Tipo_Celular = factor(Tipo_Celular, 
+                               levels = c("CD8", "CD4", "B cell", "NK", 
+                                          "Platelet", "Erythrocyte", 
+                                          "Monocyte", "DC", "Macrophage", 
+                                          "Neutrophil", "Eosinophil", "Basophil")))
+
+# === Step 4: Count non-NA entries ===
+conteo_eventos <- datos_largos %>%
+  group_by(Tipo_Celular) %>%
+  summarise(n = sum(!is.na(Intensidad))) %>%
+  mutate(source_db = case_when(
+    Tipo_Celular %in% c("CD8") ~ "Databases: 4",
+    Tipo_Celular %in% c("CD4") ~ "Databases: 3",
+    Tipo_Celular %in% c("B cell", "NK", "Platelet", "Erythrocyte", "Monocyte") ~ "Databases: 2",
+    TRUE ~ "Databases: 1"
+  ))
+
+# === Step 5: Text labels for each cell type ===
+datos_texto <- data.frame(
+  Tipo_Celular = c("CD8", "CD4", "B cell", "NK", "Platelet", "Erythrocyte", 
+                   "Monocyte", "DC", "Macrophage", "Neutrophil", "Eosinophil", "Basophil"),
+  n = c(17966, 16144, 12229, 12345, 5349, 856, 10797, 9540, 6714, 7636, 8200, 8691)
+)
+
+# === Optionally display in RStudio ===
+p <- ggplot(datos_largos, aes(x = Tipo_Celular, y = Intensidad, fill = Tipo_Celular)) +
+  geom_boxplot() +
+  geom_text(data = datos_texto, 
+            aes(x = Tipo_Celular, y = 10^1, label = n),
+            color = "black", size = 3.5) +
+  geom_text(data = conteo_eventos,
+            aes(x = Tipo_Celular, y = 10^0.5, label = source_db),
+            color = "black", size = 3.5) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_y_log10() +
+  labs(x = " ", y = "Log(Zscore)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+print(p)
+
