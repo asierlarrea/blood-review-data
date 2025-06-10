@@ -86,6 +86,7 @@ rsconnect/
 figures/
 outputs/
 results/
+plots/
 *.png
 *.jpg
 *.jpeg
@@ -94,6 +95,8 @@ results/
 *.svg
 *.eps
 *.bmp
+*.tiff
+*.tif
 
 # Log files
 # ---------
