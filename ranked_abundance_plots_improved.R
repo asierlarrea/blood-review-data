@@ -12,27 +12,10 @@
 # - Enhanced reporting and statistics
 # - Better dynamic range calculation
 
-# Set CRAN mirror
-if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
-  options(repos = c(CRAN = "https://cloud.r-project.org/"))
-}
-
-# Function to install packages if not available
-install_if_missing <- function(packages) {
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE)
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        stop(paste("Failed to install package:", pkg))
-      }
-    }
-  }
-}
-
-# Install required packages
+# Load required packages (install via install_dependencies.R if needed)
+source("load_packages.R")
 required_packages <- c("ggplot2", "dplyr", "scales", "gridExtra", "viridis")
-install_if_missing(required_packages)
+load_packages(required_packages)
 
 # Create output directory
 output_dir <- "plots/05_Ranked_Abundance_Improved"
@@ -236,6 +219,15 @@ create_all_ranked_plots <- function() {
     stop(paste("Missing required columns:", paste(missing_cols, collapse = ", ")))
   }
   
+  # Filter out HPA Immunoassay data
+  original_sources <- unique(plasma_data$source)
+  plasma_data <- plasma_data[plasma_data$source != "HPA_Immunoassay", ]
+  filtered_sources <- unique(plasma_data$source)
+  
+  message(paste("Excluded HPA_Immunoassay from analysis"))
+  message(paste("Original sources:", paste(original_sources, collapse = ", ")))
+  message(paste("Filtered sources:", paste(filtered_sources, collapse = ", ")))
+  
   # Load biomarker genes
   biomarker_genes <- load_biomarker_genes()
   
@@ -267,10 +259,10 @@ create_all_ranked_plots <- function() {
     if(!is.null(plot_obj)) {
       plot_list[[source]] <- plot_obj
       
-      # Save individual plot
+      # Save individual plot (using PNG to save disk space)
       safe_name <- gsub("[^A-Za-z0-9_]", "_", source)
-      tiff(file.path(output_dir, paste0("ranked_abundance_", safe_name, ".tiff")), 
-           width = 12, height = 8, units = "in", res = 600, compression = "lzw")
+      png(file.path(output_dir, paste0("ranked_abundance_", safe_name, ".png")), 
+          width = 12, height = 8, units = "in", res = 300)
       print(plot_list[[source]])
       dev.off()
     } else {
@@ -296,8 +288,8 @@ create_all_ranked_plots <- function() {
     fig_height <- max(10, nrow * 5)
     fig_width <- max(12, ncol * 8)
     
-    tiff(file.path(output_dir, "ranked_abundance_all_sources.tiff"), 
-         width = fig_width, height = fig_height, units = "in", res = 600, compression = "lzw")
+    png(file.path(output_dir, "ranked_abundance_all_sources.png"), 
+        width = fig_width, height = fig_height, units = "in", res = 300)
     
     grid.arrange(grobs = plot_list, ncol = ncol)
     dev.off()
@@ -313,8 +305,8 @@ create_all_ranked_plots <- function() {
   message("Creating enhanced comparison plots...")
   
   # Dynamic range comparison
-  tiff(file.path(output_dir, "dynamic_range_comparison.tiff"), 
-       width = 12, height = 8, units = "in", res = 600, compression = "lzw")
+  png(file.path(output_dir, "dynamic_range_comparison.png"), 
+      width = 12, height = 8, units = "in", res = 300)
   
   p_comparison <- ggplot(summary_stats, aes(x = reorder(source, dynamic_range), 
                                            y = dynamic_range, fill = source)) +
@@ -336,8 +328,8 @@ create_all_ranked_plots <- function() {
   dev.off()
   
   # Biomarker coverage comparison
-  tiff(file.path(output_dir, "biomarker_coverage_comparison.tiff"), 
-       width = 12, height = 8, units = "in", res = 600, compression = "lzw")
+  png(file.path(output_dir, "biomarker_coverage_comparison.png"), 
+      width = 12, height = 8, units = "in", res = 300)
   
   p_coverage <- ggplot(summary_stats, aes(x = reorder(source, biomarker_coverage_pct), 
                                          y = biomarker_coverage_pct, fill = source)) +

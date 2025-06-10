@@ -81,28 +81,37 @@ blood-review-data/
 
 ## ⚙️ Requirements
 
-### R Dependencies
-```r
-# Core packages (auto-installed)
-required_packages <- c(
-  "ggplot2",          # Visualization
-  "dplyr",            # Data manipulation
-  "tidyr",            # Data reshaping
-  "corrplot",         # Correlation plots
-  "gridExtra",        # Plot arrangements
-  "biomaRt"           # Biological ID mapping
-)
-```
-
 ### System Requirements
 - **R ≥ 4.0.0**
 - **Internet connection** (for biomaRt queries)
 - **~2GB RAM** (for large dataset processing)
 - **~500MB disk space** (for outputs and mappings)
 
+### R Dependencies
+All required packages are managed through a global dependency system:
+
+**Core Packages:**
+- `ggplot2`, `dplyr`, `tidyr` (data manipulation & visualization)
+- `scales`, `viridis`, `RColorBrewer` (plotting aesthetics)
+- `gridExtra`, `ggridges`, `ggbeeswarm` (specialized plots)
+
+**Bioconductor Packages:**
+- `biomaRt`, `org.Hs.eg.db` (biological ID mapping)
+- `GO.db`, `KEGG.db` (functional annotation)
+
+**Specialized Analysis:**
+- `UpSetR`, `VennDiagram` (set analysis)
+- `corrplot`, `pheatmap` (correlation & heatmaps)
+
 ## 🚦 Quick Start
 
-### 1. Run Complete Analysis
+### 1. **Install All Dependencies (Required First Step)**
+```bash
+# Install all required packages for the entire project
+Rscript install_dependencies.R
+```
+
+### 2. **Run Complete Analysis**
 ```r
 # Set working directory
 setwd("path/to/blood-review-data")
@@ -111,17 +120,17 @@ setwd("path/to/blood-review-data")
 source("Figure6_database_correlation.R")
 ```
 
-### 2. Test ID Mapping
+### 3. **Run Specific Analyses**
 ```r
+# Biomarker analysis
+source("biomarker_plasma_analysis.R")
+
+# Ranked abundance plots
+source("ranked_abundance_plots_improved.R")
+
 # Test enhanced mapping system
 source("enhanced_fast_mapping.R")
 test_enhanced_mapping()
-```
-
-### 3. Analyze Deduplication
-```r
-# Check dataset merging strategies
-source("fix_deduplication.R")
 ```
 
 ## 📊 Key Analysis Components
@@ -196,6 +205,48 @@ dataset_aware_data <- data %>%
 - **`plasma_gene_data.csv`**: Plasma proteins only (8,066 genes)
 - **`celltype_gene_data.csv`**: Cell type proteins (9,578 genes)
 - **`biomart_ensp_mappings.csv`**: All ENSP→gene mappings (7,013)
+
+## 📦 Dependency Management
+
+This project uses a centralized dependency management system for clean, maintainable code.
+
+### **Global Installation System**
+```bash
+# One-time setup: Install all dependencies
+Rscript install_dependencies.R
+```
+
+**What it does:**
+- ✅ Installs all required CRAN packages
+- ✅ Handles Bioconductor packages (biomaRt, org.Hs.eg.db)
+- ✅ Creates `load_packages.R` for analysis scripts
+- ✅ Provides detailed installation summary
+- ✅ Handles optional packages gracefully
+
+### **Individual Script Usage**
+All analysis scripts now use the streamlined loading system:
+```r
+# Instead of managing dependencies in each script
+source("load_packages.R")
+required_packages <- c("ggplot2", "dplyr", "scales")
+load_packages(required_packages)
+```
+
+### **Benefits of This System**
+- 🧹 **Cleaner code**: No dependency management clutter in analysis scripts
+- ⚡ **Faster execution**: No repeated installation checks
+- 🔄 **Consistency**: Same packages across all scripts
+- 🛠️ **Maintainability**: Single point for dependency updates
+- 📊 **Better errors**: Clear messages if packages missing
+
+### **File Structure**
+```
+├── install_dependencies.R      # Global dependency installer
+├── load_packages.R            # Generated package loader (auto-created)
+├── Figure6_database_correlation.R    # Uses load_packages()
+├── biomarker_plasma_analysis.R       # Uses load_packages()
+└── ranked_abundance_plots_improved.R # Uses load_packages()
+```
 
 ## 🔧 Advanced Usage
 

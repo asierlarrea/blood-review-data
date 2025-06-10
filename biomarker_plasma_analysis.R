@@ -4,28 +4,11 @@
 # Analyzes biomarker genes across different plasma databases and shows their position
 # in the overall expression distribution for each source
 
-# Set CRAN mirror
-if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
-  options(repos = c(CRAN = "https://cloud.r-project.org/"))
-}
-
-# Function to install packages if not available
-install_if_missing <- function(packages) {
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE)
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        stop(paste("Failed to install package:", pkg))
-      }
-    }
-  }
-}
-
-# Install required packages
+# Load required packages (install via install_dependencies.R if needed)
+source("load_packages.R")
 required_packages <- c("ggplot2", "dplyr", "tidyr", "ggridges", "viridis", 
                       "scales", "gridExtra", "stringr", "ggbeeswarm", "readr")
-install_if_missing(required_packages)
+load_packages(required_packages)
 
 # Create output directory
 output_dir <- "plots/04_Biomarker_Analysis"

@@ -3,28 +3,11 @@
 # Figure 6: Database Correlation and Coverage Analysis
 # Working directly with raw database files for protein-level analysis
 
-# Set CRAN mirror
-if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
-  options(repos = c(CRAN = "https://cloud.r-project.org/"))
-}
-
-# Function to install packages if not available
-install_if_missing <- function(packages) {
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE)
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        stop(paste("Failed to install package:", pkg))
-      }
-    }
-  }
-}
-
-# Install required packages
+# Load required packages (install via install_dependencies.R if needed)
+source("load_packages.R")
 required_packages <- c("ggplot2", "dplyr", "tidyr", "corrplot", "VennDiagram", 
                       "RColorBrewer", "scales", "gridExtra", "stringr", "biomaRt")
-install_if_missing(required_packages)
+load_packages(required_packages)
 
 # Load enhanced ID mapping functions with biomaRt ENSP mappings
 source("enhanced_fast_mapping.R")
