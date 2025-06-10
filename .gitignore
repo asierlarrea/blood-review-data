@@ -1,0 +1,258 @@
+# ============================================================================
+# .gitignore for Blood Proteomics Analysis Project
+# ============================================================================
+
+# R specific files
+# ----------------
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+.Rproj.user/
+*.Rproj
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+*.Rproj
+.Rhistory
+.RData
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~
+
+# RStudio Connect folder
+rsconnect/
+
+# Large Data Files
+# ----------------
+# Uncomment the following lines if you want to ignore large CSV files
+# *.csv
+# But keep specific important small files (examples):
+# !README.csv
+# !metadata.csv
+
+# Large files that should typically not be committed
+*.xlsx
+*.xls
+*.[Cc][Ss][Vv]
+*.tsv
+*.tab
+*.dat
+*.data
+*.RDS
+*.rds
+*.rda
+
+# Plots and output files
+# ----------------------
+figures/
+outputs/
+results/
+plots/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.svg
+*.eps
+*.bmp
+*.tiff
+*.tif
+
+# Log files
+# ---------
+*.log
+*.out
+*.err
+
+# Backup files
+# ------------
+*~
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+*.temp
+
+# OS specific files
+# ----------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# IDE specific files
+# ------------------
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# Vim
+*.swp
+*.swo
+*~
+.netrwhist
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Project specific
+# ----------------
+# Exclude specific large datasets but keep smaller reference files
+# Note: Comment/uncomment based on your project needs
+
+# Data directories that might contain large files
+# data/raw/
+# data/processed/
+# data/external/
+
+# Output directories
+analysis_output/
+manuscript_figures/
+supplementary_materials/
+
+# Configuration files with sensitive information
+config.R
+secrets.R
+credentials.R
+.env
+
+# Packrat (if using)
+packrat/lib*/
+packrat/src/
+
+# renv (if using)
+renv/library/
+renv/staging/
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
+
+# Documentation build
+_book/
+_bookdown_files/
+docs/
+
+# Shiny
+rsconnect/
+
+# Profiling
+*.prof
+
+# Custom additions
+# ----------------
+# Add any project-specific files you want to ignore below:
+
+# Example: ignore specific output files
+# protein_analysis_results.csv
+# final_plots.pdf
+
+# Example: ignore specific temporary directories
+# temp/
+# scratch/ 
+
+.RData
+.Rhistory
+plots/
