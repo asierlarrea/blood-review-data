@@ -23,8 +23,11 @@ install_if_missing <- function(packages) {
 
 # Install required packages
 required_packages <- c("ggplot2", "dplyr", "tidyr", "corrplot", "VennDiagram", 
-                      "RColorBrewer", "scales", "gridExtra", "stringr")
+                      "RColorBrewer", "scales", "gridExtra", "stringr", "biomaRt")
 install_if_missing(required_packages)
+
+# Load enhanced ID mapping functions with biomaRt ENSP mappings
+source("enhanced_fast_mapping.R")
 
 # Create output directory
 output_dir <- "plots/01_Database_Analysis"
@@ -158,8 +161,8 @@ read_database_files <- function() {
          !grepl("^(UNIPROT_|GENE_|UNKNOWN_|ENSP_)", gene_symbol) &&
          nchar(gene_symbol) >= 2 && nchar(gene_symbol) <= 15) {
         
-        # Try to get concentration value
-        conc_value <- suppressWarnings(as.numeric(peptideatlas$protein_concentration_protein_g_L[i]))
+        # Try to get normalized PSMs per 100K value
+        conc_value <- suppressWarnings(as.numeric(peptideatlas$norm_PSMs_per_100K[i]))
         if(length(conc_value) > 0 && !is.na(conc_value) && conc_value > 0) {
           gene_symbols[i] <- gene_symbol
           concentrations[i] <- conc_value
@@ -175,6 +178,7 @@ read_database_files <- function() {
         Database = "PeptideAtlas",
         Category = "Plasma",
         CellType = "Plasma",
+        Dataset = "PeptideAtlas",
         stringsAsFactors = FALSE
       )
       all_plasma_data <- c(all_plasma_data, list(pa_data))
@@ -182,7 +186,102 @@ read_database_files <- function() {
     }
   }
   
-  # 2. HPA files - PLASMA
+  # 2. GPMDB Plasma
+  message("  - Processing GPMDB Plasma...")
+  if(file.exists("GPMDB_Plasma.csv")) {
+    gpmdb_plasma <- read.csv("GPMDB_Plasma.csv", stringsAsFactors = FALSE)
+    
+    # Find header line
+    header_line <- which(grepl("^#,accession,total", readLines("GPMDB_Plasma.csv")))
+    if(length(header_line) > 0) {
+      # Skip to the line after the header
+      gpmdb_plasma <- read.csv("GPMDB_Plasma.csv", skip = header_line, stringsAsFactors = FALSE, header = FALSE)
+      
+      # Set column names manually
+      colnames(gpmdb_plasma) <- c("rank", "accession", "total", "log_e", "EC", "description")
+      
+      # Filter valid rows
+      valid_rows <- !is.na(gpmdb_plasma$accession) & gpmdb_plasma$accession != "" & 
+                   !is.na(gpmdb_plasma$total) & gpmdb_plasma$total > 0
+      
+      if(sum(valid_rows) > 0) {
+        # Use proper biological ID mapping for GPMDB accessions
+        accessions <- gpmdb_plasma$accession[valid_rows]
+        descriptions <- gpmdb_plasma$description[valid_rows]
+        
+        # Map accessions to gene symbols using enhanced mapping with biomaRt
+        gene_symbols <- enhanced_fast_map_to_gene_symbol(accessions, descriptions)
+        
+        # Remove entries without valid gene symbols
+        valid_genes <- !is.na(gene_symbols) & gene_symbols != "" & 
+                      nchar(gene_symbols) >= 2 & nchar(gene_symbols) <= 15 &
+                      !grepl("^(ENS|UNIPROT_|GENE_|UNKNOWN_)", gene_symbols)
+        
+        if(sum(valid_genes) > 0) {
+          gpmdb_data <- data.frame(
+            Gene = gene_symbols[valid_genes],
+            Concentration = gpmdb_plasma$total[valid_rows][valid_genes],
+            Database = "GPMDB",
+            Category = "Plasma",
+            CellType = "Plasma",
+            Dataset = "GPMDB_Plasma",
+            stringsAsFactors = FALSE
+          )
+          all_plasma_data <- c(all_plasma_data, list(gpmdb_data))
+          message(paste("    GPMDB Plasma: Kept", sum(valid_genes), "entries"))
+        }
+      }
+    }
+  }
+  
+  # 3. PaxDB Plasma
+  message("  - Processing PaxDB Plasma...")
+  paxdb_files <- c("PaxDB_plasma.csv", "PaxDB_Plasma.csv")
+  for(file in paxdb_files) {
+    if(file.exists(file)) {
+      message(paste("    Processing", file))
+      
+      paxdb_data <- read.csv(file, stringsAsFactors = FALSE)
+      
+      if("string_external_id" %in% colnames(paxdb_data) && "abundance" %in% colnames(paxdb_data)) {
+        # Extract ENSP IDs and abundances
+        valid_rows <- !is.na(paxdb_data$string_external_id) & 
+                     !is.na(paxdb_data$abundance) & 
+                     paxdb_data$abundance > 0 &
+                     grepl("9606\\.ENSP[0-9]+", paxdb_data$string_external_id)
+        
+        if(sum(valid_rows) > 0) {
+          # Extract ENSP IDs
+          ensp_ids <- gsub("9606\\.", "", paxdb_data$string_external_id[valid_rows])
+          abundances <- paxdb_data$abundance[valid_rows]
+          
+          # Map ENSP IDs to gene symbols using enhanced mapping with biomaRt
+          gene_symbols <- enhanced_fast_map_to_gene_symbol(ensp_ids)
+          
+          # Filter for valid gene mappings
+          valid_mappings <- !is.na(gene_symbols) & gene_symbols != "" &
+                           nchar(gene_symbols) >= 2 & nchar(gene_symbols) <= 15
+          
+          if(sum(valid_mappings) > 0) {
+            paxdb_plasma_data <- data.frame(
+              Gene = gene_symbols[valid_mappings],
+              Concentration = abundances[valid_mappings],
+              Database = "PaxDB",
+              Category = "Plasma",
+              CellType = "Plasma",
+              Dataset = "PaxDB_Plasma",
+              stringsAsFactors = FALSE
+            )
+            all_plasma_data <- c(all_plasma_data, list(paxdb_plasma_data))
+            message(paste("    PaxDB Plasma: Kept", sum(valid_mappings), "entries from", file))
+          }
+        }
+      }
+      break  # Only process one of the PaxDB files
+    }
+  }
+  
+  # 4. HPA files - PLASMA
   message("  - Processing HPA files (Plasma)...")
   hpa_files <- list.files(pattern = "^HPA_.*\\.csv$")
   for(file in hpa_files) {
@@ -228,12 +327,16 @@ read_database_files <- function() {
         }
         
         if(length(valid_genes) > 0) {
+          # Extract HPA technique from filename (e.g., HPA_MS.csv -> HPA_MS)
+          hpa_technique <- gsub("\\.csv$", "", file)
+          
           hpa_data <- data.frame(
             Gene = valid_genes,
             Concentration = valid_concentrations,
             Database = "HPA",
             Category = "Plasma",
             CellType = "Plasma",
+            Dataset = hpa_technique,
             stringsAsFactors = FALSE
           )
           all_plasma_data <- c(all_plasma_data, list(hpa_data))
@@ -243,7 +346,7 @@ read_database_files <- function() {
     }
   }
   
-  # 3. ProteomeXchange files - CELL TYPES
+  # 5. ProteomeXchange files - CELL TYPES
   message("  - Processing ProteomeXchange files (Cell Types)...")
   pxd_files <- list.files(pattern = "^PXD.*\\.csv$")
   for(file in pxd_files) {
@@ -311,12 +414,17 @@ read_database_files <- function() {
                 }
                 
                 if(length(valid_genes) > 0) {
+                  # Extract dataset accession from filename (e.g., PXD004352.csv -> PXD004352, PXD040957_CD8.csv -> PXD040957)
+                  dataset_accession <- gsub("\\.csv$", "", file)
+                  dataset_accession <- gsub("_CD8$|_Macrophages$", "", dataset_accession)
+                  
                   px_data <- data.frame(
                     Gene = valid_genes,
                     Concentration = valid_intensities,
                     Database = "ProteomeXchange",
                     Category = "CellType",
                     CellType = cell_type,
+                    Dataset = dataset_accession,
                     stringsAsFactors = FALSE
                   )
                   all_celltype_data <- c(all_celltype_data, list(px_data))
@@ -341,9 +449,9 @@ read_database_files <- function() {
     plasma_data <- as.data.frame(plasma_data, stringsAsFactors = FALSE)
     plasma_data$Concentration <- as.numeric(plasma_data$Concentration)
     
-    # Remove duplicates: if same gene appears multiple times in same database, keep highest concentration
+    # Remove duplicates: if same gene appears multiple times in same database/dataset, keep highest concentration
     plasma_data <- plasma_data %>%
-      group_by(Gene, Database, Category, CellType) %>%
+      group_by(Gene, Database, Dataset, Category, CellType) %>%
       slice_max(Concentration, n = 1, with_ties = FALSE) %>%
       ungroup()
     
@@ -356,9 +464,9 @@ read_database_files <- function() {
     celltype_data <- as.data.frame(celltype_data, stringsAsFactors = FALSE)
     celltype_data$Concentration <- as.numeric(celltype_data$Concentration)
     
-    # Remove duplicates: if same gene appears multiple times in same database/celltype, keep highest concentration
+    # Remove duplicates: if same gene appears multiple times in same database/dataset/celltype, keep highest concentration
     celltype_data <- celltype_data %>%
-      group_by(Gene, Database, Category, CellType) %>%
+      group_by(Gene, Database, Dataset, Category, CellType) %>%
       slice_max(Concentration, n = 1, with_ties = FALSE) %>%
       ungroup()
     
@@ -593,6 +701,73 @@ create_source_counts_plot <- function(analysis_result, category, filename) {
   dev.off()
 }
 
+# Function to create stacked bar plot by dataset accession
+create_stacked_dataset_plot <- function(gene_data, category_filter = NULL, filename) {
+  if(!is.null(category_filter)) {
+    plot_data <- gene_data %>% filter(Category == category_filter)
+    plot_title <- paste("Gene Counts by Cell Type and Dataset -", category_filter)
+  } else {
+    plot_data <- gene_data
+    plot_title <- "Gene Counts by Cell Type and Dataset - All Categories"
+  }
+  
+  if(nrow(plot_data) == 0) {
+    message(paste("Skipping stacked plot for", ifelse(is.null(category_filter), "All", category_filter), "- no data"))
+    return()
+  }
+  
+  # Calculate gene counts by CellType and Dataset
+  stacked_data <- plot_data %>%
+    group_by(CellType, Dataset) %>%
+    summarise(gene_count = n_distinct(Gene), .groups = 'drop') %>%
+    arrange(desc(gene_count))
+  
+  # Create custom color palette for datasets
+  n_datasets <- length(unique(stacked_data$Dataset))
+  if(n_datasets <= 12) {
+    dataset_colors <- RColorBrewer::brewer.pal(min(n_datasets, 12), "Set3")
+  } else {
+    dataset_colors <- rainbow(n_datasets)
+  }
+  
+  message(paste("Creating stacked dataset plot for", ifelse(is.null(category_filter), "All categories", category_filter), "..."))
+  
+  tiff(file.path(output_dir, filename), 
+       width = 14, height = 8, units = "in", res = 600)
+  
+  p <- ggplot(stacked_data, aes(x = reorder(CellType, gene_count, sum), y = gene_count, fill = Dataset)) +
+    geom_col(position = "stack", alpha = 0.8, color = "white", linewidth = 0.2) +
+    coord_flip() +
+    scale_fill_manual(values = dataset_colors, name = "Dataset\nAccession") +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold"),
+      plot.subtitle = element_text(size = 12),
+      axis.text.y = element_text(size = 11),
+      axis.text.x = element_text(size = 10),
+      legend.position = "right",
+      legend.title = element_text(size = 11, face = "bold"),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor = element_blank()
+    ) +
+    labs(
+      title = plot_title,
+      subtitle = "Stacked bars show contribution of each dataset to cell type protein counts",
+      x = "Cell Type", 
+      y = "Number of Unique Genes"
+    ) +
+    geom_text(
+      data = stacked_data %>% 
+        group_by(CellType) %>% 
+        summarise(total_genes = sum(gene_count), .groups = 'drop'),
+      aes(x = CellType, y = total_genes, label = total_genes, fill = NULL),
+      hjust = -0.1, size = 4, fontface = "bold"
+    )
+  
+  print(p)
+  dev.off()
+}
+
 # Create plots for each category
 create_correlation_plot(plasma_analysis, "Plasma", "plasma_gene_overlap_correlation.tiff")
 create_distribution_plot(plasma_analysis, "Plasma", "plasma_gene_distribution.tiff")
@@ -601,6 +776,7 @@ create_source_counts_plot(plasma_analysis, "Plasma", "plasma_source_counts.tiff"
 create_correlation_plot(celltype_analysis, "Cell Types", "celltype_gene_overlap_correlation.tiff")
 create_distribution_plot(celltype_analysis, "Cell Types", "celltype_gene_distribution.tiff")
 create_source_counts_plot(celltype_analysis, "Cell Types", "celltype_source_counts.tiff")
+create_stacked_dataset_plot(gene_data, "CellType", "celltype_stacked_by_dataset.tiff")
 
 create_correlation_plot(overall_analysis, "Overall", "overall_gene_overlap_correlation.tiff")
 create_distribution_plot(overall_analysis, "Overall", "overall_gene_distribution.tiff")
