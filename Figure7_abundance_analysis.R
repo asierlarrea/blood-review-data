@@ -32,70 +32,12 @@ if (!dir.exists(output_dir)) {
   dir.create(output_dir, recursive = TRUE)
 }
 
-# Function to map protein IDs to gene symbols based on database type
-map_to_gene_symbol <- function(protein_ids, descriptions = NULL, database_type = "general") {
-  gene_symbols <- character(length(protein_ids))
-  
-  for(i in seq_along(protein_ids)) {
-    protein_id <- as.character(protein_ids[i])
-    description <- if(!is.null(descriptions)) as.character(descriptions[i]) else ""
-    
-    # Initialize with fallback
-    gene_symbol <- protein_id
-    
-    # Database-specific handling
-    if(database_type == "paxdb") {
-      # PaxDB format: 9606.ENSP00000357727 - remove organism prefix
-      clean_id <- gsub("^9606\\.", "", protein_id)
-      gene_symbol <- paste0("GENE_", substr(clean_id, 1, 8))
-    } else if(database_type == "gpmdb") {
-      # GPMDB format: ENSP00000426179 - Ensembl protein IDs
-      gene_symbol <- paste0("GENE_", substr(protein_id, 1, 8))
-    } else if(database_type == "peptideatlas") {
-      # PeptideAtlas format: P27144 - UniProt accessions
-      # Try to extract from description first
-      if(!is.null(descriptions) && !is.na(description) && description != "") {
-        # Look for gene symbols in various formats in descriptions
-        if(grepl("GN=([A-Z0-9_-]+)", description)) {
-          gene_symbol <- gsub(".*GN=([A-Z0-9_-]+).*", "\\1", description)
-        } else if(grepl("^([A-Z0-9_-]+)\\s", description)) {
-          gene_symbol <- gsub("^([A-Z0-9_-]+)\\s.*", "\\1", description)
-        } else {
-          gene_symbol <- paste0("UNIPROT_", substr(protein_id, 1, 6))
-        }
-      } else {
-        gene_symbol <- paste0("UNIPROT_", substr(protein_id, 1, 6))
-      }
-    } else if(database_type == "hpa") {
-      # HPA already has gene symbols - just clean them
-      gene_symbol <- toupper(protein_id)
-    } else {
-      # General case - try to extract from description
-      if(!is.null(descriptions) && !is.na(description) && description != "") {
-        if(grepl("GN=([A-Z0-9_-]+)", description)) {
-          gene_symbol <- gsub(".*GN=([A-Z0-9_-]+).*", "\\1", description)
-        } else if(grepl("^([A-Z0-9_-]+)[,\\s]", description)) {
-          gene_symbol <- gsub("^([A-Z0-9_-]+)[,\\s].*", "\\1", description)
-        } else {
-          gene_symbol <- paste0("GENE_", substr(protein_id, 1, 8))
-        }
-      } else {
-        gene_symbol <- paste0("GENE_", substr(protein_id, 1, 8))
-      }
-    }
-    
-    # Clean the gene symbol
-    gene_symbol <- gsub("[^A-Z0-9_-]", "", toupper(gene_symbol))
-    
-    # Ensure we have a valid gene symbol
-    if(gene_symbol == "" || nchar(gene_symbol) < 2) {
-      gene_symbol <- paste0("UNKNOWN_", substr(protein_id, 1, 8))
-    }
-    
-    gene_symbols[i] <- gene_symbol
-  }
-  
-  return(gene_symbols)
+# Load enhanced ID mapping system
+message("Loading enhanced ID mapping system...")
+if(file.exists("enhanced_fast_mapping.R")) {
+  source("enhanced_fast_mapping.R")
+} else {
+  stop("Enhanced mapping system not found. Please run the enhanced_fast_mapping.R script first.")
 }
 
 # Function to parse cell type from column name (same as Figure 6)
@@ -159,9 +101,9 @@ read_abundance_data <- function() {
   message("  - Reading PeptideAtlas abundance data...")
   peptideatlas <- read.csv("PeptideAtlas.csv", stringsAsFactors = FALSE)
   
-  # Map to gene symbols using descriptions
-  gene_symbols <- map_to_gene_symbol(peptideatlas$biosequence_accession, 
-                                    peptideatlas$biosequence_desc)
+  # Map to gene symbols using enhanced mapping
+  gene_symbols <- enhanced_fast_map_to_gene_symbol(peptideatlas$biosequence_accession, 
+                                                  peptideatlas$biosequence_desc)
   
   abundance_data$PeptideAtlas <- data.frame(
     gene_symbol = gene_symbols,
@@ -181,18 +123,14 @@ read_abundance_data <- function() {
     message(paste("    Reading", file, "for", cell_type))
     
     lines <- readLines(file)
-    data_start <- which(grepl("^#string_external_id,abundance", lines))
+    data_start <- which(grepl("^string_external_id,abundance", lines))
     if(length(data_start) > 0) {
-      # Read from the line after the header
-      temp_data <- read.csv(file, skip = data_start, stringsAsFactors = FALSE, header = FALSE)
+      # Read from the header line directly
+      temp_data <- read.csv(file, skip = data_start - 1, stringsAsFactors = FALSE, header = TRUE)
       
-      # Set column names based on actual number of columns
-      if(ncol(temp_data) == 2) {
-        colnames(temp_data) <- c("string_external_id", "abundance")
-      } else if(ncol(temp_data) == 3) {
-        colnames(temp_data) <- c("string_external_id", "abundance", "raw_spectral_count")
-      } else {
-        message(paste("      Warning: Unexpected number of columns in", file, ":", ncol(temp_data)))
+      # Verify we have the expected columns
+      if(!"string_external_id" %in% colnames(temp_data) || !"abundance" %in% colnames(temp_data)) {
+        message(paste("      Warning: Missing expected columns in", file))
         next
       }
       
@@ -204,8 +142,8 @@ read_abundance_data <- function() {
                    !is.na(temp_data$abundance) & temp_data$abundance > 0
       
       if(sum(valid_rows) > 0) {
-        # Map to gene symbols
-        gene_symbols <- map_to_gene_symbol(protein_ids[valid_rows])
+        # Map to gene symbols using enhanced mapping
+        gene_symbols <- enhanced_fast_map_to_gene_symbol(protein_ids[valid_rows])
         
         abundance_data[[paste0("PaxDb_", cell_type)]] <- data.frame(
           gene_symbol = gene_symbols,
@@ -303,9 +241,9 @@ read_abundance_data <- function() {
                    !is.na(gpmdb_data$total) & gpmdb_data$total > 0
       
       if(sum(valid_rows) > 0) {
-        # Map GPMDB protein accessions to gene symbols using descriptions
-        gene_symbols <- map_to_gene_symbol(gpmdb_data$accession[valid_rows], 
-                                          gpmdb_data$description[valid_rows])
+        # Map GPMDB protein accessions to gene symbols using enhanced mapping
+        gene_symbols <- enhanced_fast_map_to_gene_symbol(gpmdb_data$accession[valid_rows], 
+                                                        gpmdb_data$description[valid_rows])
         
         abundance_data[[paste0("GPMDB_", cell_type)]] <- data.frame(
           gene_symbol = gene_symbols,
