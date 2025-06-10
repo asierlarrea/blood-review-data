@@ -83,7 +83,6 @@ rsconnect/
 
 # Plots and output files
 # ----------------------
-plots/
 figures/
 outputs/
 results/
@@ -94,7 +93,6 @@ results/
 *.pdf
 *.svg
 *.eps
-*.tiff
 *.bmp
 
 # Log files
@@ -251,3 +249,6 @@ rsconnect/
 # Example: ignore specific temporary directories
 # temp/
 # scratch/ 
+
+.RData
+.Rhistory
