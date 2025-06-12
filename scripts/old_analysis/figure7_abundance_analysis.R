@@ -4,26 +4,19 @@
 source("scripts/utilities/load_packages.R")
 ensure_output_dirs()
 
+
 # Figure 7: Protein Abundance Analysis 
 # Working directly with raw database files for quantitative abundance analysis
 
 # Set CRAN mirror
+if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
-# Function to install packages if not available
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      }
-    }
-  }
-}
-
-# Install required packages
+# Load required packages
 required_packages <- c("ggplot2", "dplyr", "tidyr", "ggridges", "viridis", 
                       "scales", "gridExtra", "stringr", "ggbeeswarm")
+load_packages(required_packages)
 
 # Create output directory
 output_dir <- "outputs/plots/03_Abundance_Analysis"

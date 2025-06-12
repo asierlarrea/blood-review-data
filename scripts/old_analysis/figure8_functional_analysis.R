@@ -4,26 +4,21 @@
 source("scripts/utilities/load_packages.R")
 ensure_output_dirs()
 
+
 # Figure 8: Functional Analysis of Blood Proteins
 # Working directly with raw database files for functional categorization
 
 # Set CRAN mirror
+if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
-# Function to install packages if not available
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      }
-    }
-  }
-}
+# Load required packages
+required_packages <- c("ggplot2", "dplyr", "tidyr", "pheatmap", "RColorBrewer", 
+                      "viridis", "scales", "gridExtra", "stringr")
+load_packages(required_packages)
 
-# Install required packages
-required_packages <- c("ggplot2", "dplyr", "tidyr", "wordcloud", "RColorBrewer", 
-                      "treemap", "scales", "gridExtra", "stringr", "ggalluvial")
+
 
 # Create output directory
 output_dir <- "outputs/plots/05_Functional_Analysis"
