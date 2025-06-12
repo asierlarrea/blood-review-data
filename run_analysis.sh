@@ -38,45 +38,35 @@ if ! command -v Rscript &> /dev/null; then
     exit 1
 fi
 
-# Check if we're in the right directory
-if [ ! -f "Figure2.R" ]; then
-    print_error "Figure2.R not found. Please run this script from the project directory."
+# Check if we're in the right directory (look for the new structure)
+if [ ! -d "scripts" ] || [ ! -d "data" ] || [ ! -d "outputs" ]; then
+    print_error "Required directories (scripts/, data/, outputs/) not found."
+    print_error "Please run this script from the organized project directory."
     exit 1
 fi
 
-# Check for new analysis scripts
-new_scripts=("Figure6_database_correlation.R" "Figure7_abundance_analysis.R" "Figure8_functional_analysis.R" "Figure9_comparative_analysis.R")
-missing_new=0
-for script in "${new_scripts[@]}"; do
-    if [ ! -f "$script" ]; then
-        ((missing_new++))
-    fi
-done
-
-if [ $missing_new -gt 0 ]; then
-    print_warning "$missing_new new analysis script(s) not found. Running original analysis only."
-    print_status "To get the complete extended analysis, ensure all Figure6-9 scripts are present."
-else
-    print_status "Extended analysis detected - running complete pipeline with 8 analysis scripts"
-fi
+# Create output directories if they don't exist
+mkdir -p outputs/{plots,tables,reports,logs}
 
 print_status "Starting Blood Proteomics Analysis Pipeline"
 print_status "Working directory: $(pwd)"
+print_status "Using organized repository structure"
 
-# Create output directory for logs
-mkdir -p logs
-
-# Array of scripts to run
+# Array of scripts to run (with new paths)
 scripts=(
-    "Figure2.R" 
-    "Figure3.R" 
-    "Figure4.R" 
-    "Figure5.R"
-    "Figure6_database_correlation.R"
-    "Figure7_abundance_analysis.R"
-    "Figure8_functional_analysis.R"
-    "Figure9_comparative_analysis.R"
+    "scripts/analysis/Figure2.R" 
+    "scripts/analysis/Figure3.R" 
+    "scripts/analysis/Figure4.R" 
+    "scripts/analysis/Figure5.R"
+    "scripts/analysis/Figure6_database_correlation.R"
+    "scripts/analysis/Figure7_abundance_analysis.R"
+    "scripts/analysis/Figure8_functional_analysis.R"
+    "scripts/analysis/Figure9_comparative_analysis.R"
+    "scripts/visualization/database_coverage_plots.R"
+    "scripts/visualization/database_detailed_comparison.R"
+    "scripts/visualization/variation_distribution_plot.R"
 )
+
 descriptions=(
     "UpSet plot of plasma proteins"
     "Cell type bubble plot"
@@ -86,35 +76,57 @@ descriptions=(
     "Protein abundance distribution analysis"
     "Functional categories and immunoglobulin analysis"
     "Comparative biological analysis (immune vs non-immune)"
+    "Individual database coverage analysis with descriptive plots"
+    "Detailed database comparison based on manuscript statistics"
+    "Improved PEA vs MS/MS variability distribution plot with clean aesthetics"
 )
 
-# Run each script
+# Check for optional analysis scripts
+optional_scripts=(
+    "scripts/analysis/hpa_pea_msms_variability_correlation.R"
+    "scripts/analysis/PeptideAtlas_quantification_comparison.R"
+    "scripts/analysis/biomarker_plasma_analysis.R"
+    "scripts/visualization/ranked_abundance_plots_improved.R"
+)
+
+optional_descriptions=(
+    "HPA PEA vs MS/MS variability correlation analysis"
+    "PeptideAtlas quantification comparison"
+    "Biomarker plasma analysis"
+    "Improved ranked abundance plots"
+)
+
+# Run each core script
 total_scripts=${#scripts[@]}
 successful=0
 failed=0
 skipped=0
 
+print_status "Running core analysis scripts..."
+echo "============================================================================"
+
 for i in "${!scripts[@]}"; do
     script="${scripts[$i]}"
     description="${descriptions[$i]}"
-    log_file="logs/${script%.R}_$(date +%Y%m%d_%H%M%S).log"
+    script_name=$(basename "$script")
+    log_file="outputs/logs/${script_name%.R}_$(date +%Y%m%d_%H%M%S).log"
     
     # Check if script exists
     if [ ! -f "$script" ]; then
-        print_warning "[$((i+1))/$total_scripts] Skipping $script - file not found"
+        print_warning "[$((i+1))/$total_scripts] Skipping $script_name - file not found"
         ((skipped++))
         continue
     fi
     
-    print_status "[$((i+1))/$total_scripts] Running $script - $description"
+    print_status "[$((i+1))/$total_scripts] Running $script_name - $description"
     
     # Run the script and capture output
     if Rscript "$script" > "$log_file" 2>&1; then
-        print_success "$script completed successfully"
+        print_success "$script_name completed successfully"
         print_status "Log saved to: $log_file"
         ((successful++))
     else
-        print_error "$script failed! Check log: $log_file"
+        print_error "$script_name failed! Check log: $log_file"
         ((failed++))
         
         # Show last few lines of error log
@@ -127,67 +139,87 @@ for i in "${!scripts[@]}"; do
     echo # Empty line for readability
 done
 
+# Run optional scripts if they exist
+print_status "Checking for optional analysis scripts..."
+for i in "${!optional_scripts[@]}"; do
+    script="${optional_scripts[$i]}"
+    description="${optional_descriptions[$i]}"
+    script_name=$(basename "$script")
+    log_file="outputs/logs/${script_name%.R}_$(date +%Y%m%d_%H%M%S).log"
+    
+    if [ -f "$script" ]; then
+        print_status "Running optional script: $script_name - $description"
+        
+        if Rscript "$script" > "$log_file" 2>&1; then
+            print_success "$script_name completed successfully"
+            ((successful++))
+        else
+            print_warning "$script_name failed (optional script)"
+            ((failed++))
+        fi
+    fi
+done
+
 # Summary
 echo "============================================================================"
 print_status "Analysis Pipeline Complete"
 executed=$((successful + failed))
-print_success "Successful: $successful/$executed scripts executed"
+total_available=$((total_scripts + ${#optional_scripts[@]}))
+
+print_success "Successful: $successful scripts completed"
 if [ $skipped -gt 0 ]; then
-    print_warning "Skipped: $skipped/$total_scripts scripts (files not found)"
+    print_warning "Skipped: $skipped/$total_scripts core scripts (files not found)"
 fi
 if [ $failed -gt 0 ]; then
-    print_error "Failed: $failed/$executed scripts"
-    print_warning "Check log files in the 'logs/' directory for details"
+    print_error "Failed: $failed scripts"
+    print_warning "Check log files in outputs/logs/ directory for details"
 elif [ $successful -eq $executed ] && [ $executed -gt 0 ]; then
     print_success "All available scripts completed successfully!"
 fi
 
-# Check for generated plots (if any)
-plot_files=$(find . -name "*.png" -o -name "*.pdf" -o -name "*.svg" -o -name "*.tiff" -o -name "plots/*.tiff" 2>/dev/null | wc -l)
+# Check for generated plots
+plot_files=$(find outputs/plots/ -name "*.png" -o -name "*.pdf" -o -name "*.svg" -o -name "*.tiff" 2>/dev/null | wc -l)
 if [ $plot_files -gt 0 ]; then
-    print_status "Generated $plot_files plot file(s)"
+    print_status "Generated $plot_files plot file(s) in outputs/plots/"
     
-    # Check specifically for plots in organized directories
-    plots_dir_files=$(find plots/ -name "*.tiff" 2>/dev/null | wc -l)
-    if [ $plots_dir_files -gt 0 ]; then
-        print_status "New analysis plots saved in organized directories: $plots_dir_files TIFF files"
-        
-        # List organized subdirectories if they exist
-        if [ -d "plots" ]; then
-            echo "  Plot organization:"
-            for dir in plots/*/; do
-                if [ -d "$dir" ]; then
-                    dir_name=$(basename "$dir")
-                    file_count=$(find "$dir" -name "*.tiff" 2>/dev/null | wc -l)
-                    if [ $file_count -gt 0 ]; then
-                        echo "    • $dir_name: $file_count plots"
-                    fi
+    # List organized subdirectories
+    if [ -d "outputs/plots" ]; then
+        echo "  Plot organization:"
+        for dir in outputs/plots/*/; do
+            if [ -d "$dir" ]; then
+                dir_name=$(basename "$dir")
+                file_count=$(find "$dir" -name "*.png" -o -name "*.pdf" -o -name "*.tiff" 2>/dev/null | wc -l)
+                if [ $file_count -gt 0 ]; then
+                    echo "    • $dir_name: $file_count plots"
                 fi
-            done
-        fi
+            fi
+        done
     fi
 fi
 
-# Additional information for extended analysis
-if [ $successful -gt 4 ]; then
+# Information about the organized structure
+if [ $successful -gt 0 ]; then
     echo
-    print_status "Extended analysis completed! Check the following:"
-    echo "  • Original plots: Rplots.pdf (if generated)"
-    echo "  • New analysis plots: plots/ directory with organized subdirectories"
-    echo "  • Analysis recommendations: ANALYSIS_RECOMMENDATIONS.md"
-    echo "  • Script logs: logs/ directory"
-    echo "  • Total new visualizations: ~18 publication-ready plots"
+    print_status "Repository Organization:"
+    echo "  📁 data/ - All data files organized by type"
+    echo "    ├── raw/ - Original CSV and data files"
+    echo "    ├── processed/ - Cleaned and processed data"
+    echo "    └── metadata/ - Documentation and metadata files"
+    echo "  📁 scripts/ - All analysis scripts organized by function"
+    echo "    ├── analysis/ - Main Figure*.R and analysis scripts"
+    echo "    ├── visualization/ - Specialized plotting scripts"
+    echo "    ├── data_processing/ - Data cleaning and ID mapping"
+    echo "    └── utilities/ - Helper functions and utilities"
+    echo "  📁 outputs/ - All generated outputs"
+    echo "    ├── plots/ - Generated visualizations"
+    echo "    ├── tables/ - Generated tables and summaries"
+    echo "    ├── reports/ - Analysis reports and documentation"
+    echo "    └── logs/ - Script execution logs"
+    echo "  📁 manuscript/ - Manuscript files and bibliography"
+    echo "  📁 docs/ - Documentation and README files"
+    echo "  📁 config/ - Configuration and dependency files"
     echo
-    print_status "Plot organization structure:"
-    echo "  📁 01_Database_Analysis - Database coverage and correlations"
-    echo "  📁 02_Coverage_Analysis - Cell type data completeness"  
-    echo "  📁 03_Abundance_Analysis - Protein concentration distributions"
-    echo "  📁 04_Cell_Type_Comparison - Cell type comparative analysis"
-    echo "  📁 05_Functional_Analysis - Protein functional categories"
-    echo "  📁 06_Protein_Classes - Immunoglobulins and protein classes"
-    echo "  📁 07_Diversity_Analysis - Cell type diversity metrics"
-    echo "  📁 08_Database_Comparison - Database uniqueness analysis"
-    echo "  📁 09_Efficiency_Analysis - Coverage efficiency metrics"
+    print_status "All outputs are now organized in the outputs/ directory!"
 fi
 
 echo "============================================================================" 

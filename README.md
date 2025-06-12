@@ -1,386 +1,194 @@
-# Blood Proteomics Database Analysis
+# Blood Proteomics Analysis Pipeline
 
-A comprehensive analysis pipeline for blood cell proteomes across multiple databases, featuring advanced biological ID mapping, dataset integration, and comparative analysis of plasma proteins and cellular protein distributions.
+A comprehensive analysis pipeline for blood proteomics data integration and visualization, focusing on database coverage analysis, protein variability studies, and manuscript-ready visualizations.
 
-## 🔬 Overview
-
-This project provides a comprehensive proteomics analysis pipeline that:
-- **Integrates 4 major databases** for plasma protein analysis
-- **Maps 12,713 unique genes** across blood cell types and plasma
-- **Handles complex biological ID mapping** (UniProt, ENSP, gene symbols)
-- **Analyzes protein distributions** across 11 different blood cell types
-- **Provides robust deduplication** and dataset merging strategies
-- **Generates publication-ready visualizations** and correlation matrices
-
-## 🚀 Key Features
-
-### ✅ Advanced Biological ID Mapping
-- **Enhanced ENSP mapping**: 96% coverage using biomaRt (7,033/7,328 IDs)
-- **Multi-format support**: UniProt, ENSP, gene symbols, descriptions
-- **Fast local fallbacks**: 100+ common protein mappings
-- **Automatic batch processing**: Handles large datasets efficiently
-
-### ✅ Comprehensive Database Integration
-- **4-source plasma analysis**: PeptideAtlas, GPMDB, HPA, PaxDB
-- **11 cell types**: CD4/CD8 T cells, B cells, NK, monocytes, neutrophils, etc.
-- **Dataset tracking**: Individual accession tracking (PXD004352, PXD025174, etc.)
-- **Smart deduplication**: Configurable gene merging across datasets
-
-### ✅ Publication-Ready Analysis
-- **Correlation matrices**: Jaccard similarity between databases
-- **Overlap analysis**: Gene distribution across multiple sources
-- **Stacked visualizations**: Dataset contribution plots
-- **Statistical summaries**: Comprehensive coverage reports
-
-## 📁 Project Structure
+## 🗂️ Repository Organization
 
 ```
 blood-review-data/
-├── README.md                           # This documentation
-├── Figure6_database_correlation.R      # Main analysis pipeline
-├── enhanced_fast_mapping.R             # ID mapping with biomaRt
-├── fast_id_mapping.R                   # Local ID mapping functions
-├── map_unmapped_ensp.R                 # biomaRt ENSP mapping
-├── fix_deduplication.R                 # Deduplication analysis
-├── biomart_ensp_mappings.csv           # 7,013 ENSP→gene mappings
-│
-├── Data Files/
-│   ├── PeptideAtlas.csv                # PeptideAtlas plasma data
-│   ├── PaxDB_plasma.csv                # PaxDB plasma abundance
-│   ├── GPMDB_Plasma.csv                # GPMDB plasma proteins
-│   ├── HPA_*.csv                       # Human Protein Atlas (MS, PEA, Immunoassay)
-│   ├── PXD*.csv                        # ProteomeXchange datasets
-│   └── PaxDb_*.csv                     # PaxDB cell type data
-│
-└── plots/01_Database_Analysis/         # Analysis outputs
-    ├── processed_gene_data_with_categories.csv  # Main results (7.3MB)
-    ├── plasma_gene_data.csv             # Plasma proteins (8,066 genes)
-    ├── celltype_gene_data.csv           # Cell type proteins (9,578 genes)
-    ├── *_correlation.tiff               # Correlation matrices
-    ├── *_distribution.tiff              # Gene distribution plots
-    └── *_source_counts.tiff             # Database contribution plots
+├── 📁 data/                    # All data files organized by type
+│   ├── raw/                   # Original CSV and data files
+│   ├── processed/             # Cleaned and processed data  
+│   └── metadata/              # Documentation and metadata files
+├── 📁 scripts/                # All analysis scripts organized by function
+│   ├── analysis/              # Main Figure*.R and analysis scripts
+│   ├── visualization/         # Specialized plotting scripts
+│   ├── data_processing/       # Data cleaning and ID mapping
+│   └── utilities/             # Helper functions and utilities
+├── 📁 outputs/                # All generated outputs
+│   ├── plots/                 # Generated visualizations
+│   ├── tables/                # Generated tables and summaries
+│   ├── reports/               # Analysis reports and documentation
+│   └── logs/                  # Script execution logs
+├── 📁 manuscript/             # Manuscript files and bibliography
+├── 📁 docs/                   # Documentation and README files
+├── 📁 config/                 # Configuration and dependency files
+├── run_analysis.sh            # Main analysis pipeline runner
+└── README.md                  # This file
 ```
 
-## 🎯 Analysis Results
+## 🚀 Quick Start
 
-### Database Coverage Summary
-| Database | Plasma Genes | Cell Type Genes | Total Mapped |
-|----------|-------------|----------------|-------------|
-| **PaxDB** | 7,010 | - | 7,010 |
-| **PeptideAtlas** | 4,603 | - | 4,603 |
-| **HPA** | 4,433 | - | 4,433 |
-| **GPMDB** | 2,373 | - | 2,373 |
-| **ProteomeXchange** | - | 9,578 | 9,578 |
-| **Total Unique** | **8,066** | **9,578** | **12,713** |
+### 1. Install Dependencies
+```bash
+# Install R packages automatically
+Rscript config/install_dependencies.R
+```
 
-### Key Achievements
-- **📈 355x improvement** in PaxDB mapping (20 → 7,033 genes)
-- **🔗 4-source plasma analysis** with 1,376 genes in all databases
-- **⚡ 96% ENSP mapping success** using biomaRt integration
-- **🎯 Perfect 1:1 gene ratios** with proper deduplication
+### 2. Run Complete Analysis
+```bash
+# Run all analysis scripts with organized outputs
+./run_analysis.sh
+```
 
-## ⚙️ Requirements
+### 3. Check Results
+All outputs will be organized in the `outputs/` directory:
+- **Plots**: `outputs/plots/` - Publication-ready visualizations
+- **Tables**: `outputs/tables/` - Summary statistics and data tables
+- **Logs**: `outputs/logs/` - Execution logs for debugging
 
-### System Requirements
-- **R ≥ 4.0.0**
-- **Internet connection** (for biomaRt queries)
-- **~2GB RAM** (for large dataset processing)
-- **~500MB disk space** (for outputs and mappings)
+## 📊 Analysis Components
+
+### Core Analysis Scripts (`scripts/analysis/`)
+- **Figure2.R** - UpSet plot of plasma proteins
+- **Figure3.R** - Cell type bubble plot
+- **Figure4.R** - Cell type UpSet plot
+- **Figure5.R** - Intensity distribution boxplots
+- **Figure6-9.R** - Extended database and functional analysis
+
+### Visualization Scripts (`scripts/visualization/`)
+- **database_coverage_plots.R** - Individual database coverage analysis
+- **database_detailed_comparison.R** - Manuscript-specific database statistics
+- **variation_distribution_plot.R** - PEA vs MS/MS variability analysis
+- **ranked_abundance_plots.R** - Ranked protein abundance visualizations
+
+### Data Processing (`scripts/data_processing/`)
+- **ID mapping scripts** - Protein identifier mapping and standardization
+- **Data cleaning utilities** - Deduplication and quality control
+
+## 📈 Key Datasets
+
+### Primary Databases (`data/raw/`)
+- **PeptideAtlas**: `PeptideAtlas.csv` - 4,608 canonical proteins in plasma/serum
+- **Human Protein Atlas**: `HPA_MS.csv`, `HPA_PEA.csv`, `HPA_Immunoassay.csv`
+- **GPMDB**: `GPMDB_Plasma.csv`, `GPMDB_Erythrocyte.csv`, `GPMDB_Platelet.csv`
+- **PaxDB**: `PaxDb_Plasma.csv`, `PaxDb_CD4.csv`, `PaxDb_CD8.csv`, etc.
+
+### Processed Data
+- **Cell type datasets**: Blood cell-specific protein expression data
+- **Biomarker lists**: Curated biomarker protein sets
+- **Correlation matrices**: Cross-database protein correlation data
+
+## 🎯 Key Features
+
+### Database Integration
+- **4 major databases** integrated: PeptideAtlas, HPA, GPMDB, PaxDB
+- **12,713 unique genes** mapped across blood components
+- **355x improvement** in PaxDB mapping (20 → 7,033 genes)
+- **96% ENSP coverage** achieved
+
+### Analysis Scope
+- **Blood taxonomy**: Plasma (55%), erythrocytes (43%), leukocytes/platelets (2%)
+- **11 blood cell types** analyzed
+- **Protein variability**: PEA vs MS/MS coefficient of variation analysis
+- **Publication-ready visualizations**: 25+ high-quality plots
+
+### Technical Achievements
+- **Dynamic range**: 10-12 orders of magnitude in protein concentrations
+- **Technology comparison**: MS proteomics vs affinity-based methods
+- **Cross-platform validation**: Correlation analysis across databases
+
+## 📋 Requirements
 
 ### R Dependencies
-All required packages are managed through a global dependency system:
+```r
+# Core packages (automatically installed)
+ggplot2, dplyr, tidyr, viridis, RColorBrewer
+scales, gridExtra, stringr, cowplot, ggrepel
+UpSetR, corrplot, ggpubr, ComplexHeatmap
+```
 
-**Core Packages:**
-- `ggplot2`, `dplyr`, `tidyr` (data manipulation & visualization)
-- `scales`, `viridis`, `RColorBrewer` (plotting aesthetics)
-- `gridExtra`, `ggridges`, `ggbeeswarm` (specialized plots)
+### System Requirements
+- **R version**: ≥ 4.0.0
+- **Memory**: ≥ 8GB RAM (for large datasets)
+- **Storage**: ≥ 2GB free space for outputs
 
-**Bioconductor Packages:**
-- `biomaRt`, `org.Hs.eg.db` (biological ID mapping)
-- `GO.db`, `KEGG.db` (functional annotation)
+## 🔧 Customization
 
-**Specialized Analysis:**
-- `UpSetR`, `VennDiagram` (set analysis)
-- `corrplot`, `pheatmap` (correlation & heatmaps)
-
-## 🚦 Quick Start
-
-### 1. **Install All Dependencies (Required First Step)**
+### Running Individual Scripts
 ```bash
-# Install all required packages for the entire project
-Rscript install_dependencies.R
+# Run specific analysis from project root
+Rscript scripts/analysis/Figure2.R
+Rscript scripts/visualization/variation_distribution_plot.R
 ```
 
-### 2. **Run Complete Analysis**
+### Modifying Output Locations
+Edit the utility functions in `scripts/utilities/load_packages.R`:
 ```r
-# Set working directory
-setwd("path/to/blood-review-data")
-
-# Run main analysis pipeline
-source("Figure6_database_correlation.R")
+# Customize output paths
+get_output_path("my_plot.png", "plots")    # outputs/plots/my_plot.png
+get_data_path("my_data.csv", "raw")        # data/raw/my_data.csv
 ```
 
-### 3. **Run Specific Analyses**
-```r
-# Biomarker analysis
-source("biomarker_plasma_analysis.R")
+## 📊 Output Organization
 
-# Ranked abundance plots
-source("ranked_abundance_plots_improved.R")
+### Plot Categories (`outputs/plots/`)
+- **01_Database_Analysis** - Database coverage and correlations
+- **02_Coverage_Analysis** - Cell type data completeness
+- **03_Abundance_Analysis** - Protein concentration distributions
+- **04_Cell_Type_Comparison** - Comparative cell type analysis
+- **05_Functional_Analysis** - Protein functional categories
 
-# Test enhanced mapping system
-source("enhanced_fast_mapping.R")
-test_enhanced_mapping()
-```
-
-## 📊 Key Analysis Components
-
-### 🧬 Biological ID Mapping Pipeline
-
-**Enhanced Fast Mapping System:**
-```r
-# Load all 7,013 biomaRt ENSP mappings
-source("enhanced_fast_mapping.R")
-
-# Map IDs with multiple strategies
-gene_symbols <- enhanced_fast_map_to_gene_symbol(
-  accessions = c("P02768", "ENSP00000295897", "ALB"),
-  descriptions = c("Albumin GN=ALB", "", "")
-)
-# Result: "ALB", "ALB", "ALB"
-```
-
-**Mapping Strategies (in order):**
-1. **Gene symbol recognition** (direct mapping)
-2. **biomaRt ENSP lookup** (comprehensive, 7,013 mappings)
-3. **Common protein mappings** (local, 100+ proteins)
-4. **Description parsing** (multiple patterns)
-5. **Ensembl description extraction** (for ENSP IDs)
-
-### 📈 Database Correlation Analysis
-
-**4-Source Plasma Overlap:**
-```r
-# Analyze gene overlap between databases
-plasma_analysis <- analyze_gene_overlaps_by_category(gene_data, "Plasma")
-
-# Results:
-# - 1,376 genes in all 4 sources
-# - 2,736 genes in 3 sources  
-# - 753 genes in 2 sources
-# - 3,201 genes in 1 source
-```
-
-### 🔄 Deduplication Strategies
-
-**Option 1: Complete Deduplication (Recommended)**
-```r
-# Merge genes across all datasets (standard approach)
-deduplicated_data <- data %>%
-  group_by(Gene, Database, Category, CellType) %>%
-  summarise(Concentration = max(Concentration), .groups = 'drop')
-# Result: 18,876 → 9,352 measurements (1:1 gene ratio)
-```
-
-**Option 2: Dataset-Aware Analysis**
-```r
-# Keep dataset information for meta-analysis
-dataset_aware_data <- data %>%
-  group_by(Gene, Database, Dataset, Category, CellType) %>%
-  slice_max(Concentration, n = 1) %>%
-  ungroup()
-# Result: Maintains dataset provenance for comparison studies
-```
-
-## 🎨 Output Visualizations
-
-### Generated Plots
-1. **Correlation Matrices**: Jaccard similarity between databases
-2. **Gene Distribution**: Histogram of genes per source count
-3. **Source Counts**: Bar plots of database contributions
-4. **Stacked Dataset Plots**: Cell type contributions by dataset
-
-### CSV Outputs
-- **`processed_gene_data_with_categories.csv`**: Complete dataset (7.3MB)
-- **`plasma_gene_data.csv`**: Plasma proteins only (8,066 genes)
-- **`celltype_gene_data.csv`**: Cell type proteins (9,578 genes)
-- **`biomart_ensp_mappings.csv`**: All ENSP→gene mappings (7,013)
-
-## 📦 Dependency Management
-
-This project uses a centralized dependency management system for clean, maintainable code.
-
-### **Global Installation System**
-```bash
-# One-time setup: Install all dependencies
-Rscript install_dependencies.R
-```
-
-**What it does:**
-- ✅ Installs all required CRAN packages
-- ✅ Handles Bioconductor packages (biomaRt, org.Hs.eg.db)
-- ✅ Creates `load_packages.R` for analysis scripts
-- ✅ Provides detailed installation summary
-- ✅ Handles optional packages gracefully
-
-### **Individual Script Usage**
-All analysis scripts now use the streamlined loading system:
-```r
-# Instead of managing dependencies in each script
-source("load_packages.R")
-required_packages <- c("ggplot2", "dplyr", "scales")
-load_packages(required_packages)
-```
-
-### **Benefits of This System**
-- 🧹 **Cleaner code**: No dependency management clutter in analysis scripts
-- ⚡ **Faster execution**: No repeated installation checks
-- 🔄 **Consistency**: Same packages across all scripts
-- 🛠️ **Maintainability**: Single point for dependency updates
-- 📊 **Better errors**: Clear messages if packages missing
-
-### **File Structure**
-```
-├── install_dependencies.R      # Global dependency installer
-├── load_packages.R            # Generated package loader (auto-created)
-├── Figure6_database_correlation.R    # Uses load_packages()
-├── biomarker_plasma_analysis.R       # Uses load_packages()
-└── ranked_abundance_plots_improved.R # Uses load_packages()
-```
-
-## 🔧 Advanced Usage
-
-### Custom ID Mapping
-```r
-# Map your own accessions
-source("enhanced_fast_mapping.R")
-my_ids <- c("P02768", "ENSP00000295897", "Q13438")
-results <- enhanced_fast_map_to_gene_symbol(my_ids)
-```
-
-### Deduplication Analysis
-```r
-# Analyze gene duplication patterns
-source("fix_deduplication.R")
-# Generates: cd8_merged_deduplicated.csv, cd8_dataset_aware.csv
-```
-
-### Generate New biomaRt Mappings
-```r
-# Update ENSP mappings with latest biomaRt
-source("map_unmapped_ensp.R")
-# Creates: biomart_ensp_mappings.csv, biomart_ensp_mappings.R
-```
-
-## 📋 Data Format Requirements
-
-### Input Data Structure
-```csv
-# PaxDB format (organism prefix handling)
-string_external_id,abundance
-9606.ENSP00000295897,81110
-9606.ENSP00000236850,40718
-
-# GPMDB format (description parsing)
-accession,description,total
-P02768,"Serum albumin GN=ALB PE=1 SV=2",12500
-
-# ProteomeXchange format (gene names)
-Gene names,LFQ.intensity.CD8_1,LFQ.intensity.CD4_1
-ALB,1.5e+08,2.3e+07
-```
-
-### Output Data Consistency
-- **Gene symbols**: Uppercase, validated (ALB, TF, HP)
-- **Concentrations**: Numeric, highest value per gene
-- **Datasets**: Clean accessions (PXD004352, PXD025174, PXD040957)
-- **Categories**: "Plasma" or "CellType"
+### Key Visualizations
+1. **Database Coverage**: Individual database protein counts and overlaps
+2. **Variability Analysis**: PEA vs MS/MS coefficient of variation comparison
+3. **Abundance Distributions**: Protein concentration ranges across platforms
+4. **Cell Type Profiles**: Blood cell-specific protein expression patterns
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
+1. **Path errors**: Ensure you're running from the project root directory
+2. **Missing packages**: Run `Rscript config/install_dependencies.R`
+3. **Memory issues**: Close other applications when processing large datasets
+4. **Permission errors**: Check write permissions for `outputs/` directory
 
-**1. biomaRt Connection Timeout**
-```r
-# Switch to enhanced fast mapping (local only)
-source("fast_id_mapping.R")
-gene_symbols <- fast_map_to_gene_symbol(accessions, descriptions)
+### Log Files
+Check `outputs/logs/` for detailed error messages:
+```bash
+# View recent log
+ls -la outputs/logs/
+tail -20 outputs/logs/[script_name]_[timestamp].log
 ```
-
-**2. Memory Issues with Large Datasets**
-```r
-# Process in smaller batches
-batch_size <- 100  # Reduce from default 500
-```
-
-**3. ENSP IDs Not Mapping**
-```r
-# Check if biomart_ensp_mappings.csv exists
-file.exists("biomart_ensp_mappings.csv")
-
-# Regenerate if needed
-source("map_unmapped_ensp.R")
-```
-
-**4. Duplicate Gene Counts**
-```r
-# Check deduplication strategy
-source("fix_deduplication.R")  # Analyze the issue
-# Then choose Option 1 (complete) or Option 2 (dataset-aware)
-```
-
-### Data Quality Checks
-- **File validation**: Automatic existence and format checking
-- **ID validation**: Multi-format accession recognition
-- **Coverage reporting**: Mapping success rates per dataset
-- **Duplicate detection**: Gene count vs. measurement count analysis
-
-## 🤝 Contributing
-
-### Development Workflow
-1. **Fork** the repository
-2. **Create feature branch**: `git checkout -b feature/new-analysis`
-3. **Test changes**: Ensure all scripts run successfully
-4. **Update documentation**: Modify README for new features
-5. **Submit pull request**: Include test results and examples
-
-### Adding New Databases
-1. **Create mapping function** in `enhanced_fast_mapping.R`
-2. **Add processing logic** in `Figure6_database_correlation.R`
-3. **Update common mappings** if needed
-4. **Test integration** with existing analysis
 
 ## 📚 Citation
 
-If you use this analysis pipeline in your research, please cite:
-
-```bibtex
-@software{blood_proteomics_analysis,
-  title = {Blood Proteomics Database Analysis Pipeline},
-  author = {Data Analysis Team},
-  year = {2024},
-  url = {https://github.com/your-repo/blood-review-data},
-  note = {Comprehensive proteomics analysis with biomaRt integration}
-}
+If you use this analysis pipeline, please cite:
 ```
+[Your manuscript citation when published]
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature-name`
+3. Add scripts to appropriate `scripts/` subdirectory
+4. Update documentation
+5. Submit pull request
 
 ## 📄 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔗 Related Resources
+## 🙋 Support
 
-- **biomaRt Documentation**: https://bioconductor.org/packages/biomaRt/
-- **PeptideAtlas**: http://www.peptideatlas.org/
-- **Human Protein Atlas**: https://www.proteinatlas.org/
-- **GPMDB**: http://gpmdb.thegpm.org/
-- **PaxDB**: https://pax-db.org/
+For questions or issues:
+1. Check the troubleshooting section above
+2. Review log files in `outputs/logs/`
+3. Open an issue on GitHub with error details
 
 ---
 
-### 📈 Analysis Statistics
-
-- **Total Processing Time**: ~15 minutes (including biomaRt queries)
-- **Memory Usage**: ~1.5GB peak
-- **Output Size**: ~20MB (plots + CSV files)
-- **Gene Mapping Success**: 96% overall (12,713/13,247 total) 
+**Last updated**: December 2024  
+**Pipeline version**: 2.0 (Organized Structure)  
+**R compatibility**: R ≥ 4.0.0 
