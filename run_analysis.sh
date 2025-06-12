@@ -54,14 +54,14 @@ print_status "Using organized repository structure"
 
 # Array of scripts to run (with new paths)
 scripts=(
-    "scripts/analysis/Figure2.R" 
-    "scripts/analysis/Figure3.R" 
-    "scripts/analysis/Figure4.R" 
-    "scripts/analysis/Figure5.R"
-    "scripts/analysis/Figure6_database_correlation.R"
-    "scripts/analysis/Figure7_abundance_analysis.R"
-    "scripts/analysis/Figure8_functional_analysis.R"
-    "scripts/analysis/Figure9_comparative_analysis.R"
+    "scripts/analysis/figure2.R" 
+    "scripts/analysis/figure3.R" 
+    "scripts/analysis/figure4.R" 
+    "scripts/analysis/figure5.R"
+    "scripts/analysis/figure6_database_correlation.R"
+    "scripts/analysis/figure7_abundance_analysis.R"
+    "scripts/analysis/figure8_functional_analysis.R"
+    "scripts/analysis/figure9_comparative_analysis.R"
     "scripts/visualization/database_coverage_plots.R"
     "scripts/visualization/database_detailed_comparison.R"
     "scripts/visualization/variation_distribution_plot.R"
@@ -84,7 +84,7 @@ descriptions=(
 # Check for optional analysis scripts
 optional_scripts=(
     "scripts/analysis/hpa_pea_msms_variability_correlation.R"
-    "scripts/analysis/PeptideAtlas_quantification_comparison.R"
+    "scripts/analysis/peptideatlas_quantification_comparison.R"
     "scripts/analysis/biomarker_plasma_analysis.R"
     "scripts/visualization/ranked_abundance_plots_improved.R"
 )

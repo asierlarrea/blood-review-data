@@ -9,8 +9,6 @@ ensure_output_dirs()
 # Description: Creates boxplots showing protein intensity distributions by cell type
 # ============================================================================
 
-# Set CRAN mirror for package installation
-if (length(getOption("repos")) == 0 || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
@@ -19,8 +17,6 @@ required_packages <- c("ggplot2", "tidyr", "dplyr",
                        "readr", "scales")
 for (pkg in required_packages) {
   if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
-    cat(paste("Installing", pkg, "package...\n"))
-    install.packages(pkg, dependencies = TRUE)
     library(pkg, character.only = TRUE)
   }
 }

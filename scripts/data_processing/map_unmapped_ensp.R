@@ -19,7 +19,7 @@ get_unmapped_ensp_ids <- function() {
   message("Reading PaxDB data...")
   
   # Read PaxDB data
-  paxdb_data <- read.csv(get_data_path("PaxDB_plasma.csv")), stringsAsFactors = FALSE)
+  paxdb_data <- read.csv(get_data_path("paxdb_plasma.csv"), stringsAsFactors = FALSE)
   
   # Extract valid ENSP IDs
   valid_rows <- !is.na(paxdb_data$string_external_id) & 

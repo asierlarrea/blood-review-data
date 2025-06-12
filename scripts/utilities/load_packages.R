@@ -1,13 +1,16 @@
-# Load Packages Function - Updated for organized repository structure
-# Author: Blood Proteomics Analysis Pipeline
-# Description: Centralized package loading with automatic installation
+# ============================================================================
+# PACKAGE LOADING UTILITIES
+# ============================================================================
+# Description: Centralized package loading for blood proteomics analysis
+# Note: All packages must be installed first using install_dependencies.R
+# ============================================================================
 
+# Function to load packages (assumes they are already installed)
 load_packages <- function(packages) {
   for (pkg in packages) {
     if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE, repos = "https://cran.r-project.org/")
-      library(pkg, character.only = TRUE)
+      stop(paste("❌ Package", pkg, "not found.", 
+                "\n💡 Please run 'Rscript install_dependencies.R' first to install all dependencies."))
     }
   }
 }

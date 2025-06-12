@@ -4,7 +4,6 @@
 source("scripts/utilities/load_packages.R")
 ensure_output_dirs()
 
-
 # PeptideAtlas Quantification Method Comparison
 # Comparing n_observations vs norm_PSMs_per_100K
 # Author: Data Analysis Pipeline
@@ -59,7 +58,7 @@ extract_gene_symbol <- function(description) {
 
 # Read and process PeptideAtlas data
 message("Reading PeptideAtlas data...")
-peptideatlas <- read.csv(get_data_path("PeptideAtlas.csv"), stringsAsFactors = FALSE)
+peptideatlas <- read.csv(get_data_path("peptideatlas.csv"), stringsAsFactors = FALSE)
 
 message(paste("Total rows in PeptideAtlas:", nrow(peptideatlas)))
 message("Column names:", paste(colnames(peptideatlas), collapse = ", "))

@@ -50,11 +50,11 @@ All outputs will be organized in the `outputs/` directory:
 ## 📊 Analysis Components
 
 ### Core Analysis Scripts (`scripts/analysis/`)
-- **Figure2.R** - UpSet plot of plasma proteins
-- **Figure3.R** - Cell type bubble plot
-- **Figure4.R** - Cell type UpSet plot
-- **Figure5.R** - Intensity distribution boxplots
-- **Figure6-9.R** - Extended database and functional analysis
+- **figure2.R** - UpSet plot of plasma proteins
+- **figure3.R** - Cell type bubble plot
+- **figure4.R** - Cell type UpSet plot
+- **figure5.R** - Intensity distribution boxplots
+- **figure6-9.R** - Extended database and functional analysis
 
 ### Visualization Scripts (`scripts/visualization/`)
 - **database_coverage_plots.R** - Individual database coverage analysis
@@ -69,10 +69,10 @@ All outputs will be organized in the `outputs/` directory:
 ## 📈 Key Datasets
 
 ### Primary Databases (`data/raw/`)
-- **PeptideAtlas**: `PeptideAtlas.csv` - 4,608 canonical proteins in plasma/serum
-- **Human Protein Atlas**: `HPA_MS.csv`, `HPA_PEA.csv`, `HPA_Immunoassay.csv`
-- **GPMDB**: `GPMDB_Plasma.csv`, `GPMDB_Erythrocyte.csv`, `GPMDB_Platelet.csv`
-- **PaxDB**: `PaxDb_Plasma.csv`, `PaxDb_CD4.csv`, `PaxDb_CD8.csv`, etc.
+- **PeptideAtlas**: `peptideatlas.csv` - 4,608 canonical proteins in plasma/serum
+- **Human Protein Atlas**: `hpa_ms.csv`, `hpa_pea.csv`, `hpa_immunoassay.csv`
+- **GPMDB**: `gpmdb_plasma.csv`, `gpmdb_erythrocyte.csv`, `gpmdb_platelet.csv`
+- **PaxDB**: `paxdb_plasma.csv`, `paxdb_cd4.csv`, `paxdb_cd8.csv`, etc.
 
 ### Processed Data
 - **Cell type datasets**: Blood cell-specific protein expression data
@@ -118,7 +118,7 @@ UpSetR, corrplot, ggpubr, ComplexHeatmap
 ### Running Individual Scripts
 ```bash
 # Run specific analysis from project root
-Rscript scripts/analysis/Figure2.R
+Rscript scripts/analysis/figure2.R
 Rscript scripts/visualization/variation_distribution_plot.R
 ```
 

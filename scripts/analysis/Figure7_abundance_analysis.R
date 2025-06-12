@@ -4,23 +4,18 @@
 source("scripts/utilities/load_packages.R")
 ensure_output_dirs()
 
-
 # Figure 7: Protein Abundance Analysis 
 # Working directly with raw database files for quantitative abundance analysis
 
 # Set CRAN mirror
-if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
 # Function to install packages if not available
-install_if_missing <- function(packages) {
   for(pkg in packages) {
     if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
       message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE)
       if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        stop(paste("Failed to install package:", pkg))
       }
     }
   }
@@ -29,7 +24,6 @@ install_if_missing <- function(packages) {
 # Install required packages
 required_packages <- c("ggplot2", "dplyr", "tidyr", "ggridges", "viridis", 
                       "scales", "gridExtra", "stringr", "ggbeeswarm")
-install_if_missing(required_packages)
 
 # Create output directory
 output_dir <- "outputs/plots/03_Abundance_Analysis"
@@ -125,10 +119,11 @@ read_abundance_data <- function() {
   message("Reading abundance data from raw database files...")
   
   abundance_data <- list()
+  data_dir <- file.path(get_project_root(), "data", "raw")
   
   # 1. PeptideAtlas - normalized PSMs
   message("  - Reading PeptideAtlas abundance data...")
-  peptideatlas <- read.csv(get_data_path("PeptideAtlas.csv"), stringsAsFactors = FALSE)
+  peptideatlas <- read.csv(get_data_path("peptideatlas.csv"), stringsAsFactors = FALSE)
   
   # Map to gene symbols using enhanced mapping
   gene_symbols <- enhanced_fast_map_to_gene_symbol(peptideatlas$biosequence_accession, 
@@ -146,16 +141,16 @@ read_abundance_data <- function() {
   
   # 2. PaxDb files - protein abundance in ppm
   message("  - Reading PaxDb abundance data...")
-  paxdb_files <- list.files(pattern = "^PaxDb_.*\\.csv$")
+  paxdb_files <- list.files(path = data_dir, pattern = "^paxdb_.*\\.csv$")
   for(file in paxdb_files) {
-    cell_type <- gsub("PaxDb_|\\.csv", "", file)
+    cell_type <- gsub("paxdb_|\\.csv", "", file)
     message(paste("    Reading", file, "for", cell_type))
     
-    lines <- readLines(file)
+    lines <- readLines(file.path(data_dir, file))
     data_start <- which(grepl("^string_external_id,abundance", lines))
     if(length(data_start) > 0) {
       # Read from the header line directly
-      temp_data <- read.csv(file, skip = data_start - 1, stringsAsFactors = FALSE, header = TRUE)
+      temp_data <- read.csv(file.path(data_dir, file), skip = data_start - 1, stringsAsFactors = FALSE, header = TRUE)
       
       # Verify we have the expected columns
       if(!"string_external_id" %in% colnames(temp_data) || !"abundance" %in% colnames(temp_data)) {
@@ -174,7 +169,7 @@ read_abundance_data <- function() {
         # Map to gene symbols using enhanced mapping
         gene_symbols <- enhanced_fast_map_to_gene_symbol(protein_ids[valid_rows])
         
-        abundance_data[[paste0("PaxDb_", cell_type)]] <- data.frame(
+        abundance_data[[paste0("paxdb_", cell_type)]] <- data.frame(
           gene_symbol = gene_symbols,
           abundance = temp_data$abundance[valid_rows],
           log_abundance = log10(temp_data$abundance[valid_rows] + 1),
@@ -193,12 +188,13 @@ read_abundance_data <- function() {
   
   # 3. HPA concentration data
   message("  - Reading HPA concentration data...")
-  hpa_files <- list.files(pattern = "^HPA_.*\\.csv$")
+  hpa_files <- list.files(path = data_dir, pattern = "^hpa_.*\\.csv$")
+  message(paste("    Found HPA files:", paste(hpa_files, collapse = ", ")))
   for(file in hpa_files) {
-    technique <- gsub("HPA_|\\.csv", "", file)
+    technique <- gsub("hpa_|\\.csv", "", file)
     message(paste("    Reading", file, "for", technique))
     
-    hpa_data <- read.csv(file, stringsAsFactors = FALSE)
+    hpa_data <- read.csv(file.path(data_dir, file), stringsAsFactors = FALSE)
     
     # The HPA file has Mean.concentration column, filter valid rows
     if("Mean.concentration" %in% colnames(hpa_data)) {
@@ -217,19 +213,19 @@ read_abundance_data <- function() {
     if(sum(valid_rows) > 0) {
       valid_data <- hpa_data[valid_rows, ]
       
-      # Convert concentration to numeric (remove units)
+      # Convert concentration to numeric (handle scientific notation)
       # Handle encoding issues by converting to character and cleaning
       conc_strings <- as.character(valid_data[[concentration_col]])
       # Convert to UTF-8 and handle invalid characters
       conc_strings <- iconv(conc_strings, to = "UTF-8", sub = "")
-      # Extract numeric values
-      concentration_values <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", conc_strings)))
+      # Handle scientific notation properly (don't remove E)
+      concentration_values <- suppressWarnings(as.numeric(conc_strings))
       
       # Remove rows where concentration conversion failed
       numeric_valid <- !is.na(concentration_values) & concentration_values > 0
       
       if(sum(numeric_valid) > 0) {
-        # HPA already provides gene symbols
+        # HPA already provides gene symbols - use them directly
         gene_symbols <- toupper(valid_data$Gene[numeric_valid])
         
         abundance_data[[paste0("HPA_", technique)]] <- data.frame(
@@ -238,9 +234,10 @@ read_abundance_data <- function() {
           log_abundance = log10(concentration_values[numeric_valid] + 0.001),  # Add small value for log transform
           database = "HPA",
           cell_type = technique,
-          abundance_type = "mg/L",
+          abundance_type = "pg/L",
           stringsAsFactors = FALSE
         )
+        message(paste("      Created", length(gene_symbols), "entries for", technique))
       } else {
         message(paste("      Warning: No valid concentration data in", file))
       }
@@ -251,16 +248,16 @@ read_abundance_data <- function() {
   
   # 4. GPMDB spectral counts
   message("  - Reading GPMDB spectral count data...")
-  gpmdb_files <- list.files(pattern = "^GPMDB_.*\\.csv$")
+  gpmdb_files <- list.files(path = data_dir, pattern = "^gpmdb_.*\\.csv$")
   for(file in gpmdb_files) {
-    cell_type <- gsub("GPMDB_|\\.csv", "", file)
+    cell_type <- gsub("gpmdb_|\\.csv", "", file)
     message(paste("    Reading", file, "for", cell_type))
     
-    lines <- readLines(file)
+    lines <- readLines(file.path(data_dir, file))
     header_line <- which(grepl("^#,accession,total", lines))
     if(length(header_line) > 0) {
       # Skip to the line after the header
-      gpmdb_data <- read.csv(file, skip = header_line, stringsAsFactors = FALSE, header = FALSE)
+      gpmdb_data <- read.csv(file.path(data_dir, file), skip = header_line, stringsAsFactors = FALSE, header = FALSE)
       
       # Set column names manually
       colnames(gpmdb_data) <- c("rank", "accession", "total", "log_e", "EC", "description")
@@ -293,12 +290,12 @@ read_abundance_data <- function() {
   
   # 5. ProteomeXchange files - with proper cell type parsing
   message("  - Reading ProteomeXchange data with cell type parsing...")
-  pxd_files <- list.files(pattern = "^PXD.*\\.csv$")
+  pxd_files <- list.files(path = data_dir, pattern = "^PXD.*\\.csv$")
   for(file in pxd_files) {
     message(paste("    Processing", file, "for cell type-specific abundance"))
     
     # Read data with header (not skip = 1)
-    pxd_data <- read.csv(file, stringsAsFactors = FALSE)
+    pxd_data <- read.csv(file.path(data_dir, file), stringsAsFactors = FALSE)
     
     # Find gene names column
     gene_col <- NULL
@@ -377,7 +374,20 @@ read_abundance_data <- function() {
   }
   
   # Combine all data
+  message(paste("Number of datasets before combining:", length(abundance_data)))
+  if(length(abundance_data) == 0) {
+    message("No abundance data found!")
+    return(data.frame())
+  }
+  
   all_abundance <- do.call(rbind, abundance_data)
+  message(paste("Total rows after combining:", nrow(all_abundance)))
+  message(paste("Sample of combined data:"))
+  print(head(all_abundance, 3))
+  
+  # Check gene symbols
+  valid_genes <- !is.na(all_abundance$gene_symbol) & all_abundance$gene_symbol != ""
+  message(paste("Rows with valid gene symbols:", sum(valid_genes), "out of", nrow(all_abundance)))
   
   # Aggregate by gene symbol (sum abundances for same gene from same database/cell_type)
   aggregated_abundance <- all_abundance %>%

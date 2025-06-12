@@ -9,20 +9,14 @@ ensure_output_dirs()
 # Description: Creates a bubble plot showing protein counts by database and cell type
 # ============================================================================
 
-# Set CRAN mirror for package installation
-if (length(getOption("repos")) == 0 || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
 # Load required libraries
 if (!require(ggplot2, quietly = TRUE)) {
-  cat("Installing ggplot2 package...\n")
-  install.packages("ggplot2", dependencies = TRUE)
   library(ggplot2)
 }
 if (!require(scales, quietly = TRUE)) {
-  cat("Installing scales package...\n")
-  install.packages("scales", dependencies = TRUE)
   library(scales)
 }
 
@@ -112,5 +106,4 @@ top_5 <- proteomics_data[order(proteomics_data$Protein.count,
                                decreasing = TRUE), ][1:5, ]
 cat("\nTop 5 highest protein counts:\n")
 print(top_5[, c("Database", "Cell.type", "Protein.count")])
-
 
