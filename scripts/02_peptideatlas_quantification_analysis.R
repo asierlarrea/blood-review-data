@@ -33,239 +33,161 @@ if (!dir.exists(plot_dir)) {
 message("PeptideAtlas Quantification Methods Comparison Analysis")
 message("=====================================================")
 
-# Read PeptideAtlas data
-message("Reading and processing PeptideAtlas data...")
-peptideatlas <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
+# Load the complete dataset with new gene mapping
+# Try to load processed file first, if not available, create it
+processed_file <- "data/processed/peptideatlas_mapped_genes.csv"
 
-message(sprintf("Total rows in PeptideAtlas: %d", nrow(peptideatlas)))
-message("Column names:", paste(colnames(peptideatlas), collapse = ", "))
-
-# Map accessions to gene symbols using modern approach
-peptideatlas$gene <- convert_to_gene_symbol(peptideatlas$biosequence_accession, force_mapping = force_mapping)
-
-# Create datasets for both quantification methods
-message("Processing quantification methods...")
-
-# Method 1: n_observations
-n_obs_data <- peptideatlas %>%
-  filter(!is.na(gene), !is.na(n_observations), n_observations > 0) %>%
-  select(gene, value = n_observations) %>%
-  mutate(
-    log_value = log10(value + 1),
-    method = "n_observations"
-  )
-
-# Method 2: norm_PSMs_per_100K  
-norm_psm_data <- peptideatlas %>%
-  filter(!is.na(gene), !is.na(norm_PSMs_per_100K), norm_PSMs_per_100K > 0) %>%
-  select(gene, value = norm_PSMs_per_100K) %>%
-  mutate(
-    log_value = log10(value + 0.001),  # Small offset for log transformation
-    method = "norm_PSMs_per_100K"
-  )
-
-# Combine for comparison
-all_data <- rbind(n_obs_data, norm_psm_data)
-
-# Find genes present in both methods
-genes_both <- intersect(n_obs_data$gene, norm_psm_data$gene)
-
-message(sprintf("Genes with n_observations data: %d", nrow(n_obs_data)))
-message(sprintf("Genes with norm_PSMs_per_100K data: %d", nrow(norm_psm_data)))
-message(sprintf("Genes present in both methods: %d", length(genes_both)))
-
-# Create paired comparison data
-paired_data <- NULL
-if(length(genes_both) > 0) {
-  paired_data <- data.frame(
-    gene = genes_both,
-    n_observations = sapply(genes_both, function(g) n_obs_data$value[n_obs_data$gene == g][1]),
-    norm_PSMs_per_100K = sapply(genes_both, function(g) norm_psm_data$value[norm_psm_data$gene == g][1]),
-    stringsAsFactors = FALSE
-  ) %>%
-    mutate(
-      log_n_observations = log10(n_observations + 1),
-      log_norm_PSMs_per_100K = log10(norm_PSMs_per_100K + 0.001)
-    )
+if (file.exists(processed_file)) {
+  cat("Loading processed dataset...\n")
+  peptideatlas_data <- read_csv(processed_file, show_col_types = FALSE)
+} else {
+  cat("Processed file not found. Loading and mapping original data...\n")
+  # Load original data
+  peptideatlas_original <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
+  
+  # Map genes
+  cat("Mapping genes (this may take a moment)...\n")
+  peptideatlas_data <- peptideatlas_original %>%
+    mutate(gene = convert_to_gene_symbol(biosequence_accession, force_mapping = force_mapping))
+  
+  # Create processed directory if it doesn't exist
+  if (!dir.exists("data/processed")) {
+    dir.create("data/processed", recursive = TRUE)
+  }
+  
+  # Save processed data
+  write_csv(peptideatlas_data, processed_file)
+  cat("Saved processed data to:", processed_file, "\n")
 }
 
-# Calculate summary statistics
-stats_summary <- list(
-  n_obs_count = nrow(n_obs_data),
-  norm_psm_count = nrow(norm_psm_data),
-  paired_count = length(genes_both),
-  n_obs_stats = list(
-    min = min(n_obs_data$value),
-    median = median(n_obs_data$value),
-    mean = mean(n_obs_data$value),
-    max = max(n_obs_data$value),
-    sd = sd(n_obs_data$value)
-  ),
-  norm_psm_stats = list(
-    min = min(norm_psm_data$value),
-    median = median(norm_psm_data$value),
-    mean = mean(norm_psm_data$value),
-    max = max(norm_psm_data$value),
-    sd = sd(norm_psm_data$value)
-  )
-)
+# Convert quantification values to numeric
+peptideatlas_data$n_observations <- as.numeric(peptideatlas_data$n_observations)
+peptideatlas_data$norm_PSMs_per_100K <- as.numeric(peptideatlas_data$norm_PSMs_per_100K)
 
-# Calculate correlations if paired data exists
-if(!is.null(paired_data) && nrow(paired_data) > 0) {
-  stats_summary$correlation_raw <- cor(paired_data$n_observations, paired_data$norm_PSMs_per_100K, use = "complete.obs")
-  stats_summary$correlation_log <- cor(paired_data$log_n_observations, paired_data$log_norm_PSMs_per_100K, use = "complete.obs")
-}
+# Remove rows with missing quantification data
+peptideatlas_clean <- peptideatlas_data %>%
+  filter(!is.na(n_observations) & !is.na(norm_PSMs_per_100K) & 
+         n_observations > 0 & norm_PSMs_per_100K > 0)
 
-# Create visualizations
-message("Creating visualizations...")
+cat(sprintf("Loaded %d proteins with quantification data\n", nrow(peptideatlas_clean)))
 
-# 1. Distribution comparison plot
-p1 <- ggplot(all_data, aes(x = log_value, fill = method)) +
-  geom_histogram(alpha = 0.7, bins = 50, position = "identity") +
-  scale_fill_manual(values = c("n_observations" = "#2E86AB", "norm_PSMs_per_100K" = "#A23B72")) +
-  facet_wrap(~method, scales = "free", ncol = 1, labeller = labeller(method = c(
-    "n_observations" = "n_observations",
-    "norm_PSMs_per_100K" = "norm_PSMs_per_100K"
-  ))) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    legend.position = "none",
-    panel.grid.minor = element_blank()
+# Create correlation plot comparing the two quantification methods
+cat("Creating correlation plot...\n")
+
+correlation_coef <- cor(log10(peptideatlas_clean$n_observations), 
+                       log10(peptideatlas_clean$norm_PSMs_per_100K))
+
+p1 <- peptideatlas_clean %>%
+  ggplot(aes(x = log10(n_observations), y = log10(norm_PSMs_per_100K))) +
+  geom_point(alpha = 0.6, color = "steelblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "dashed") +
+  labs(
+    title = "Correlation between PeptideAtlas Quantification Methods",
+    subtitle = sprintf("Pearson correlation: r = %.4f", correlation_coef),
+    x = "Log10(Number of Observations)",
+    y = "Log10(Normalized PSMs per 100K)",
+    caption = "Each point represents a protein in PeptideAtlas"
   ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 11, face = "bold")
+  )
+
+# Create distribution comparison plot
+cat("Creating distribution comparison plot...\n")
+
+# Prepare data for distribution plot
+dist_data <- peptideatlas_clean %>%
+  select(n_observations, norm_PSMs_per_100K) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "metric", values_to = "value") %>%
+  mutate(
+    metric = case_when(
+      metric == "n_observations" ~ "Number of Observations",
+      metric == "norm_PSMs_per_100K" ~ "Normalized PSMs per 100K"
+    ),
+    log_value = log10(value)
+  )
+
+# Create histogram distribution plot
+p2a <- dist_data %>%
+  ggplot(aes(x = log_value, fill = metric)) +
+  geom_histogram(alpha = 0.7, bins = 50) +
+  facet_wrap(~metric, ncol = 1) +
+  scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
+                              "Normalized PSMs per 100K" = "#56B4E9")) +
   labs(
     title = "PeptideAtlas Quantification Methods Distribution",
     subtitle = "Comparison of log-transformed quantification values",
     x = "Log10(Value + offset)",
     y = "Frequency"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 11, face = "bold"),
+    legend.position = "none"
   )
 
-ggsave(file.path(plot_dir, "quantification_methods_distribution.png"), p1, 
-       width = 10, height = 8, dpi = 300, bg = "white")
-
-# 2. Dynamic range comparison (box plot)
-p2 <- ggplot(all_data, aes(x = method, y = log_value, fill = method)) +
-  geom_boxplot(alpha = 0.7, outlier.alpha = 0.3) +
-  geom_violin(alpha = 0.3) +
-  scale_fill_manual(values = c("n_observations" = "#2E86AB", "norm_PSMs_per_100K" = "#A23B72")) +
-  scale_x_discrete(labels = c("n_observations" = "n_observations", "norm_PSMs_per_100K" = "norm_PSMs_per_100K")) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    legend.position = "none",
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    panel.grid.minor = element_blank()
-  ) +
+# Create violin plot with boxplot overlay
+p2b <- dist_data %>%
+  ggplot(aes(x = metric, y = log_value, fill = metric)) +
+  geom_violin(alpha = 0.7, scale = "width") +
+  geom_boxplot(width = 0.2, alpha = 0.7, outlier.alpha = 0.3) +
+  scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
+                              "Normalized PSMs per 100K" = "#56B4E9")) +
   labs(
     title = "Dynamic Range Comparison",
     subtitle = "Distribution of quantification values (log scale)",
     x = "Quantification Method",
     y = "Log10(Value + offset)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 11, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
   )
 
-ggsave(file.path(plot_dir, "quantification_methods_boxplot.png"), p2, 
-       width = 10, height = 8, dpi = 300, bg = "white")
+# Combine distribution plots
+p2 <- p2a | p2b
 
-# 3. Correlation plots (if paired data exists)
-if(!is.null(paired_data) && nrow(paired_data) > 0) {
-  # Raw values correlation
-  p3a <- ggplot(paired_data, aes(x = n_observations, y = norm_PSMs_per_100K)) +
-    geom_point(alpha = 0.6, color = "#2E86AB") +
-    geom_smooth(method = "lm", color = "#A23B72", linewidth = 1) +
-    theme_minimal(base_size = 12) +
-    theme(
-      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
-      plot.subtitle = element_text(size = 12, hjust = 0.5)
-    ) +
-    labs(
-      title = "Raw Values Correlation",
-      subtitle = sprintf("Pearson r = %.3f", stats_summary$correlation_raw),
-      x = "n_observations",
-      y = "norm_PSMs_per_100K"
-    )
-  
-  # Log-transformed values correlation
-  p3b <- ggplot(paired_data, aes(x = log_n_observations, y = log_norm_PSMs_per_100K)) +
-    geom_point(alpha = 0.6, color = "#2E86AB") +
-    geom_smooth(method = "lm", color = "#A23B72", linewidth = 1) +
-    theme_minimal(base_size = 12) +
-    theme(
-      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
-      plot.subtitle = element_text(size = 12, hjust = 0.5)
-    ) +
-    labs(
-      title = "Log-transformed Values Correlation",
-      subtitle = sprintf("Pearson r = %.3f", stats_summary$correlation_log),
-      x = "Log10(n_observations + 1)",
-      y = "Log10(norm_PSMs_per_100K + 0.001)"
-    )
-  
-  # Combined correlation plot
-  p3 <- p3a | p3b
-  p3 <- p3 + plot_annotation(
-    title = "PeptideAtlas Quantification Methods Correlation",
-    subtitle = "Relationship between n_observations and norm_PSMs_per_100K",
-    theme = theme(
-      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-      plot.subtitle = element_text(size = 12, hjust = 0.5)
-    )
+# Combine all plots into comprehensive view
+cat("Creating comprehensive plot...\n")
+
+# Create the comprehensive plot with Dynamic Range on left, distribution top right, correlation bottom right
+comprehensive_plot <- p2b | (p2a / p1) +
+  plot_annotation(
+    title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
+    subtitle = "Distribution comparison and dynamic range analysis"
+  ) & 
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5)
   )
-  
-  ggsave(file.path(plot_dir, "quantification_methods_correlation.png"), p3, 
-         width = 16, height = 8, dpi = 300, bg = "white")
-}
 
-# 4. Create comprehensive combined plot
-if(!is.null(paired_data) && nrow(paired_data) > 0) {
-  # Create a 3-panel comprehensive plot with correlation
-  combined_plot <- (p1 | p2) / p3
-  combined_plot <- combined_plot + 
-    plot_annotation(
-      title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
-      subtitle = "Distribution comparison, dynamic range analysis, and correlation",
-      theme = theme(
-        plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-        plot.subtitle = element_text(size = 14, hjust = 0.5)
-      )
-    )
-} else {
-  # Fallback to 2-panel plot if no correlation data
-  combined_plot <- p1 | p2
-  combined_plot <- combined_plot + 
-    plot_annotation(
-      title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
-      subtitle = "Distribution comparison and dynamic range analysis",
-      theme = theme(
-        plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-        plot.subtitle = element_text(size = 14, hjust = 0.5)
-      )
-    )
-}
+# Save plots with high resolution PNG format
+ggsave(file.path(plot_dir, "correlation_plot.png"), p1, width = 10, height = 8, dpi = 300)
+ggsave(file.path(plot_dir, "distribution_plot.png"), p2, width = 15, height = 8, dpi = 300)
+ggsave(file.path(plot_dir, "comprehensive_plot.png"), comprehensive_plot, width = 20, height = 12, dpi = 300)
 
-ggsave(file.path(plot_dir, "peptideatlas_quantification_comprehensive.png"), combined_plot, 
-       width = 16, height = 12, dpi = 300, bg = "white")
+# Print summary statistics
+cat("\n=== PeptideAtlas Quantification Analysis Summary ===\n")
+cat(sprintf("Total proteins analyzed: %d\n", nrow(peptideatlas_clean)))
+cat(sprintf("Correlation between methods: r = %.4f\n", correlation_coef))
 
-message("Plots saved to:", plot_dir)
+message("\nRECOMMENDATION: Use norm_PSMs_per_100K for normalized, quantitative analysis")
 
 # Save data files
 message("Saving comparison data...")
-write_csv(n_obs_data, file.path(output_dir, "peptideatlas_n_observations.csv"))
-write_csv(norm_psm_data, file.path(output_dir, "peptideatlas_norm_PSMs_per_100K.csv"))
-
-if(!is.null(paired_data) && nrow(paired_data) > 0) {
-  write_csv(paired_data, file.path(output_dir, "peptideatlas_paired_comparison.csv"))
-}
-
-# Save summary statistics
-write_csv(
-  data.frame(
-    Metric = c("n_observations_count", "norm_PSMs_per_100K_count", "paired_count"),
-    Value = c(stats_summary$n_obs_count, stats_summary$norm_psm_count, stats_summary$paired_count)
-  ),
-  file.path(output_dir, "quantification_summary_counts.csv")
-)
+write_csv(peptideatlas_clean, file.path(output_dir, "peptideatlas_clean.csv"))
 
 # Create summary report
 sink(file.path(output_dir, "quantification_analysis_summary.txt"))
@@ -274,34 +196,30 @@ cat("=============================================\n\n")
 
 cat("DATA SUMMARY:\n")
 cat("=============\n")
-cat(sprintf("Total proteins with n_observations: %d\n", stats_summary$n_obs_count))
-cat(sprintf("Total proteins with norm_PSMs_per_100K: %d\n", stats_summary$norm_psm_count))
-cat(sprintf("Proteins present in both methods: %d\n", stats_summary$paired_count))
+cat(sprintf("Total proteins with n_observations: %d\n", nrow(peptideatlas_clean)))
+cat(sprintf("Total proteins with norm_PSMs_per_100K: %d\n", nrow(peptideatlas_clean)))
 cat("\n")
 
 cat("QUANTIFICATION STATISTICS:\n")
 cat("==========================\n")
 cat("n_observations:\n")
-cat(sprintf("  Range: %d - %d\n", stats_summary$n_obs_stats$min, stats_summary$n_obs_stats$max))
-cat(sprintf("  Median: %.0f\n", stats_summary$n_obs_stats$median))
-cat(sprintf("  Mean: %.3f\n", stats_summary$n_obs_stats$mean))
-cat(sprintf("  Standard Deviation: %.3f\n", stats_summary$n_obs_stats$sd))
+cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_clean$n_observations), max(peptideatlas_clean$n_observations)))
+cat(sprintf("  Median: %.6f\n", median(peptideatlas_clean$n_observations)))
+cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_clean$n_observations)))
+cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_clean$n_observations)))
 cat("\n")
 
 cat("norm_PSMs_per_100K:\n")
-cat(sprintf("  Range: %.6f - %.6f\n", stats_summary$norm_psm_stats$min, stats_summary$norm_psm_stats$max))
-cat(sprintf("  Median: %.6f\n", stats_summary$norm_psm_stats$median))
-cat(sprintf("  Mean: %.6f\n", stats_summary$norm_psm_stats$mean))
-cat(sprintf("  Standard Deviation: %.6f\n", stats_summary$norm_psm_stats$sd))
+cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_clean$norm_PSMs_per_100K), max(peptideatlas_clean$norm_PSMs_per_100K)))
+cat(sprintf("  Median: %.6f\n", median(peptideatlas_clean$norm_PSMs_per_100K)))
+cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_clean$norm_PSMs_per_100K)))
+cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_clean$norm_PSMs_per_100K)))
 cat("\n")
 
-if(!is.null(stats_summary$correlation_raw)) {
-  cat("CORRELATION ANALYSIS:\n")
-  cat("====================\n")
-  cat(sprintf("Pearson correlation (raw values): %.4f\n", stats_summary$correlation_raw))
-  cat(sprintf("Pearson correlation (log values): %.4f\n", stats_summary$correlation_log))
-  cat("\n")
-}
+cat("CORRELATION ANALYSIS:\n")
+cat("====================\n")
+cat(sprintf("Pearson correlation: r = %.4f\n", correlation_coef))
+cat("\n")
 
 cat("RECOMMENDATION:\n")
 cat("===============\n")
@@ -315,12 +233,9 @@ cat("\n")
 
 cat("GENERATED FILES:\n")
 cat("================\n")
-cat("• Distribution comparison: quantification_methods_distribution.png\n")
-cat("• Dynamic range comparison: quantification_methods_boxplot.png\n")
-if(!is.null(paired_data) && nrow(paired_data) > 0) {
-  cat("• Correlation analysis: quantification_methods_correlation.png\n")
-}
-cat("• Comprehensive analysis: peptideatlas_quantification_comprehensive.png\n")
+cat("• Correlation analysis: correlation_plot.png\n")
+cat("• Distribution comparison: distribution_plot.png\n")
+cat("• Comprehensive analysis: comprehensive_plot.png\n")
 cat("• Data files: peptideatlas_*.csv\n")
 cat("• Summary report: quantification_analysis_summary.txt\n")
 
@@ -330,9 +245,6 @@ message("\nPeptideAtlas quantification comparison completed!")
 message(sprintf("Results saved to: %s", output_dir))
 message(sprintf("Plots saved to: %s", plot_dir))
 message("\nSUMMARY:")
-message(sprintf("- n_observations proteins: %d", stats_summary$n_obs_count))
-message(sprintf("- norm_PSMs_per_100K proteins: %d", stats_summary$norm_psm_count))
-if(!is.null(stats_summary$correlation_log)) {
-  message(sprintf("- Correlation between methods: %.4f", stats_summary$correlation_log))
-}
+message(sprintf("- n_observations proteins: %d", nrow(peptideatlas_clean)))
+message(sprintf("- norm_PSMs_per_100K proteins: %d", nrow(peptideatlas_clean)))
 message("\nRECOMMENDATION: Use norm_PSMs_per_100K for normalized, quantitative analysis") 

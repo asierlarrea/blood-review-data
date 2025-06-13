@@ -165,14 +165,14 @@ fi
 # Run the biomarker plasma analysis
 print_status "Running biomarker plasma analysis..."
 if [ -n "$FORCE_MAPPING" ]; then
-    if Rscript scripts/biomarker_plasma_analysis.R "$FORCE_MAPPING"; then
+    if Rscript scripts/03_biomarker_plasma_analysis.R "$FORCE_MAPPING"; then
         print_success "Biomarker plasma analysis completed successfully!"
     else
         print_error "Biomarker plasma analysis failed!"
         exit 1
     fi
 else
-    if Rscript scripts/biomarker_plasma_analysis.R; then
+    if Rscript scripts/03_biomarker_plasma_analysis.R; then
         print_success "Biomarker plasma analysis completed successfully!"
     else
         print_error "Biomarker plasma analysis failed!"
@@ -191,15 +191,17 @@ echo "  📊 Plots:"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_source.png"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_technology.png"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_comprehensive.png"
-echo "     • outputs/plots/02_peptideatlas_quantification_analysis/quantification_methods_*.png"
-echo "     • outputs/plots/02_peptideatlas_quantification_analysis/peptideatlas_quantification_comprehensive.png"
-echo "     • outputs/plots/biomarker_plasma_analysis/expression_distribution_*.png"
-echo "     • outputs/plots/biomarker_plasma_analysis/combined_biomarker_distributions.png"
+echo "     • outputs/plots/02_peptideatlas_quantification_analysis/correlation_plot.png"
+echo "     • outputs/plots/02_peptideatlas_quantification_analysis/distribution_plot.png"
+echo "     • outputs/plots/02_peptideatlas_quantification_analysis/comprehensive_plot.png"
+echo "     • outputs/plots/03_biomarker_plasma_analysis/*_distribution.png"
+echo "     • outputs/plots/03_biomarker_plasma_analysis/*_dynamic_range.png"
+echo "     • outputs/plots/03_biomarker_plasma_analysis/comprehensive_biomarker_analysis.png"
+echo "     • outputs/plots/03_biomarker_plasma_analysis/biomarker_technology_overlap.png"
 echo ""
 echo "  📋 Data & Reports:"
 echo "     • outputs/plasma_protein_counts_summary.csv"
-echo "     • outputs/analysis_summary.txt"
-echo "     • outputs/peptideatlas_quantification/quantification_analysis_summary.txt"
+echo "     • outputs/03_biomarker_plasma_analysis/biomarker_detection_summary.csv"
 echo ""
 echo "  📖 Documentation:"
 echo "     • scripts/plasma_protein_analysis_summary.md"
