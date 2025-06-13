@@ -33,8 +33,12 @@ biomarker_genes <- unique(biomarkers$To)
 
 # Helper: plot distribution with biomarker lines
 distribution_plot <- function(df, gene_col, value_col, source_name, log10=TRUE, biomarker_genes, output_dir) {
-  # Data preparation
-  df <- df %>% filter(!is.na(.data[[gene_col]]), !is.na(.data[[value_col]]))
+  # Data preparation - filter NA values and ensure numeric type
+  df <- df %>% 
+    filter(!is.na(.data[[gene_col]]), !is.na(.data[[value_col]])) %>%
+    mutate(!!value_col := as.numeric(.data[[value_col]])) %>%
+    filter(!is.na(.data[[value_col]]), is.finite(.data[[value_col]]))
+  
   if (log10) {
     df <- df %>% mutate(expr = log10(.data[[value_col]] + 1))
     xlab <- paste0("log10(", value_col, "+1)")
@@ -64,11 +68,11 @@ distribution_plot <- function(df, gene_col, value_col, source_name, log10=TRUE, 
   # Create main plot
   p <- ggplot(df, aes(x = expr)) +
     # Add density plot with gradient fill
-    geom_density(aes(y = ..density..), fill = "#69b3a2", alpha = 0.3, color = NA) +
+    geom_density(aes(y = after_stat(density)), fill = "#69b3a2", alpha = 0.3, color = NA) +
     # Add histogram with transparency
-    geom_histogram(aes(y = ..density..), bins = 60, fill = "#69b3a2", alpha = 0.4) +
+    geom_histogram(aes(y = after_stat(density)), bins = 60, fill = "#69b3a2", alpha = 0.4) +
     # Add density line
-    geom_density(color = "#1a1a1a", size = 0.8) +
+    geom_density(color = "#1a1a1a", linewidth = 0.8) +
     # Add biomarker gene lines with annotations
     geom_vline(data = biomarker_vals, aes(xintercept = expr), 
                color = "red", linetype = "dashed", alpha = 0.5) +
@@ -136,7 +140,9 @@ p2 <- distribution_plot(hpa_ms, "gene", "expr", "HPA MS", TRUE, biomarker_genes,
 # 3. HPA PEA
 message("[Biomarker Analysis] Processing HPA PEA...")
 hpa_pea <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
-hpa_pea <- hpa_pea %>% rename(gene = Gene, expr = `Variation between individuals`)
+hpa_pea <- hpa_pea %>% 
+  rename(gene = Gene, expr = median_npx) %>%
+  filter(!is.na(expr), expr != "NA", expr != "")
 p3 <- distribution_plot(hpa_pea, "gene", "expr", "HPA PEA", TRUE, biomarker_genes, output_dir)
 
 # 4. HPA Immunoassay

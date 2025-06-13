@@ -183,7 +183,13 @@ echo ""
 if [ -f "outputs/analysis_summary.txt" ]; then
     print_status "Quick Summary:"
     echo ""
-    grep -A 10 "SUMMARY STATISTICS:" outputs/analysis_summary.txt | head -6
+    grep -A 10 "SUMMARY STATISTICS:" outputs/plasma_protein/analysis_summary.txt | head -6
+    echo ""
+    echo "Technology Classification:"
+    echo "• MS-based: PeptideAtlas, HPA MS, GPMDB"
+    echo "• PEA: HPA PEA (Proximity Extension Assay)"
+    echo "• Immunoassay: HPA Immunoassay"
+    echo "• Expression Database: PAXDB"
     echo ""
 fi
 

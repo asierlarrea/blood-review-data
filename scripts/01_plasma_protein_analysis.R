@@ -89,11 +89,12 @@ all_genes <- unique(c(
 ))
 stats_summary$total_across_sources <- length(all_genes)
 
-# Calculate MS technologies total
+# Calculate MS technologies total (including PAXDB)
 ms_genes <- unique(c(
   peptideatlas$gene,
   hpa_ms$gene,
-  gpmdb$gene
+  gpmdb$gene,
+  paxdb$gene
 ))
 stats_summary$ms_technologies <- length(ms_genes)
 
@@ -129,7 +130,7 @@ source_data <- data.frame(
   Source = c("PeptideAtlas", "HPA MS", "HPA PEA", "HPA Immunoassay", "GPMDB", "PAXDB"),
   Count = c(stats_summary$peptideatlas, stats_summary$hpa_ms, stats_summary$hpa_pea, 
             stats_summary$hpa_immunoassay, stats_summary$gpmdb, stats_summary$paxdb),
-  Technology = c("MS", "MS", "PEA", "Immunoassay", "MS", "Expression"),
+  Technology = c("MS", "MS", "PEA", "Immunoassay", "MS", "MS"),
   Database = c("PeptideAtlas", "HPA", "HPA", "HPA", "GPMDB", "PAXDB")
 )
 
@@ -138,7 +139,7 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
   geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 3.5) +
   coord_flip() +
   scale_fill_manual(values = c("MS" = "#2E86AB", "PEA" = "#A23B72", 
-                               "Immunoassay" = "#F18F01", "Expression" = "#C73E1D")) +
+                               "Immunoassay" = "#F18F01")) +
   scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   theme_minimal(base_size = 12) +
   theme(
@@ -160,18 +161,19 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
 ggsave(file.path(plot_dir, "plasma_proteins_by_source.png"), p1, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 2. Bar plot by technology grouping
+# 2. Bar plot by technology grouping (comprehensive breakdown)
 tech_data <- data.frame(
-  Technology = c("Mass Spectrometry", "HPA (All Technologies)", "Total Across Sources"),
-  Count = c(stats_summary$ms_technologies, stats_summary$hpa_total, stats_summary$total_across_sources),
-  Type = c("Technology", "Database", "Overall")
+  Technology = c("Mass Spectrometry", "PEA", "Immunoassay", "Total Across Sources"),
+  Count = c(stats_summary$ms_technologies, stats_summary$hpa_pea, stats_summary$hpa_immunoassay, 
+            stats_summary$total_across_sources),
+  Type = c("Technology", "Technology", "Technology", "Overall")
 )
 
 p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Type)) +
   geom_col(alpha = 0.8, width = 0.7) +
   geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 4, fontface = "bold") +
   coord_flip() +
-  scale_fill_manual(values = c("Technology" = "#2E86AB", "Database" = "#A23B72", "Overall" = "#C73E1D")) +
+  scale_fill_manual(values = c("Technology" = "#2E86AB", "Overall" = "#C73E1D")) +
   scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   theme_minimal(base_size = 12) +
   theme(
@@ -183,9 +185,9 @@ p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Ty
     panel.grid.minor = element_blank()
   ) +
   labs(
-    title = "Plasma Proteins by Technology and Overall Coverage",
-    subtitle = "Aggregated counts across different analytical approaches",
-    x = "Category",
+    title = "Plasma Proteins by Technology Classification",
+    subtitle = "MS includes PeptideAtlas, HPA MS, GPMDB, and PAXDB; PEA and Immunoassay from HPA",
+    x = "Technology Category",
     y = "Number of Genes",
     fill = "Category Type"
   )
@@ -193,49 +195,12 @@ p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Ty
 ggsave(file.path(plot_dir, "plasma_proteins_by_technology.png"), p2, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 3. Main databases comparison (excluding HPA subcategories)
-main_data <- data.frame(
-  Database = c("PeptideAtlas", "HPA (Combined)", "GPMDB", "PAXDB"),
-  Count = c(stats_summary$peptideatlas, stats_summary$hpa_total, 
-            stats_summary$gpmdb, stats_summary$paxdb),
-  Description = c("MS-based proteomics", "Multi-technology platform", 
-                  "MS-based proteomics", "Expression database")
-)
-
-p3 <- ggplot(main_data, aes(x = reorder(Database, Count), y = Count, fill = Description)) +
-  geom_col(alpha = 0.8, width = 0.7) +
-  geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 4, fontface = "bold") +
-  coord_flip() +
-  scale_fill_manual(values = c("MS-based proteomics" = "#2E86AB", 
-                               "Multi-technology platform" = "#A23B72",
-                               "Expression database" = "#F18F01")) +
-  scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    axis.title = element_text(size = 12),
-    legend.position = "bottom",
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank()
-  ) +
-  labs(
-    title = "Main Plasma Protein Databases Comparison",
-    subtitle = "Unique genes detected in major databases and platforms",
-    x = "Database/Platform",
-    y = "Number of Genes",
-    fill = "Database Type"
-  )
-
-ggsave(file.path(plot_dir, "plasma_proteins_main_databases.png"), p3, 
-       width = 10, height = 6, dpi = 300, bg = "white")
-
-# 4. Create a comprehensive combined plot
-combined_plot <- (p1 / p2) | p3
+# 3. Create a comprehensive combined plot with the two main analyses
+combined_plot <- p1 | p2
 combined_plot <- combined_plot + 
   plot_annotation(
     title = "Comprehensive Plasma Protein Quantification Analysis",
-    subtitle = "Comparison across different data sources, technologies, and databases",
+    subtitle = "Individual data sources (left) and technology classifications (right)",
     theme = theme(
       plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 14, hjust = 0.5)
@@ -243,7 +208,7 @@ combined_plot <- combined_plot +
   )
 
 ggsave(file.path(plot_dir, "plasma_proteins_comprehensive.png"), combined_plot, 
-       width = 16, height = 12, dpi = 300, bg = "white")
+       width = 16, height = 8, dpi = 300, bg = "white")
 
 message("Plots saved to:", plot_dir)
 
@@ -267,7 +232,9 @@ cat(rep("=", 60), "\n", sep = "")
 
 cat("\nAnalysis completed successfully!\n")
 cat("Generated files:\n")
-cat("• Plots: plots/plasma_proteins_*.png\n")
+cat("• Individual source plot: plasma_proteins_by_source.png\n")
+cat("• Technology classification plot: plasma_proteins_by_technology.png\n")
+cat("• Comprehensive combined plot: plasma_proteins_comprehensive.png\n")
 cat("• Data: outputs/plasma_protein_counts_summary.csv\n")
 cat("• Report: outputs/analysis_summary.txt\n")
 sink()
