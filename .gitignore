@@ -63,23 +63,25 @@ rsconnect/
 
 # Large Data Files
 # ----------------
-# Uncomment the following lines if you want to ignore large CSV files
-# *.csv
-# But keep specific important small files (examples):
-# !README.csv
-# !metadata.csv
-
-# Large files that should typically not be committed
+# Exclude CSV files in general locations
 *.xlsx
 *.xls
-*.[Cc][Ss][Vv]
-*.tsv
-*.tab
-*.dat
-*.data
 *.RDS
 *.rds
 *.rda
+
+# Allow data files in specific directories
+!data/**/*.csv
+!data/**/*.tsv
+!data/**/*.tab
+
+# Exception: exclude very large files that exceed GitHub limits
+data/raw/proteomexchange/pxd004352.csv
+
+# Exclude CSV files in output directories but not data directories
+outputs/**/*.csv
+results/**/*.csv
+plots/**/*.csv
 
 # Plots and output files
 # ----------------------
