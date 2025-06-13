@@ -26,6 +26,9 @@ force_mapping <- "--force-mapping" %in% args
 # Load gene mapping utility
 source("scripts/data_processing/simple_id_mapping.R")
 
+# Load gene deduplication utility
+source("scripts/utilities/gene_deduplication.R")
+
 # Set output directory
 output_dir <- get_output_path("", subdir = "plasma_protein")
 if (!dir.exists(output_dir)) {
@@ -37,35 +40,72 @@ message("Reading and processing data from each source...")
 
 # 1. PeptideAtlas
 message("Processing PeptideAtlas data...")
-peptideatlas <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
-peptideatlas$gene <- convert_to_gene_symbol(peptideatlas$biosequence_accession, force_mapping = force_mapping)
-peptideatlas <- peptideatlas %>% filter(!is.na(norm_PSMs_per_100K))
+peptideatlas_raw <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
+peptideatlas_raw$gene <- convert_to_gene_symbol(peptideatlas_raw$biosequence_accession, force_mapping = force_mapping)
+peptideatlas_raw <- peptideatlas_raw %>% filter(!is.na(norm_PSMs_per_100K))
+
+# Deduplicate genes using median quantification values
+peptideatlas <- deduplicate_genes(peptideatlas_raw, "gene", "norm_PSMs_per_100K", 
+                                additional_cols = c("biosequence_accession"), 
+                                aggregation_method = "median")
 
 # 2. HPA MS
 message("Processing HPA MS data...")
-hpa_ms <- read_csv("data/raw/hpa/hpa_ms.csv", show_col_types = FALSE, skip = 1)
-hpa_ms <- hpa_ms %>% rename(gene = Gene, expr = Concentration)
+hpa_ms_raw <- read_csv("data/raw/hpa/hpa_ms.csv", show_col_types = FALSE, skip = 1)
+hpa_ms_raw <- hpa_ms_raw %>% rename(gene = Gene, expr = Concentration)
+
+# Deduplicate genes using median quantification values
+hpa_ms <- deduplicate_genes(hpa_ms_raw, "gene", "expr", aggregation_method = "median")
 
 # 3. HPA PEA
 message("Processing HPA PEA data...")
-hpa_pea <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
-hpa_pea <- hpa_pea %>% rename(gene = Gene, expr = `Variation between individuals`)
+hpa_pea_raw <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
+hpa_pea_raw <- hpa_pea_raw %>% rename(gene = Gene, expr = `Variation between individuals`)
+
+# Deduplicate genes using median quantification values
+hpa_pea <- deduplicate_genes(hpa_pea_raw, "gene", "expr", aggregation_method = "median")
 
 # 4. HPA Immunoassay
 message("Processing HPA Immunoassay data...")
-hpa_imm <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
-hpa_imm <- hpa_imm %>% rename(gene = Gene, expr = Concentration)
+hpa_imm_raw <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
+hpa_imm_raw <- hpa_imm_raw %>% rename(gene = Gene, expr = Concentration)
+
+# Deduplicate genes using median quantification values
+hpa_imm <- deduplicate_genes(hpa_imm_raw, "gene", "expr", aggregation_method = "median")
 
 # 5. GPMDB
 message("Processing GPMDB data...")
-gpmdb <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
-gpmdb$gene <- stringr::str_extract(gpmdb$description, "[A-Z0-9]+(?=,| |$)")
+gpmdb_raw <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
+gpmdb_raw$gene <- stringr::str_extract(gpmdb_raw$description, "[A-Z0-9]+(?=,| |$)")
+
+# Deduplicate genes using median quantification values (assuming 'total' column exists)
+# If no quantification column, we'll filter for unique genes only
+if ("total" %in% colnames(gpmdb_raw)) {
+  gpmdb <- deduplicate_genes(gpmdb_raw, "gene", "total", aggregation_method = "median")
+} else {
+  # Just remove duplicate genes if no quantification column
+  gpmdb <- gpmdb_raw %>% 
+    filter(!is.na(gene) & gene != "") %>%
+    distinct(gene, .keep_all = TRUE)
+}
 
 # 6. PAXDB
 message("Processing PAXDB data...")
-paxdb <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
-paxdb$ensp <- stringr::str_replace(paxdb$string_external_id, "^9606\\.", "")
-paxdb$gene <- convert_to_gene_symbol(paxdb$ensp, force_mapping = force_mapping)
+paxdb_raw <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
+paxdb_raw$ensp <- stringr::str_replace(paxdb_raw$string_external_id, "^9606\\.", "")
+paxdb_raw$gene <- convert_to_gene_symbol(paxdb_raw$ensp, force_mapping = force_mapping)
+
+# Deduplicate genes using median quantification values (assuming 'abundance' column exists)
+if ("abundance" %in% colnames(paxdb_raw)) {
+  paxdb <- deduplicate_genes(paxdb_raw, "gene", "abundance", 
+                           additional_cols = c("ensp"), 
+                           aggregation_method = "median")
+} else {
+  # Just remove duplicate genes if no quantification column
+  paxdb <- paxdb_raw %>% 
+    filter(!is.na(gene) & gene != "") %>%
+    distinct(gene, .keep_all = TRUE)
+}
 
 # Create summary statistics
 message("Creating summary statistics...")
@@ -89,11 +129,12 @@ all_genes <- unique(c(
 ))
 stats_summary$total_across_sources <- length(all_genes)
 
-# Calculate MS technologies total
+# Calculate MS technologies total (including PAXDB)
 ms_genes <- unique(c(
   peptideatlas$gene,
   hpa_ms$gene,
-  gpmdb$gene
+  gpmdb$gene,
+  paxdb$gene
 ))
 stats_summary$ms_technologies <- length(ms_genes)
 
@@ -129,7 +170,7 @@ source_data <- data.frame(
   Source = c("PeptideAtlas", "HPA MS", "HPA PEA", "HPA Immunoassay", "GPMDB", "PAXDB"),
   Count = c(stats_summary$peptideatlas, stats_summary$hpa_ms, stats_summary$hpa_pea, 
             stats_summary$hpa_immunoassay, stats_summary$gpmdb, stats_summary$paxdb),
-  Technology = c("MS", "MS", "PEA", "Immunoassay", "MS", "Expression"),
+  Technology = c("MS", "MS", "PEA", "Immunoassay", "MS", "MS"),
   Database = c("PeptideAtlas", "HPA", "HPA", "HPA", "GPMDB", "PAXDB")
 )
 
@@ -138,7 +179,7 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
   geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 3.5) +
   coord_flip() +
   scale_fill_manual(values = c("MS" = "#2E86AB", "PEA" = "#A23B72", 
-                               "Immunoassay" = "#F18F01", "Expression" = "#C73E1D")) +
+                               "Immunoassay" = "#F18F01")) +
   scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   theme_minimal(base_size = 12) +
   theme(
@@ -160,18 +201,19 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
 ggsave(file.path(plot_dir, "plasma_proteins_by_source.png"), p1, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 2. Bar plot by technology grouping
+# 2. Bar plot by technology grouping (comprehensive breakdown)
 tech_data <- data.frame(
-  Technology = c("Mass Spectrometry", "HPA (All Technologies)", "Total Across Sources"),
-  Count = c(stats_summary$ms_technologies, stats_summary$hpa_total, stats_summary$total_across_sources),
-  Type = c("Technology", "Database", "Overall")
+  Technology = c("Mass Spectrometry", "PEA", "Immunoassay", "Total Across Sources"),
+  Count = c(stats_summary$ms_technologies, stats_summary$hpa_pea, stats_summary$hpa_immunoassay, 
+            stats_summary$total_across_sources),
+  Type = c("Technology", "Technology", "Technology", "Overall")
 )
 
 p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Type)) +
   geom_col(alpha = 0.8, width = 0.7) +
   geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 4, fontface = "bold") +
   coord_flip() +
-  scale_fill_manual(values = c("Technology" = "#2E86AB", "Database" = "#A23B72", "Overall" = "#C73E1D")) +
+  scale_fill_manual(values = c("Technology" = "#2E86AB", "Overall" = "#C73E1D")) +
   scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   theme_minimal(base_size = 12) +
   theme(
@@ -183,9 +225,9 @@ p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Ty
     panel.grid.minor = element_blank()
   ) +
   labs(
-    title = "Plasma Proteins by Technology and Overall Coverage",
-    subtitle = "Aggregated counts across different analytical approaches",
-    x = "Category",
+    title = "Plasma Proteins by Technology Classification",
+    subtitle = "MS includes PeptideAtlas, HPA MS, GPMDB, and PAXDB; PEA and Immunoassay from HPA",
+    x = "Technology Category",
     y = "Number of Genes",
     fill = "Category Type"
   )
@@ -193,49 +235,12 @@ p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Ty
 ggsave(file.path(plot_dir, "plasma_proteins_by_technology.png"), p2, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 3. Main databases comparison (excluding HPA subcategories)
-main_data <- data.frame(
-  Database = c("PeptideAtlas", "HPA (Combined)", "GPMDB", "PAXDB"),
-  Count = c(stats_summary$peptideatlas, stats_summary$hpa_total, 
-            stats_summary$gpmdb, stats_summary$paxdb),
-  Description = c("MS-based proteomics", "Multi-technology platform", 
-                  "MS-based proteomics", "Expression database")
-)
-
-p3 <- ggplot(main_data, aes(x = reorder(Database, Count), y = Count, fill = Description)) +
-  geom_col(alpha = 0.8, width = 0.7) +
-  geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 4, fontface = "bold") +
-  coord_flip() +
-  scale_fill_manual(values = c("MS-based proteomics" = "#2E86AB", 
-                               "Multi-technology platform" = "#A23B72",
-                               "Expression database" = "#F18F01")) +
-  scale_y_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    axis.title = element_text(size = 12),
-    legend.position = "bottom",
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank()
-  ) +
-  labs(
-    title = "Main Plasma Protein Databases Comparison",
-    subtitle = "Unique genes detected in major databases and platforms",
-    x = "Database/Platform",
-    y = "Number of Genes",
-    fill = "Database Type"
-  )
-
-ggsave(file.path(plot_dir, "plasma_proteins_main_databases.png"), p3, 
-       width = 10, height = 6, dpi = 300, bg = "white")
-
-# 4. Create a comprehensive combined plot
-combined_plot <- (p1 / p2) | p3
+# 3. Create a comprehensive combined plot with the two main analyses
+combined_plot <- p1 | p2
 combined_plot <- combined_plot + 
   plot_annotation(
     title = "Comprehensive Plasma Protein Quantification Analysis",
-    subtitle = "Comparison across different data sources, technologies, and databases",
+    subtitle = "Individual data sources (left) and technology classifications (right)",
     theme = theme(
       plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 14, hjust = 0.5)
@@ -243,31 +248,39 @@ combined_plot <- combined_plot +
   )
 
 ggsave(file.path(plot_dir, "plasma_proteins_comprehensive.png"), combined_plot, 
-       width = 16, height = 12, dpi = 300, bg = "white")
+       width = 16, height = 8, dpi = 300, bg = "white")
 
 message("Plots saved to:", plot_dir)
 
 # Create summary report
 sink(file.path(output_dir, "analysis_summary.txt"))
-cat("PLASMA PROTEIN ANALYSIS SUMMARY\n")
-cat("==============================\n\n")
+cat("PLASMA PROTEIN ANALYSIS SUMMARY (WITH GENE DEDUPLICATION)\n")
+cat("=========================================================\n\n")
 
-cat("SUMMARY STATISTICS:\n")
-cat("==================\n")
-cat(sprintf("PeptideAtlas: %d genes\n", stats_summary$peptideatlas))
-cat(sprintf("HPA MS: %d genes\n", stats_summary$hpa_ms))
-cat(sprintf("HPA PEA: %d genes\n", stats_summary$hpa_pea))
-cat(sprintf("HPA Immunoassay: %d genes\n", stats_summary$hpa_immunoassay))
-cat(sprintf("GPMDB: %d genes\n", stats_summary$gpmdb))
-cat(sprintf("PAXDB: %d genes\n", stats_summary$paxdb))
-cat(sprintf("\nTotal genes across sources: %d\n", stats_summary$total_across_sources))
-cat(sprintf("MS technologies total: %d genes\n", stats_summary$ms_technologies))
-cat(sprintf("HPA total (all technologies): %d genes\n", stats_summary$hpa_total))
+cat("GENE DEDUPLICATION INFORMATION:\n")
+cat("===============================\n")
+cat("Multiple proteins mapping to the same gene have been deduplicated.\n")
+cat("For genes with multiple protein entries, median quantification values are used.\n")
+cat("This ensures accurate gene-level counts and quantification.\n\n")
+
+cat("SUMMARY STATISTICS (AFTER DEDUPLICATION):\n")
+cat("==========================================\n")
+cat(sprintf("PeptideAtlas: %d unique genes\n", stats_summary$peptideatlas))
+cat(sprintf("HPA MS: %d unique genes\n", stats_summary$hpa_ms))
+cat(sprintf("HPA PEA: %d unique genes\n", stats_summary$hpa_pea))
+cat(sprintf("HPA Immunoassay: %d unique genes\n", stats_summary$hpa_immunoassay))
+cat(sprintf("GPMDB: %d unique genes\n", stats_summary$gpmdb))
+cat(sprintf("PAXDB: %d unique genes\n", stats_summary$paxdb))
+cat(sprintf("\nTotal unique genes across sources: %d\n", stats_summary$total_across_sources))
+cat(sprintf("MS technologies total: %d unique genes\n", stats_summary$ms_technologies))
+cat(sprintf("HPA total (all technologies): %d unique genes\n", stats_summary$hpa_total))
 cat(rep("=", 60), "\n", sep = "")
 
 cat("\nAnalysis completed successfully!\n")
 cat("Generated files:\n")
-cat("• Plots: plots/plasma_proteins_*.png\n")
+cat("• Individual source plot: plasma_proteins_by_source.png\n")
+cat("• Technology classification plot: plasma_proteins_by_technology.png\n")
+cat("• Comprehensive combined plot: plasma_proteins_comprehensive.png\n")
 cat("• Data: outputs/plasma_protein_counts_summary.csv\n")
 cat("• Report: outputs/analysis_summary.txt\n")
 sink()

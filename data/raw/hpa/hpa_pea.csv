@@ -1,4 +1,4 @@
-Gene,Gene description,Variation between individuals,Variation within individuals,
+Gene,Gene description,Variation between individuals,Variation within individuals,median_npx
 ARNT,Aryl hydrocarbon receptor nuclear translocator,0.52,0.2,0.9026
 GH2,Growth hormone 2,0.49,0.08,3.59645
 GFOD2,Glucose-fructose oxidoreductase domain containing 2,0.48,0.07,2.4442
@@ -49,8 +49,8 @@ AKR1C4,Aldo-keto reductase family 1 member C4,0.25,0.07,2.4953
 SIGLEC15,Sialic acid binding Ig like lectin 15,0.25,0.07,2.6502
 MEP1B,Meprin A subunit beta,0.25,0.03,5.66565
 FCRLB,Fc receptor like B,0.24,0.04,3.98445
-DEFB4A,Defensin beta 4A,0.24,0.09,#N/D
-DEFB4B,Defensin beta 4B,0.24,0.09,#N/D
+DEFB4A,Defensin beta 4A,0.24,0.09,NA
+DEFB4B,Defensin beta 4B,0.24,0.09,NA
 ILKAP,ILK associated serine/threonine phosphatase,0.24,0.13,3.17075
 TIA1,TIA1 cytotoxic granule associated RNA binding protein,0.24,0.22,4.22435
 LHB,Luteinizing hormone subunit beta,0.24,0.05,4.0377
@@ -59,7 +59,7 @@ BID,BH3 interacting domain death agonist,0.24,0.12,3.38915
 IFNG,Interferon gamma,0.24,0.11,4.6908
 FES,"FES proto-oncogene, tyrosine kinase",0.24,0.11,1.4723
 VASH1,Vasohibin 1,0.24,0.2,2.7816
-MICB,MHC class I polypeptide-related sequence B,0.24,0.02,#N/D
+MICB,MHC class I polypeptide-related sequence B,0.24,0.02,NA
 LYAR,Ly1 antibody reactive,0.24,0.1,1.93565
 PRDX3,Peroxiredoxin 3,0.24,0.18,3.02345
 JUN,"Jun proto-oncogene, AP-1 transcription factor subunit",0.24,0.09,2.97475
@@ -122,7 +122,7 @@ S100A16,S100 calcium binding protein A16,0.19,0.08,3.6676
 AOC1,Amine oxidase copper containing 1,0.19,0.08,3.20665
 TDRKH,Tudor and KH domain containing,0.19,0.15,3.8319
 MESD,Mesoderm development LRP chaperone,0.19,0.15,5.2166
-CEP43,Centrosomal protein 43,0.19,0.14,#N/D
+CEP43,Centrosomal protein 43,0.19,0.14,NA
 PPP1R12A,Protein phosphatase 1 regulatory subunit 12A,0.19,0.16,5.7987
 VPS53,VPS53 subunit of GARP complex,0.19,0.17,3.47405
 OXT,Oxytocin/neurophysin I prepropeptide,0.19,0.03,8.13105
@@ -260,9 +260,9 @@ SPRY2,Sprouty RTK signaling antagonist 2,0.15,0.12,5.8111
 CDKN1A,Cyclin dependent kinase inhibitor 1A,0.15,0.12,5.9519
 KIFBP,Kinesin family binding protein,0.15,0.12,4.92405
 TMPRSS15,Transmembrane serine protease 15,0.15,0.06,4.6649
-HARS1,Histidyl-tRNA synthetase 1,0.15,0.13,#N/D
+HARS1,Histidyl-tRNA synthetase 1,0.15,0.13,NA
 BAX,"BCL2 associated X, apoptosis regulator",0.15,0.11,6.86725
-CERT1,Ceramide transporter 1,0.15,0.12,#N/D
+CERT1,Ceramide transporter 1,0.15,0.12,NA
 SUGT1,"SGT1 homolog, MIS12 kinetochore complex assembly cochaperone",0.15,0.13,5.30985
 ATP5IF1,ATP synthase inhibitory factor subunit 1,0.15,0.12,7.5608
 IL6,Interleukin 6,0.15,0.07,5.4747
@@ -321,7 +321,7 @@ GOPC,Golgi associated PDZ and coiled-coil motif containing,0.14,0.11,6.84435
 FOSB,"FosB proto-oncogene, AP-1 transcription factor subunit",0.14,0.09,2.1084
 GCG,Glucagon,0.14,0.08,6.39045
 DNAJB1,DnaJ heat shock protein family (Hsp40) member B1,0.14,0.12,6.1394
-CEP20,Centrosomal protein 20,0.14,0.12,#N/D
+CEP20,Centrosomal protein 20,0.14,0.12,NA
 SCGN,"Secretagogin, EF-hand calcium binding protein",0.14,0.09,3.6898
 METAP1D,"Methionyl aminopeptidase type 1D, mitochondrial",0.14,0.12,5.0695
 USO1,USO1 vesicle transport factor,0.14,0.12,6.10835
@@ -339,8 +339,8 @@ MGMT,O-6-methylguanine-DNA methyltransferase,0.13,0.1,7.96
 KIR2DL3,"Killer cell immunoglobulin like receptor, two Ig domains and long cytoplasmic tail 3",0.13,0.03,5.5435
 VSTM1,V-set and transmembrane domain containing 1,0.13,0.06,3.30335
 FMNL1,Formin like 1,0.13,0.08,3.9382
-DARS1,Aspartyl-tRNA synthetase 1,0.13,0.12,#N/D
-IRAG2,"Inositol 1,4,5-triphosphate receptor associated 2",0.13,0.12,#N/D
+DARS1,Aspartyl-tRNA synthetase 1,0.13,0.12,NA
+IRAG2,"Inositol 1,4,5-triphosphate receptor associated 2",0.13,0.12,NA
 JCHAIN,Joining chain of multimeric IgA and IgM,0.13,0.07,4.3559
 CLSTN1,Calsyntenin 1,0.13,0.06,3.69665
 ACAA1,Acetyl-CoA acyltransferase 1,0.13,0.1,5.4733
@@ -397,10 +397,10 @@ PADI4,Peptidyl arginine deiminase 4,0.13,0.07,2.7819
 STAT5B,Signal transducer and activator of transcription 5B,0.13,0.11,9.86815
 EPCAM,Epithelial cell adhesion molecule,0.13,0.03,9.0538
 DECR1,"2,4-dienoyl-CoA reductase 1",0.13,0.12,6.45025
-DEFA1,Defensin alpha 1,0.12,0.06,#N/D
-DEFA1B,Defensin alpha 1B,0.12,0.06,#N/D
+DEFA1,Defensin alpha 1,0.12,0.06,NA
+DEFA1B,Defensin alpha 1B,0.12,0.06,NA
 PDGFA,Platelet derived growth factor subunit A,0.12,0.07,5.9439
-RIGI,RNA sensor RIG-I,0.12,0.08,#N/D
+RIGI,RNA sensor RIG-I,0.12,0.08,NA
 COMT,Catechol-O-methyltransferase,0.12,0.11,6.3206
 IL7,Interleukin 7,0.12,0.05,5.54245
 EBAG9,Estrogen receptor binding site associated antigen 9,0.12,0.11,6.3857
@@ -727,7 +727,7 @@ MSLN,Mesothelin,0.08,0.02,6.9224
 BLVRB,Biliverdin reductase B,0.08,0.05,3.88155
 PLA2G10,Phospholipase A2 group X,0.08,0.03,7.48725
 GKN1,Gastrokine 1,0.08,0.04,2.7803
-IL12A,Interleukin 12A,0.08,0.02,#N/D
+IL12A,Interleukin 12A,0.08,0.02,NA
 GP6,Glycoprotein VI platelet,0.08,0.07,8.99255
 C1QTNF1,C1q and TNF related 1,0.08,0.04,6.9006
 ITM2A,Integral membrane protein 2A,0.08,0.03,4.902
@@ -749,7 +749,7 @@ SSC5D,Scavenger receptor cysteine rich family member with 5 domains,0.08,0.03,6.
 PLXNB3,Plexin B3,0.08,0.06,5.0807
 PDCD6,Programmed cell death 6,0.08,0.03,6.65375
 CARHSP1,Calcium regulated heat stable protein 1,0.08,0.06,5.182
-PTGES3L-AARSD1,PTGES3L-AARSD1 readthrough,0.08,0.07,#N/D
+PTGES3L-AARSD1,PTGES3L-AARSD1 readthrough,0.08,0.07,NA
 AARSD1,Alanyl-tRNA synthetase domain containing 1,0.08,0.07,6.09065
 REG1B,Regenerating family member 1 beta,0.08,0.02,7.33895
 DFFA,DNA fragmentation factor subunit alpha,0.08,0.07,8.55375
@@ -850,8 +850,8 @@ TNR,Tenascin R,0.07,0.03,6.86565
 ELOA,Elongin A,0.07,0.04,5.73275
 NCR1,Natural cytotoxicity triggering receptor 1,0.07,0.03,5.21975
 CNTN5,Contactin 5,0.07,0.02,6.3281
-CKMT1A,"Creatine kinase, mitochondrial 1A",0.07,0.04,#N/D
-CKMT1B,"Creatine kinase, mitochondrial 1B",0.07,0.04,#N/D
+CKMT1A,"Creatine kinase, mitochondrial 1A",0.07,0.04,NA
+CKMT1B,"Creatine kinase, mitochondrial 1B",0.07,0.04,NA
 HAVCR1,Hepatitis A virus cellular receptor 1,0.07,0.02,8.0624
 FCER2,Fc epsilon receptor II,0.07,0.02,8.16865
 CLEC1A,C-type lectin domain family 1 member A,0.07,0.03,5.28565
@@ -889,8 +889,8 @@ PSMD9,"Proteasome 26S subunit, non-ATPase 9",0.07,0.05,5.3677
 NRP2,Neuropilin 2,0.07,0.04,4.50475
 MMP12,Matrix metallopeptidase 12,0.07,0.02,9.8398
 CDH6,Cadherin 6,0.07,0.03,5.8349
-LGALS7B,Galectin 7B,0.07,0.03,#N/D
-LGALS7,Galectin 7,0.07,0.03,#N/D
+LGALS7B,Galectin 7B,0.07,0.03,NA
+LGALS7,Galectin 7,0.07,0.03,NA
 CHGB,Chromogranin B,0.07,0.03,6.35215
 IL18BP,Interleukin 18 binding protein,0.07,0.03,5.0807
 CEACAM8,CEA cell adhesion molecule 8,0.07,0.03,6.52475
@@ -932,8 +932,8 @@ CTRB1,Chymotrypsinogen B1,0.06,0.02,8.4898
 NPTXR,Neuronal pentraxin receptor,0.06,0.03,6.58955
 CDH3,Cadherin 3,0.06,0.03,5.7068
 APRT,Adenine phosphoribosyltransferase,0.06,0.05,8.29985
-FUT5,Fucosyltransferase 5,0.06,0.02,#N/D
-FUT3,Fucosyltransferase 3 (Lewis blood group),0.06,0.02,#N/D
+FUT5,Fucosyltransferase 5,0.06,0.02,NA
+FUT3,Fucosyltransferase 3 (Lewis blood group),0.06,0.02,NA
 CGREF1,Cell growth regulator with EF-hand domain 1,0.06,0.03,6.1851
 PODXL2,Podocalyxin like 2,0.06,0.02,5.64925
 OGN,Osteoglycin,0.06,0.02,7.451
@@ -1027,7 +1027,7 @@ ANGPTL1,Angiopoietin like 1,0.06,0.03,5.03865
 PDGFRA,Platelet derived growth factor receptor alpha,0.06,0.03,5.4815
 RTBDN,Retbindin,0.06,0.03,5.66865
 CA3,Carbonic anhydrase 3,0.06,0.02,8.7988
-CCN5,Cellular communication network factor 5,0.06,0.04,#N/D
+CCN5,Cellular communication network factor 5,0.06,0.04,NA
 LPL,Lipoprotein lipase,0.06,0.03,8.84165
 VCAN,Versican,0.06,0.02,6.11075
 HMOX1,Heme oxygenase 1,0.06,0.02,9.9237
@@ -1057,7 +1057,7 @@ FLT4,Fms related receptor tyrosine kinase 4,0.05,0.02,6.33675
 CD109,CD109 molecule,0.05,0.02,6.80665
 TXNDC15,Thioredoxin domain containing 15,0.05,0.02,6.34665
 DSG2,Desmoglein 2,0.05,0.02,6.6553
-WARS1,Tryptophanyl-tRNA synthetase 1,0.05,0.03,#N/D
+WARS1,Tryptophanyl-tRNA synthetase 1,0.05,0.03,NA
 ESAM,Endothelial cell adhesion molecule,0.05,0.03,5.6041
 SFRP1,Secreted frizzled related protein 1,0.05,0.02,9.12945
 CDNF,Cerebral dopamine neurotrophic factor,0.05,0.03,6.06285
@@ -1260,7 +1260,7 @@ GP1BA,Glycoprotein Ib platelet subunit alpha,0.04,0.02,8.914
 PTPRF,Protein tyrosine phosphatase receptor type F,0.04,0.02,8.27305
 SPON1,Spondin 1,0.04,0.02,8.5792
 WFIKKN2,"WAP, follistatin/kazal, immunoglobulin, kunitz and netrin domain containing 2",0.04,0.01,10.5284
-CCN4,Cellular communication network factor 4,0.04,0.02,#N/D
+CCN4,Cellular communication network factor 4,0.04,0.02,NA
 PLA2G7,Phospholipase A2 group VII,0.04,0.02,7.87545
 CRHBP,Corticotropin releasing hormone binding protein,0.04,0.02,9.1924
 ADA2,Adenosine deaminase 2,0.04,0.02,8.96915
@@ -1323,7 +1323,7 @@ PTPRS,Protein tyrosine phosphatase receptor type S,0.04,0.02,7.3109
 GALNT10,Polypeptide N-acetylgalactosaminyltransferase 10,0.04,0.02,6.95055
 DDR1,Discoidin domain receptor tyrosine kinase 1,0.04,0.02,7.21475
 TNFRSF11B,TNF receptor superfamily member 11b,0.04,0.01,9.98965
-ADGRE5,Adhesion G protein-coupled receptor E5,0.04,0.02,#N/D
+ADGRE5,Adhesion G protein-coupled receptor E5,0.04,0.02,NA
 CD84,CD84 molecule,0.04,0.03,8.6796
 SORT1,Sortilin 1,0.04,0.02,8.4601
 ADAM23,ADAM metallopeptidase domain 23,0.04,0.01,9.30775
@@ -1349,8 +1349,8 @@ NOMO1,NODAL modulator 1,0.04,0.02,7.9285
 FLT3LG,Fms related receptor tyrosine kinase 3 ligand,0.04,0.02,8.8635
 TGFBI,Transforming growth factor beta induced,0.04,0.02,9.0975
 COMP,Cartilage oligomeric matrix protein,0.04,0.02,10.512
-EBI3,Epstein-Barr virus induced 3,0.03,0.01,#N/D
-IL27,Interleukin 27,0.03,0.01,#N/D
+EBI3,Epstein-Barr virus induced 3,0.03,0.01,NA
+IL27,Interleukin 27,0.03,0.01,NA
 THOP1,Thimet oligopeptidase 1,0.03,0.02,8.83295
 CSF1,Colony stimulating factor 1,0.03,0.02,7.7336
 LGALS9,Galectin 9,0.03,0.01,10.6366
@@ -1374,7 +1374,7 @@ LGMN,Legumain,0.03,0.02,9.9294
 CD59,CD59 molecule (CD59 blood group),0.03,0.02,7.88835
 PAM,Peptidylglycine alpha-amidating monooxygenase,0.03,0.02,8.50425
 CRIM1,Cysteine rich transmembrane BMP regulator 1,0.03,0.02,7.37855
-GOLM2,Golgi membrane protein 2,0.03,0.02,#N/D
+GOLM2,Golgi membrane protein 2,0.03,0.02,NA
 TACSTD2,Tumor associated calcium signal transducer 2,0.03,0.01,7.816
 TNFRSF10B,TNF receptor superfamily member 10b,0.03,0.02,7.66285
 CD276,CD276 molecule,0.03,0.01,9.5836
