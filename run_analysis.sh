@@ -138,6 +138,30 @@ else
     fi
 fi
 
+# Run the PeptideAtlas quantification analysis
+print_status "Running PeptideAtlas quantification comparison analysis..."
+echo ""
+echo "Comparing PeptideAtlas quantification methods:"
+echo "  • n_observations vs norm_PSMs_per_100K"
+echo "  • Distribution analysis and correlation"
+echo ""
+
+if [ -n "$FORCE_MAPPING" ]; then
+    if Rscript scripts/02_peptideatlas_quantification_analysis.R "$FORCE_MAPPING"; then
+        print_success "PeptideAtlas quantification analysis completed successfully!"
+    else
+        print_error "PeptideAtlas quantification analysis failed!"
+        exit 1
+    fi
+else
+    if Rscript scripts/02_peptideatlas_quantification_analysis.R; then
+        print_success "PeptideAtlas quantification analysis completed successfully!"
+    else
+        print_error "PeptideAtlas quantification analysis failed!"
+        exit 1
+    fi
+fi
+
 # Run the biomarker plasma analysis
 print_status "Running biomarker plasma analysis..."
 if [ -n "$FORCE_MAPPING" ]; then
@@ -166,14 +190,16 @@ print_success "Generated files:"
 echo "  📊 Plots:"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_source.png"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_technology.png"
-echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_main_databases.png"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_comprehensive.png"
+echo "     • outputs/plots/02_peptideatlas_quantification_analysis/quantification_methods_*.png"
+echo "     • outputs/plots/02_peptideatlas_quantification_analysis/peptideatlas_quantification_comprehensive.png"
 echo "     • outputs/plots/biomarker_plasma_analysis/expression_distribution_*.png"
 echo "     • outputs/plots/biomarker_plasma_analysis/combined_biomarker_distributions.png"
 echo ""
 echo "  📋 Data & Reports:"
 echo "     • outputs/plasma_protein_counts_summary.csv"
 echo "     • outputs/analysis_summary.txt"
+echo "     • outputs/peptideatlas_quantification/quantification_analysis_summary.txt"
 echo ""
 echo "  📖 Documentation:"
 echo "     • scripts/plasma_protein_analysis_summary.md"
@@ -186,10 +212,11 @@ if [ -f "outputs/analysis_summary.txt" ]; then
     grep -A 10 "SUMMARY STATISTICS:" outputs/plasma_protein/analysis_summary.txt | head -6
     echo ""
     echo "Technology Classification:"
-    echo "• MS-based: PeptideAtlas, HPA MS, GPMDB"
+    echo "• MS-based: PeptideAtlas, HPA MS, GPMDB, PAXDB"
     echo "• PEA: HPA PEA (Proximity Extension Assay)"
     echo "• Immunoassay: HPA Immunoassay"
-    echo "• Expression Database: PAXDB"
+    echo ""
+    echo "PeptideAtlas Quantification Recommendation: norm_PSMs_per_100K"
     echo ""
 fi
 
