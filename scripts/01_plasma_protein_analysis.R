@@ -26,6 +26,9 @@ force_mapping <- "--force-mapping" %in% args
 # Load gene mapping utility
 source("scripts/data_processing/simple_id_mapping.R")
 
+# Load gene deduplication utility
+source("scripts/utilities/gene_deduplication.R")
+
 # Set output directory
 output_dir <- get_output_path("", subdir = "plasma_protein")
 if (!dir.exists(output_dir)) {
@@ -37,35 +40,72 @@ message("Reading and processing data from each source...")
 
 # 1. PeptideAtlas
 message("Processing PeptideAtlas data...")
-peptideatlas <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
-peptideatlas$gene <- convert_to_gene_symbol(peptideatlas$biosequence_accession, force_mapping = force_mapping)
-peptideatlas <- peptideatlas %>% filter(!is.na(norm_PSMs_per_100K))
+peptideatlas_raw <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
+peptideatlas_raw$gene <- convert_to_gene_symbol(peptideatlas_raw$biosequence_accession, force_mapping = force_mapping)
+peptideatlas_raw <- peptideatlas_raw %>% filter(!is.na(norm_PSMs_per_100K))
+
+# Deduplicate genes using median quantification values
+peptideatlas <- deduplicate_genes(peptideatlas_raw, "gene", "norm_PSMs_per_100K", 
+                                additional_cols = c("biosequence_accession"), 
+                                aggregation_method = "median")
 
 # 2. HPA MS
 message("Processing HPA MS data...")
-hpa_ms <- read_csv("data/raw/hpa/hpa_ms.csv", show_col_types = FALSE, skip = 1)
-hpa_ms <- hpa_ms %>% rename(gene = Gene, expr = Concentration)
+hpa_ms_raw <- read_csv("data/raw/hpa/hpa_ms.csv", show_col_types = FALSE, skip = 1)
+hpa_ms_raw <- hpa_ms_raw %>% rename(gene = Gene, expr = Concentration)
+
+# Deduplicate genes using median quantification values
+hpa_ms <- deduplicate_genes(hpa_ms_raw, "gene", "expr", aggregation_method = "median")
 
 # 3. HPA PEA
 message("Processing HPA PEA data...")
-hpa_pea <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
-hpa_pea <- hpa_pea %>% rename(gene = Gene, expr = `Variation between individuals`)
+hpa_pea_raw <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
+hpa_pea_raw <- hpa_pea_raw %>% rename(gene = Gene, expr = `Variation between individuals`)
+
+# Deduplicate genes using median quantification values
+hpa_pea <- deduplicate_genes(hpa_pea_raw, "gene", "expr", aggregation_method = "median")
 
 # 4. HPA Immunoassay
 message("Processing HPA Immunoassay data...")
-hpa_imm <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
-hpa_imm <- hpa_imm %>% rename(gene = Gene, expr = Concentration)
+hpa_imm_raw <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
+hpa_imm_raw <- hpa_imm_raw %>% rename(gene = Gene, expr = Concentration)
+
+# Deduplicate genes using median quantification values
+hpa_imm <- deduplicate_genes(hpa_imm_raw, "gene", "expr", aggregation_method = "median")
 
 # 5. GPMDB
 message("Processing GPMDB data...")
-gpmdb <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
-gpmdb$gene <- stringr::str_extract(gpmdb$description, "[A-Z0-9]+(?=,| |$)")
+gpmdb_raw <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
+gpmdb_raw$gene <- stringr::str_extract(gpmdb_raw$description, "[A-Z0-9]+(?=,| |$)")
+
+# Deduplicate genes using median quantification values (assuming 'total' column exists)
+# If no quantification column, we'll filter for unique genes only
+if ("total" %in% colnames(gpmdb_raw)) {
+  gpmdb <- deduplicate_genes(gpmdb_raw, "gene", "total", aggregation_method = "median")
+} else {
+  # Just remove duplicate genes if no quantification column
+  gpmdb <- gpmdb_raw %>% 
+    filter(!is.na(gene) & gene != "") %>%
+    distinct(gene, .keep_all = TRUE)
+}
 
 # 6. PAXDB
 message("Processing PAXDB data...")
-paxdb <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
-paxdb$ensp <- stringr::str_replace(paxdb$string_external_id, "^9606\\.", "")
-paxdb$gene <- convert_to_gene_symbol(paxdb$ensp, force_mapping = force_mapping)
+paxdb_raw <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
+paxdb_raw$ensp <- stringr::str_replace(paxdb_raw$string_external_id, "^9606\\.", "")
+paxdb_raw$gene <- convert_to_gene_symbol(paxdb_raw$ensp, force_mapping = force_mapping)
+
+# Deduplicate genes using median quantification values (assuming 'abundance' column exists)
+if ("abundance" %in% colnames(paxdb_raw)) {
+  paxdb <- deduplicate_genes(paxdb_raw, "gene", "abundance", 
+                           additional_cols = c("ensp"), 
+                           aggregation_method = "median")
+} else {
+  # Just remove duplicate genes if no quantification column
+  paxdb <- paxdb_raw %>% 
+    filter(!is.na(gene) & gene != "") %>%
+    distinct(gene, .keep_all = TRUE)
+}
 
 # Create summary statistics
 message("Creating summary statistics...")
@@ -214,20 +254,26 @@ message("Plots saved to:", plot_dir)
 
 # Create summary report
 sink(file.path(output_dir, "analysis_summary.txt"))
-cat("PLASMA PROTEIN ANALYSIS SUMMARY\n")
-cat("==============================\n\n")
+cat("PLASMA PROTEIN ANALYSIS SUMMARY (WITH GENE DEDUPLICATION)\n")
+cat("=========================================================\n\n")
 
-cat("SUMMARY STATISTICS:\n")
-cat("==================\n")
-cat(sprintf("PeptideAtlas: %d genes\n", stats_summary$peptideatlas))
-cat(sprintf("HPA MS: %d genes\n", stats_summary$hpa_ms))
-cat(sprintf("HPA PEA: %d genes\n", stats_summary$hpa_pea))
-cat(sprintf("HPA Immunoassay: %d genes\n", stats_summary$hpa_immunoassay))
-cat(sprintf("GPMDB: %d genes\n", stats_summary$gpmdb))
-cat(sprintf("PAXDB: %d genes\n", stats_summary$paxdb))
-cat(sprintf("\nTotal genes across sources: %d\n", stats_summary$total_across_sources))
-cat(sprintf("MS technologies total: %d genes\n", stats_summary$ms_technologies))
-cat(sprintf("HPA total (all technologies): %d genes\n", stats_summary$hpa_total))
+cat("GENE DEDUPLICATION INFORMATION:\n")
+cat("===============================\n")
+cat("Multiple proteins mapping to the same gene have been deduplicated.\n")
+cat("For genes with multiple protein entries, median quantification values are used.\n")
+cat("This ensures accurate gene-level counts and quantification.\n\n")
+
+cat("SUMMARY STATISTICS (AFTER DEDUPLICATION):\n")
+cat("==========================================\n")
+cat(sprintf("PeptideAtlas: %d unique genes\n", stats_summary$peptideatlas))
+cat(sprintf("HPA MS: %d unique genes\n", stats_summary$hpa_ms))
+cat(sprintf("HPA PEA: %d unique genes\n", stats_summary$hpa_pea))
+cat(sprintf("HPA Immunoassay: %d unique genes\n", stats_summary$hpa_immunoassay))
+cat(sprintf("GPMDB: %d unique genes\n", stats_summary$gpmdb))
+cat(sprintf("PAXDB: %d unique genes\n", stats_summary$paxdb))
+cat(sprintf("\nTotal unique genes across sources: %d\n", stats_summary$total_across_sources))
+cat(sprintf("MS technologies total: %d unique genes\n", stats_summary$ms_technologies))
+cat(sprintf("HPA total (all technologies): %d unique genes\n", stats_summary$hpa_total))
 cat(rep("=", 60), "\n", sep = "")
 
 cat("\nAnalysis completed successfully!\n")

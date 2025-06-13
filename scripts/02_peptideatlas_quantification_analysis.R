@@ -20,6 +20,9 @@ force_mapping <- "--force-mapping" %in% args
 # Load gene mapping utility
 source("scripts/data_processing/simple_id_mapping.R")
 
+# Load gene deduplication utility
+source("scripts/utilities/gene_deduplication.R")
+
 # Set output directories
 output_dir <- get_output_path("peptideatlas_quantification")
 plot_dir <- get_output_path("02_peptideatlas_quantification_analysis", subdir = "plots")
@@ -64,12 +67,31 @@ if (file.exists(processed_file)) {
 peptideatlas_data$n_observations <- as.numeric(peptideatlas_data$n_observations)
 peptideatlas_data$norm_PSMs_per_100K <- as.numeric(peptideatlas_data$norm_PSMs_per_100K)
 
-# Remove rows with missing quantification data
-peptideatlas_clean <- peptideatlas_data %>%
+# Remove rows with missing quantification data and deduplicate genes
+peptideatlas_clean_raw <- peptideatlas_data %>%
   filter(!is.na(n_observations) & !is.na(norm_PSMs_per_100K) & 
          n_observations > 0 & norm_PSMs_per_100K > 0)
 
-cat(sprintf("Loaded %d proteins with quantification data\n", nrow(peptideatlas_clean)))
+# Deduplicate genes for both quantification methods
+message("Deduplicating genes for n_observations...")
+peptideatlas_n_obs <- deduplicate_genes(peptideatlas_clean_raw, "gene", "n_observations", 
+                                       additional_cols = c("biosequence_accession"), 
+                                       aggregation_method = "median")
+
+message("Deduplicating genes for norm_PSMs_per_100K...")
+peptideatlas_psms <- deduplicate_genes(peptideatlas_clean_raw, "gene", "norm_PSMs_per_100K", 
+                                     additional_cols = c("biosequence_accession"), 
+                                     aggregation_method = "median")
+
+# Merge the deduplicated data
+peptideatlas_clean <- peptideatlas_n_obs %>%
+  select(gene, n_observations, biosequence_accession) %>%
+  inner_join(
+    peptideatlas_psms %>% select(gene, norm_PSMs_per_100K),
+    by = "gene"
+  )
+
+cat(sprintf("Loaded %d unique genes with quantification data (after deduplication)\n", nrow(peptideatlas_clean)))
 
 # Create correlation plot comparing the two quantification methods
 cat("Creating correlation plot...\n")
@@ -141,7 +163,7 @@ p2b <- dist_data %>%
   scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
                               "Normalized PSMs per 100K" = "#56B4E9")) +
   labs(
-    title = "Dynamic Range Comparison",
+    title = "Abundance Distribution Comparison",
     subtitle = "Distribution of quantification values (log scale)",
     x = "Quantification Method",
     y = "Log10(Value + offset)"
@@ -162,11 +184,11 @@ p2 <- p2a | p2b
 # Combine all plots into comprehensive view
 cat("Creating comprehensive plot...\n")
 
-# Create the comprehensive plot with Dynamic Range on left, distribution top right, correlation bottom right
+# Create the comprehensive plot with abundance distribution on left, distribution top right, correlation bottom right
 comprehensive_plot <- p2b | (p2a / p1) +
   plot_annotation(
     title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
-    subtitle = "Distribution comparison and dynamic range analysis"
+    subtitle = "Distribution comparison and abundance analysis"
   ) & 
   theme(
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
@@ -225,7 +247,7 @@ cat("RECOMMENDATION:\n")
 cat("===============\n")
 cat("norm_PSMs_per_100K is recommended because:\n")
 cat("1. Normalized per 100K PSMs - accounts for run-to-run variation\n")
-cat("2. Better dynamic range for quantitative analysis\n")
+cat("2. Better abundance distribution for quantitative analysis\n")
 cat("3. More comparable to concentration-based measures\n")
 cat("4. Standard metric used in PeptideAtlas publications\n")
 cat("5. Enables better cross-study comparisons\n")

@@ -20,6 +20,9 @@ force_mapping <- "--force-mapping" %in% args
 # Load gene mapping utility
 source("scripts/data_processing/simple_id_mapping.R")
 
+# Load gene deduplication utility
+source("scripts/utilities/gene_deduplication.R")
+
 # Set output directory
 output_dir <- get_output_path("03_biomarker_plasma_analysis", subdir = "plots")
 if (!dir.exists(output_dir)) {
@@ -85,13 +88,13 @@ create_database_plots <- function(data, gene_col, intensity_col, database_name, 
     scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
                      labels = c("All proteins", "Biomarkers")) +
     scale_x_discrete(labels = c("FALSE" = "All proteins", "TRUE" = "Biomarkers")) +
-    labs(
-      title = paste(database_name, "Dynamic Range"),
-      subtitle = sprintf("Median (All): %.2f, Median (Bio): %.2f", 
-                        stats$median[1], stats$median[2]),
-      x = "",
-      y = "log10(Intensity + 1)"
-    ) +
+      labs(
+    title = paste(database_name, "Abundance Distribution"),
+    subtitle = sprintf("Median (All): %.2f, Median (Bio): %.2f", 
+                      stats$median[1], stats$median[2]),
+    x = "",
+    y = "log10(Intensity + 1)"
+  ) +
     theme_minimal() +
     theme(
       plot.title = element_text(size = 12, face = "bold"),
@@ -109,41 +112,83 @@ message("[Biomarker Analysis] Processing databases...")
 
 # 1. PeptideAtlas
 message("Processing PeptideAtlas...")
-peptideatlas <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
-peptideatlas$gene <- convert_to_gene_symbol(peptideatlas$biosequence_accession, force_mapping = force_mapping)
+peptideatlas_raw <- read_csv("data/raw/peptideatlas/peptideatlas.csv", show_col_types = FALSE)
+peptideatlas_raw$gene <- convert_to_gene_symbol(peptideatlas_raw$biosequence_accession, force_mapping = force_mapping)
+
+# Deduplicate genes before analysis
+peptideatlas <- deduplicate_genes(peptideatlas_raw, "gene", "norm_PSMs_per_100K", 
+                                additional_cols = c("biosequence_accession"), 
+                                aggregation_method = "median")
+
 peptideatlas_plots <- create_database_plots(peptideatlas, "gene", "norm_PSMs_per_100K", "PeptideAtlas", biomarker_genes)
 peptideatlas_biomarkers <- unique(peptideatlas$gene[peptideatlas$gene %in% biomarker_genes])
 
 # 2. HPA MS
 message("Processing HPA MS...")
-hpa_ms <- read_csv("data/raw/hpa/hpa_ms.csv", show_col_types = FALSE, skip = 1)
+hpa_ms_raw <- read_csv("data/raw/hpa/hpa_ms.csv", show_col_types = FALSE, skip = 1)
+
+# Deduplicate genes before analysis
+hpa_ms <- deduplicate_genes(hpa_ms_raw, "Gene", "Concentration", aggregation_method = "median")
+
 hpa_ms_plots <- create_database_plots(hpa_ms, "Gene", "Concentration", "HPA MS", biomarker_genes)
 hpa_ms_biomarkers <- unique(hpa_ms$Gene[hpa_ms$Gene %in% biomarker_genes])
 
 # 3. HPA PEA
 message("Processing HPA PEA...")
-hpa_pea <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
+hpa_pea_raw <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
+
+# Deduplicate genes before analysis
+hpa_pea <- deduplicate_genes(hpa_pea_raw, "Gene", "median_npx", aggregation_method = "median")
+
 hpa_pea_plots <- create_database_plots(hpa_pea, "Gene", "median_npx", "HPA PEA", biomarker_genes)
 hpa_pea_biomarkers <- unique(hpa_pea$Gene[hpa_pea$Gene %in% biomarker_genes])
 
 # 4. HPA Immunoassay
 message("Processing HPA Immunoassay...")
-hpa_imm <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
+hpa_imm_raw <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
+
+# Deduplicate genes before analysis
+hpa_imm <- deduplicate_genes(hpa_imm_raw, "Gene", "Concentration", aggregation_method = "median")
+
 hpa_imm_plots <- create_database_plots(hpa_imm, "Gene", "Concentration", "HPA Immunoassay", biomarker_genes)
 hpa_imm_biomarkers <- unique(hpa_imm$Gene[hpa_imm$Gene %in% biomarker_genes])
 
 # 5. GPMDB
 message("Processing GPMDB...")
-gpmdb <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
-gpmdb$gene <- stringr::str_extract(gpmdb$description, "[A-Z0-9]+(?=,| |$)")
+gpmdb_raw <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
+gpmdb_raw$gene <- stringr::str_extract(gpmdb_raw$description, "[A-Z0-9]+(?=,| |$)")
+
+# Deduplicate genes before analysis
+if ("total" %in% colnames(gpmdb_raw)) {
+  gpmdb <- deduplicate_genes(gpmdb_raw, "gene", "total", aggregation_method = "median")
+} else {
+  # Just remove duplicate genes if no quantification column
+  gpmdb <- gpmdb_raw %>% 
+    filter(!is.na(gene) & gene != "") %>%
+    distinct(gene, .keep_all = TRUE)
+}
+
 gpmdb_plots <- create_database_plots(gpmdb, "gene", "total", "GPMDB", biomarker_genes)
 gpmdb_biomarkers <- unique(gpmdb$gene[gpmdb$gene %in% biomarker_genes])
 
 # 6. PAXDB
 message("Processing PAXDB...")
-paxdb <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
-paxdb$ensp <- stringr::str_replace(paxdb$string_external_id, "^9606\\.", "")
-paxdb$gene <- convert_to_gene_symbol(paxdb$ensp, force_mapping = force_mapping)
+paxdb_raw <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
+paxdb_raw$ensp <- stringr::str_replace(paxdb_raw$string_external_id, "^9606\\.", "")
+paxdb_raw$gene <- convert_to_gene_symbol(paxdb_raw$ensp, force_mapping = force_mapping)
+
+# Deduplicate genes before analysis
+if ("abundance" %in% colnames(paxdb_raw)) {
+  paxdb <- deduplicate_genes(paxdb_raw, "gene", "abundance", 
+                           additional_cols = c("ensp"), 
+                           aggregation_method = "median")
+} else {
+  # Just remove duplicate genes if no quantification column
+  paxdb <- paxdb_raw %>% 
+    filter(!is.na(gene) & gene != "") %>%
+    distinct(gene, .keep_all = TRUE)
+}
+
 paxdb_plots <- create_database_plots(paxdb, "gene", "abundance", "PAXDB", biomarker_genes)
 paxdb_biomarkers <- unique(paxdb$gene[paxdb$gene %in% biomarker_genes])
 
@@ -176,7 +221,7 @@ violin_combined <- (peptideatlas_plots$violin + hpa_ms_plots$violin) /
   (hpa_pea_plots$violin + hpa_imm_plots$violin) /
   (gpmdb_plots$violin + paxdb_plots$violin) +
   plot_annotation(
-    title = "Protein Dynamic Range Across Databases",
+    title = "Protein Abundance Distribution Across Databases",
     subtitle = "Comparing all proteins vs. biomarkers",
     theme = theme(
       plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
@@ -185,7 +230,7 @@ violin_combined <- (peptideatlas_plots$violin + hpa_ms_plots$violin) /
   )
 
 ggsave(
-  file.path(output_dir, "violins_by_database.png"),
+  file.path(output_dir, "abundance_distributions_by_database.png"),
   violin_combined,
   width = 15,
   height = 20,
@@ -258,14 +303,15 @@ message("[Biomarker Analysis] Completed successfully.")
 message("\nAnalysis complete. Files saved to: ", output_dir)
 
 # Create distribution plot for PeptideAtlas (as representative dataset)
+# Note: After deduplication, we use the deduplicated data
 distribution_plot <- ggplot() +
   geom_density(data = data.frame(value = log10(peptideatlas$norm_PSMs_per_100K[!is.na(peptideatlas$norm_PSMs_per_100K)])), 
                aes(x = value), fill = "#69b3a2", alpha = 0.3) +
   geom_density(data = data.frame(value = log10(peptideatlas$norm_PSMs_per_100K[peptideatlas$gene %in% biomarker_genes & !is.na(peptideatlas$norm_PSMs_per_100K)])), 
                aes(x = value), fill = "#E69F00", alpha = 0.3) +
   labs(
-    title = "Distribution of Protein Intensities",
-    subtitle = "All proteins vs. Biomarkers",
+    title = "Distribution of Protein Intensities (Gene-Deduplicated)",
+    subtitle = "All genes vs. Biomarker genes (using median values for duplicate genes)",
     x = "log10(PSMs per 100K)",
     y = "Density"
   ) +
