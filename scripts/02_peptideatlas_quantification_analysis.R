@@ -218,19 +218,34 @@ if(!is.null(paired_data) && nrow(paired_data) > 0) {
 }
 
 # 4. Create comprehensive combined plot
-combined_plot <- p1 | p2
-combined_plot <- combined_plot + 
-  plot_annotation(
-    title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
-    subtitle = "Distribution comparison and dynamic range analysis",
-    theme = theme(
-      plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-      plot.subtitle = element_text(size = 14, hjust = 0.5)
+if(!is.null(paired_data) && nrow(paired_data) > 0) {
+  # Create a 3-panel comprehensive plot with correlation
+  combined_plot <- (p1 | p2) / p3
+  combined_plot <- combined_plot + 
+    plot_annotation(
+      title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
+      subtitle = "Distribution comparison, dynamic range analysis, and correlation",
+      theme = theme(
+        plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+        plot.subtitle = element_text(size = 14, hjust = 0.5)
+      )
     )
-  )
+} else {
+  # Fallback to 2-panel plot if no correlation data
+  combined_plot <- p1 | p2
+  combined_plot <- combined_plot + 
+    plot_annotation(
+      title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
+      subtitle = "Distribution comparison and dynamic range analysis",
+      theme = theme(
+        plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+        plot.subtitle = element_text(size = 14, hjust = 0.5)
+      )
+    )
+}
 
 ggsave(file.path(plot_dir, "peptideatlas_quantification_comprehensive.png"), combined_plot, 
-       width = 16, height = 8, dpi = 300, bg = "white")
+       width = 16, height = 12, dpi = 300, bg = "white")
 
 message("Plots saved to:", plot_dir)
 
