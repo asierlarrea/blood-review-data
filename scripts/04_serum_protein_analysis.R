@@ -235,7 +235,10 @@ dist_data <- bind_rows(
 
 p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_histogram(alpha = 0.7, bins = 50) +
-  facet_wrap(~Database, scales = "free", ncol = 1) +
+  facet_wrap(~Database, scales = "free", ncol = 1, 
+             labeller = labeller(Database = c("GPMDB" = "(a) GPMDB", 
+                                             "PAXDB" = "(b) PAXDB", 
+                                             "HPA Immunoassay" = "(c) HPA Immunoassay"))) +
   scale_fill_viridis_d(option = "plasma") +
   theme_minimal(base_size = 12) +
   theme(
@@ -342,11 +345,25 @@ p6 <- p1 + p2 +
   plot_annotation(
     title = "Comprehensive Serum Protein Analysis",
     subtitle = "Comparison across GPMDB, PAXDB, and HPA databases",
+    tag_levels = list(c('(a)', '(b)')),
     theme = theme(plot.title = element_text(size = 18, face = "bold"))
   )
 
 ggsave(file.path(plot_dir, "serum_protein_comprehensive_summary.png"), 
        p6, width = 12, height = 12, dpi = 300, bg = "white")
+
+# 8. Create an extended comprehensive plot with distributions
+p7 <- p1 + p2 + p5 + 
+  plot_layout(ncol = 1) +
+  plot_annotation(
+    title = "Comprehensive Serum Protein Analysis with Quantification Distributions",
+    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases",
+    tag_levels = list(c('(a)', '(b)', '(c)')),
+    theme = theme(plot.title = element_text(size = 18, face = "bold"))
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive.png"), 
+       p7, width = 12, height = 18, dpi = 300, bg = "white")
 
 # Print summary information
 message("\n=== SERUM PROTEIN ANALYSIS SUMMARY ===")

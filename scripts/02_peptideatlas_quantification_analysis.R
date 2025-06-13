@@ -137,7 +137,9 @@ dist_data <- peptideatlas_clean %>%
 p2a <- dist_data %>%
   ggplot(aes(x = log_value, fill = metric)) +
   geom_histogram(alpha = 0.7, bins = 50) +
-  facet_wrap(~metric, ncol = 1) +
+  facet_wrap(~metric, ncol = 1,
+             labeller = labeller(metric = c("Number of Observations" = "(a) Number of Observations",
+                                           "Normalized PSMs per 100K" = "(b) Normalized PSMs per 100K"))) +
   scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
                               "Normalized PSMs per 100K" = "#56B4E9")) +
   labs(
@@ -152,7 +154,8 @@ p2a <- dist_data %>%
     plot.subtitle = element_text(size = 12),
     axis.text = element_text(size = 10),
     axis.title = element_text(size = 11, face = "bold"),
-    legend.position = "none"
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12)
   )
 
 # Create violin plot with boxplot overlay
@@ -179,7 +182,8 @@ p2b <- dist_data %>%
   )
 
 # Combine distribution plots
-p2 <- p2a | p2b
+p2 <- p2a | p2b + 
+  plot_annotation(tag_levels = list(c('(a)', '(b)')))
 
 # Combine all plots into comprehensive view
 cat("Creating comprehensive plot...\n")
@@ -188,7 +192,8 @@ cat("Creating comprehensive plot...\n")
 comprehensive_plot <- p2b | (p2a / p1) +
   plot_annotation(
     title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
-    subtitle = "Distribution comparison and abundance analysis"
+    subtitle = "Distribution comparison and abundance analysis",
+    tag_levels = list(c('(a)', '(b)', '(c)'))
   ) & 
   theme(
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5),

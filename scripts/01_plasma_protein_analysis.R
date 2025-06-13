@@ -473,6 +473,7 @@ combined_plot <- (p1 | p2) / (p3 | p4) +
   plot_annotation(
     title = "Comprehensive Plasma Protein Quantification Analysis",
     subtitle = "Gene counts and technology classification (top), abundance distributions and intersections (bottom)",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)')),
     theme = theme(
       plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 14, hjust = 0.5)

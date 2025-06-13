@@ -202,6 +202,7 @@ distribution_combined <- (peptideatlas_plots$distribution + hpa_ms_plots$distrib
   plot_annotation(
     title = "Protein Abundance Distribution Across Databases",
     subtitle = "Comparing all proteins vs. biomarkers",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
     theme = theme(
       plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 12, hjust = 0.5)
@@ -223,6 +224,7 @@ violin_combined <- (peptideatlas_plots$violin + hpa_ms_plots$violin) /
   plot_annotation(
     title = "Protein Abundance Distribution Across Databases",
     subtitle = "Comparing all proteins vs. biomarkers",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
     theme = theme(
       plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 12, hjust = 0.5)
