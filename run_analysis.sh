@@ -63,7 +63,7 @@ done
 # Print header
 echo "==============================================================================="
 echo "                    BLOOD REVIEW DATA ANALYSIS"
-echo "                    Plasma Protein Quantification"
+echo "              Plasma and Serum Protein Quantification"
 echo "==============================================================================="
 echo ""
 
@@ -85,6 +85,9 @@ required_files=(
     "data/raw/hpa/hpa_immunoassay_plasma.csv"
     "data/raw/gpmdb/gpmdb_plasma.csv"
     "data/raw/paxdb/paxdb_plasma.csv"
+    "data/raw/gpmdb/gpmdb_serum.csv"
+    "data/raw/paxdb/paxdb_serum.csv"
+    "data/raw/hpa/hpa_immunoassay_serum.csv"
 )
 
 print_status "Verifying required data files..."
@@ -180,6 +183,31 @@ else
     fi
 fi
 
+# Run the serum protein analysis
+print_status "Running serum protein analysis..."
+echo ""
+echo "Analyzing serum protein quantification across:"
+echo "  • GPMDB (MS)"
+echo "  • PAXDB (Expression data)"
+echo "  • HPA Immunoassay"
+echo ""
+
+if [ -n "$FORCE_MAPPING" ]; then
+    if Rscript scripts/04_serum_protein_analysis.R "$FORCE_MAPPING"; then
+        print_success "Serum protein analysis completed successfully!"
+    else
+        print_error "Serum protein analysis failed!"
+        exit 1
+    fi
+else
+    if Rscript scripts/04_serum_protein_analysis.R; then
+        print_success "Serum protein analysis completed successfully!"
+    else
+        print_error "Serum protein analysis failed!"
+        exit 1
+    fi
+fi
+
 # Display results
 echo ""
 echo "==============================================================================="
@@ -198,10 +226,17 @@ echo "     • outputs/plots/03_biomarker_plasma_analysis/*_distribution.png"
 echo "     • outputs/plots/03_biomarker_plasma_analysis/*_dynamic_range.png"
 echo "     • outputs/plots/03_biomarker_plasma_analysis/comprehensive_biomarker_analysis.png"
 echo "     • outputs/plots/03_biomarker_plasma_analysis/biomarker_technology_overlap.png"
+echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_counts_by_source.png"
+echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_counts_combined.png"
+echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_overlap_upset.png"
+echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_quantification_distributions.png"
+echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_comprehensive_summary.png"
 echo ""
 echo "  📋 Data & Reports:"
 echo "     • outputs/plasma_protein_counts_summary.csv"
 echo "     • outputs/03_biomarker_plasma_analysis/biomarker_detection_summary.csv"
+echo "     • outputs/serum_protein/serum_protein_counts_summary.csv"
+echo "     • outputs/serum_protein/serum_protein_overlap_statistics.csv"
 echo ""
 echo "  📖 Documentation:"
 echo "     • scripts/plasma_protein_analysis_summary.md"
