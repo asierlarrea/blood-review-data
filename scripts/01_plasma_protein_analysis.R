@@ -235,12 +235,132 @@ p2 <- ggplot(tech_data, aes(x = reorder(Technology, Count), y = Count, fill = Ty
 ggsave(file.path(plot_dir, "plasma_proteins_by_technology.png"), p2, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 3. Create a comprehensive combined plot with the two main analyses
-combined_plot <- p1 | p2
-combined_plot <- combined_plot + 
+# 3. Create violin plot showing quantification value distributions
+message("Creating quantification distribution violin plot...")
+
+# Prepare combined data for violin plot
+violin_data <- data.frame()
+
+# Add PeptideAtlas data
+if (nrow(peptideatlas) > 0) {
+  violin_data <- rbind(violin_data, data.frame(
+    Database = "PeptideAtlas",
+    Technology = "MS",
+    log_value = log10(peptideatlas$norm_PSMs_per_100K + 1),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Add HPA MS data
+if (nrow(hpa_ms) > 0) {
+  violin_data <- rbind(violin_data, data.frame(
+    Database = "HPA MS",
+    Technology = "MS", 
+    log_value = log10(hpa_ms$expr + 1),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Add HPA PEA data
+if (nrow(hpa_pea) > 0) {
+  violin_data <- rbind(violin_data, data.frame(
+    Database = "HPA PEA",
+    Technology = "PEA",
+    log_value = log10(hpa_pea$expr + 1),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Add HPA Immunoassay data
+if (nrow(hpa_imm) > 0) {
+  violin_data <- rbind(violin_data, data.frame(
+    Database = "HPA Immunoassay", 
+    Technology = "Immunoassay",
+    log_value = log10(hpa_imm$expr + 1),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Add GPMDB data (if total column exists)
+if (nrow(gpmdb) > 0 && "total" %in% colnames(gpmdb)) {
+  violin_data <- rbind(violin_data, data.frame(
+    Database = "GPMDB",
+    Technology = "MS",
+    log_value = log10(gpmdb$total + 1),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Add PAXDB data (if abundance column exists)
+if (nrow(paxdb) > 0 && "abundance" %in% colnames(paxdb)) {
+  violin_data <- rbind(violin_data, data.frame(
+    Database = "PAXDB",
+    Technology = "MS", 
+    log_value = log10(paxdb$abundance + 1),
+    stringsAsFactors = FALSE
+  ))
+}
+
+# Create violin plot with improved aesthetics
+p3 <- ggplot(violin_data, aes(x = reorder(Database, log_value, FUN = median), 
+                              y = log_value, fill = Technology)) +
+  # Violin plots with better scaling and smoothing
+  geom_violin(alpha = 0.8, 
+              scale = "area",           # Equal area scaling for better comparison
+              trim = TRUE,              # Trim to data range
+              adjust = 1.2,             # Slightly smoother curves
+              draw_quantiles = c(0.25, 0.5, 0.75),  # Add quartile lines
+              color = "#150b0b",          # White outline for better definition
+              size = 0.3) +
+  # Refined boxplot overlay with matching colors
+  geom_boxplot(aes(fill = Technology),
+               width = 0.15, 
+               alpha = 0.6,             # More transparent to show violin underneath
+               outlier.size = 1.2,      # Larger outlier points
+               outlier.alpha = 0.7,     # More opaque outliers
+               outlier.color = "gray20", # Dark color for outliers
+               color = "gray30",        # Dark outline for box and whiskers
+               size = 0.5) +
+  # Add median points for emphasis
+  stat_summary(fun = median, 
+               geom = "point", 
+               shape = 21, 
+               size = 2.5, 
+               fill = "white", 
+               color = "gray20", 
+               stroke = 1) +
+  coord_flip() +
+  scale_fill_manual(values = c("MS" = "#2E86AB", "PEA" = "#A23B72", 
+                               "Immunoassay" = "#F18F01")) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    legend.position = "bottom",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "gray90", fill = NA, size = 0.5)
+  ) +
+  labs(
+    title = "Protein Abundance Distribution by Data Source",
+    subtitle = "Log10-transformed quantification values with quartiles (after gene deduplication)",
+    x = "Data Source",
+    y = "Log10(Quantification Value + 1)",
+    fill = "Technology"
+  )
+
+ggsave(file.path(plot_dir, "plasma_proteins_abundance_distributions.png"), p3, 
+       width = 10, height = 6, dpi = 300, bg = "white")
+
+# 4. Create a comprehensive combined plot with all three analyses
+# Layout: Gene counts by source (top left), Gene counts by technology (top right), 
+#         Abundance distributions (bottom, spanning full width)
+combined_plot <- (p1 | p2) / p3 + 
+  plot_layout(heights = c(1, 1)) +
   plot_annotation(
     title = "Comprehensive Plasma Protein Quantification Analysis",
-    subtitle = "Individual data sources (left) and technology classifications (right)",
+    subtitle = "Gene counts by source and technology (top) and abundance distributions (bottom)",
     theme = theme(
       plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 14, hjust = 0.5)
@@ -248,7 +368,7 @@ combined_plot <- combined_plot +
   )
 
 ggsave(file.path(plot_dir, "plasma_proteins_comprehensive.png"), combined_plot, 
-       width = 16, height = 8, dpi = 300, bg = "white")
+       width = 16, height = 12, dpi = 300, bg = "white")
 
 message("Plots saved to:", plot_dir)
 
@@ -280,6 +400,7 @@ cat("\nAnalysis completed successfully!\n")
 cat("Generated files:\n")
 cat("• Individual source plot: plasma_proteins_by_source.png\n")
 cat("• Technology classification plot: plasma_proteins_by_technology.png\n")
+cat("• Abundance distribution plot: plasma_proteins_abundance_distributions.png\n")
 cat("• Comprehensive combined plot: plasma_proteins_comprehensive.png\n")
 cat("• Data: outputs/plasma_protein_counts_summary.csv\n")
 cat("• Report: outputs/analysis_summary.txt\n")
