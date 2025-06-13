@@ -50,7 +50,8 @@ data_packages <- c(
   "tidyr",        # Data tidying
   "readr",        # Reading CSV/TSV files
   "stringr",      # String manipulation
-  "data.table"    # Fast data processing
+  "data.table",   # Fast data processing
+  "optparse"      # Command line argument parsing
 )
 install_if_missing(data_packages)
 

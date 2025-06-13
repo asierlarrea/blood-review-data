@@ -10,6 +10,10 @@ suppressPackageStartupMessages({
   library(jsonlite)
 })
 
+# Parse command line arguments
+# Parse command line arguments - this function is not used in this script
+# since it's a utility that gets sourced by other scripts
+
 # Global variable to store loaded mappings (cache)
 .mapping_cache <- NULL
 
@@ -19,6 +23,15 @@ load_mapping_cache <- function(cache_file = "data/cache/protein_to_gene_mappings
     if (file.exists(cache_file)) {
       message(sprintf("Loading protein mappings from %s...", cache_file))
       .mapping_cache <<- read_csv(cache_file, show_col_types = FALSE)
+      
+      # Check if mapping_status column exists, if not add it
+      if (!"mapping_status" %in% colnames(.mapping_cache)) {
+        message("Adding mapping_status column to existing cache...")
+        .mapping_cache$mapping_status <<- "success"  # Assume existing entries were successful
+        # Save updated cache
+        write_csv(.mapping_cache, cache_file)
+      }
+      
       message(sprintf("Loaded %d cached protein → gene mappings", nrow(.mapping_cache)))
     } else {
       # Create empty cache if file doesn't exist
@@ -30,6 +43,7 @@ load_mapping_cache <- function(cache_file = "data/cache/protein_to_gene_mappings
         source = character(0),
         description = character(0),
         query_date = character(0),
+        mapping_status = character(0),  # New column to track mapping status
         stringsAsFactors = FALSE
       )
       write_csv(.mapping_cache, cache_file)
@@ -62,14 +76,27 @@ query_uniprot <- function(protein_id) {
           gene_symbol = toupper(gene_symbol),
           description = description,
           source = "UniProt_API",
-          query_date = Sys.Date()
+          query_date = Sys.Date(),
+          mapping_status = "success"
         ))
       }
     }
-    return(NULL)
+    return(list(
+      gene_symbol = NA_character_,
+      description = "",
+      source = "UniProt_API",
+      query_date = Sys.Date(),
+      mapping_status = "not_found"
+    ))
   }, error = function(e) {
     message(sprintf("UniProt query error for %s: %s", protein_id, e$message))
-    return(NULL)
+    return(list(
+      gene_symbol = NA_character_,
+      description = "",
+      source = "UniProt_API",
+      query_date = Sys.Date(),
+      mapping_status = "error"
+    ))
   })
 }
 
@@ -118,7 +145,8 @@ query_ensembl <- function(ensp_id) {
                   gene_symbol = toupper(gene_symbol),
                   description = description,
                   source = "Ensembl_API",
-                  query_date = Sys.Date()
+                  query_date = Sys.Date(),
+                  mapping_status = "success"
                 ))
               }
             }
@@ -126,15 +154,27 @@ query_ensembl <- function(ensp_id) {
         }
       }
     }
-    return(NULL)
+    return(list(
+      gene_symbol = NA_character_,
+      description = "",
+      source = "Ensembl_API",
+      query_date = Sys.Date(),
+      mapping_status = "not_found"
+    ))
   }, error = function(e) {
     message(sprintf("Ensembl query error for %s: %s", ensp_id, e$message))
-    return(NULL)
+    return(list(
+      gene_symbol = NA_character_,
+      description = "",
+      source = "Ensembl_API",
+      query_date = Sys.Date(),
+      mapping_status = "error"
+    ))
   })
 }
 
 # Add new mapping to cache and save
-add_to_cache <- function(protein_id, gene_symbol, source, description, query_date, 
+add_to_cache <- function(protein_id, gene_symbol, source, description, query_date, mapping_status,
                         cache_file = "data/cache/protein_to_gene_mappings.csv") {
   # Load current cache
   current_cache <- load_mapping_cache(cache_file)
@@ -146,6 +186,7 @@ add_to_cache <- function(protein_id, gene_symbol, source, description, query_dat
     source = source,
     description = description,
     query_date = as.character(query_date),
+    mapping_status = mapping_status,
     stringsAsFactors = FALSE
   )
   
@@ -153,11 +194,15 @@ add_to_cache <- function(protein_id, gene_symbol, source, description, query_dat
   .mapping_cache <<- rbind(current_cache, new_row)
   write_csv(.mapping_cache, cache_file)
   
-  message(sprintf("Cached: %s → %s (from %s)", protein_id, gene_symbol, source))
+  if (mapping_status == "success") {
+    message(sprintf("Cached: %s → %s (from %s)", protein_id, gene_symbol, source))
+  } else {
+    message(sprintf("Cached failed mapping: %s (status: %s)", protein_id, mapping_status))
+  }
 }
 
 # Main function: convert any ID to gene symbol with lazy loading
-convert_to_gene_symbol <- function(ids, cache_file = "data/cache/protein_to_gene_mappings.csv") {
+convert_to_gene_symbol <- function(ids, cache_file = "data/cache/protein_to_gene_mappings.csv", force_mapping = FALSE) {
   if (length(ids) == 0) return(character(0))
   
   message(sprintf("Converting %d IDs to gene symbols...", length(ids)))
@@ -189,12 +234,16 @@ convert_to_gene_symbol <- function(ids, cache_file = "data/cache/protein_to_gene
     # Step 1: Check cache first
     mapping_row <- mappings[mappings$protein_id == clean_id, ]
     if (nrow(mapping_row) > 0) {
-      results[i] <- mapping_row$gene_symbol[1]
-      cache_hits <- cache_hits + 1
-      next
+      # If force_mapping is FALSE and we have a cached result (success or failure), use it
+      if (!force_mapping) {
+        results[i] <- mapping_row$gene_symbol[1]
+        cache_hits <- cache_hits + 1
+        next
+      }
+      # If force_mapping is TRUE, we'll query the database again
     }
     
-    # Step 2: Not in cache - query appropriate database
+    # Step 2: Not in cache or force_mapping is TRUE - query appropriate database
     db_result <- NULL
     
     if (grepl("^[A-Z][0-9][A-Z0-9]{3}[0-9]|^[OPQ][0-9][A-Z0-9]{3}[0-9]", clean_id)) {
@@ -210,11 +259,12 @@ convert_to_gene_symbol <- function(ids, cache_file = "data/cache/protein_to_gene
       db_queries <- db_queries + 1
     }
     
-    # Step 3: If found, cache it and use it
+    # Step 3: Cache the result (success or failure) and use it
     if (!is.null(db_result)) {
       results[i] <- db_result$gene_symbol
       add_to_cache(clean_id, db_result$gene_symbol, db_result$source, 
-                  db_result$description, db_result$query_date, cache_file)
+                  db_result$description, db_result$query_date, 
+                  db_result$mapping_status, cache_file)
     }
     
     # Small delay to be nice to APIs
@@ -248,17 +298,17 @@ clean_protein_id <- function(id) {
 
 # Check if ID is already a gene symbol
 is_gene_symbol <- function(id) {
-  if (is.na(id) || id == "") return(FALSE)
+  # Exclude known protein ID patterns first
+  if (grepl("^[A-Z][0-9][A-Z0-9]{3}[0-9]|^[OPQ][0-9][A-Z0-9]{3}[0-9]", id)) {
+    return(FALSE)  # This is a UniProt accession
+  }
+  if (grepl("^ENSP[0-9]+", id)) {
+    return(FALSE)  # This is an Ensembl protein ID
+  }
   
-  # Gene symbols: 2-15 characters, start with letter, alphanumeric + underscore/dash
-  if (nchar(id) < 2 || nchar(id) > 15) return(FALSE)
-  if (!grepl("^[A-Za-z]", id)) return(FALSE)
-  if (!grepl("^[A-Za-z][A-Za-z0-9_-]*$", id)) return(FALSE)
-  
-  # Exclude known protein ID patterns and invalid patterns
-  if (grepl("^ENS|^[OPQ][0-9]|^[A-NR-Z][0-9][A-Z0-9]{3}[0-9]|INVALID", id)) return(FALSE)
-  
-  return(TRUE)
+  # Simple heuristic: gene symbols are usually 2-10 characters, start with a letter,
+  # contain only letters, numbers, and some special characters, but avoid UniProt patterns
+  grepl("^[A-Z][A-Z0-9-]{1,9}$", id)
 }
 
 # Function to get mapping statistics
@@ -337,4 +387,6 @@ message("Lazy-loading ID mapping loaded!")
 message("Usage: gene_symbols <- convert_to_gene_symbol(your_protein_ids)")
 message("Test with: test_simple_mapping()")
 message("Clear cache: clear_cache()")
-message("Note: First run will be slow (database queries), subsequent runs will be fast (cached)") 
+message("Note: First run will be slow (database queries), subsequent runs will be fast (cached)")
+
+# This script is designed to be sourced by other scripts, not run directly 

@@ -45,6 +45,21 @@ check_command() {
     fi
 }
 
+# Parse command line arguments
+FORCE_MAPPING=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --force-mapping)
+            FORCE_MAPPING="--force-mapping"
+            shift
+            ;;
+        *)
+            print_error "Unknown option: $1"
+            exit 1
+            ;;
+    esac
+done
+
 # Print header
 echo "==============================================================================="
 echo "                    BLOOD REVIEW DATA ANALYSIS"
@@ -107,11 +122,38 @@ echo "  • GPMDB (MS)"
 echo "  • PAXDB (Expression data)"
 echo ""
 
-if Rscript scripts/01_plasma_protein_analysis.R; then
-    print_success "Plasma protein analysis completed successfully!"
+if [ -n "$FORCE_MAPPING" ]; then
+    if Rscript scripts/01_plasma_protein_analysis.R "$FORCE_MAPPING"; then
+        print_success "Plasma protein analysis completed successfully!"
+    else
+        print_error "Plasma protein analysis failed!"
+        exit 1
+    fi
 else
-    print_error "Plasma protein analysis failed!"
-    exit 1
+    if Rscript scripts/01_plasma_protein_analysis.R; then
+        print_success "Plasma protein analysis completed successfully!"
+    else
+        print_error "Plasma protein analysis failed!"
+        exit 1
+    fi
+fi
+
+# Run the biomarker plasma analysis
+print_status "Running biomarker plasma analysis..."
+if [ -n "$FORCE_MAPPING" ]; then
+    if Rscript scripts/biomarker_plasma_analysis.R "$FORCE_MAPPING"; then
+        print_success "Biomarker plasma analysis completed successfully!"
+    else
+        print_error "Biomarker plasma analysis failed!"
+        exit 1
+    fi
+else
+    if Rscript scripts/biomarker_plasma_analysis.R; then
+        print_success "Biomarker plasma analysis completed successfully!"
+    else
+        print_error "Biomarker plasma analysis failed!"
+        exit 1
+    fi
 fi
 
 # Display results
@@ -122,9 +164,12 @@ echo "==========================================================================
 echo ""
 print_success "Generated files:"
 echo "  📊 Plots:"
-echo "     • plots/plasma_proteins_by_source.png"
-echo "     • plots/plasma_proteins_by_technology.png"
-echo "     • plots/plasma_proteins_main_databases.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_source.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_technology.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_main_databases.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_comprehensive.png"
+echo "     • outputs/plots/biomarker_plasma_analysis/expression_distribution_*.png"
+echo "     • outputs/plots/biomarker_plasma_analysis/combined_biomarker_distributions.png"
 echo ""
 echo "  📋 Data & Reports:"
 echo "     • outputs/plasma_protein_counts_summary.csv"
