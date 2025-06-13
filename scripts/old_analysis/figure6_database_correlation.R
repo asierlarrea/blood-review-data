@@ -144,8 +144,8 @@ read_database_files <- function() {
   
   # 1. PeptideAtlas - PLASMA
   message("  - Processing PeptideAtlas (Plasma)...")
-  if(file.exists(get_data_path("PeptideAtlas.csv"))) {
-    peptideatlas <- read.csv(get_data_path("PeptideAtlas.csv"), stringsAsFactors = FALSE)
+  if(file.exists(get_data_path("peptideatlas.csv"))) {
+    peptideatlas <- read.csv(get_data_path("peptideatlas.csv"), stringsAsFactors = FALSE)
     
     gene_symbols <- character(nrow(peptideatlas))
     concentrations <- numeric(nrow(peptideatlas))
@@ -199,14 +199,14 @@ read_database_files <- function() {
   
   # 2. GPMDB Plasma
   message("  - Processing GPMDB Plasma...")
-  if(file.exists(get_data_path("GPMDB_Plasma.csv"))) {
-    gpmdb_plasma <- read.csv(get_data_path("GPMDB_Plasma.csv"), stringsAsFactors = FALSE)
+  if(file.exists(get_data_path("gpmdb_plasma.csv"))) {
+    gpmdb_plasma <- read.csv(get_data_path("gpmdb_plasma.csv"), stringsAsFactors = FALSE)
     
     # Find header line
-    header_line <- which(grepl("^#,accession,total", readLines(get_data_path("GPMDB_Plasma.csv"))))
+    header_line <- which(grepl("^#,accession,total", readLines(get_data_path("gpmdb_plasma.csv"))))
     if(length(header_line) > 0) {
       # Skip to the line after the header
-      gpmdb_plasma <- read.csv(get_data_path("GPMDB_Plasma.csv"), skip = header_line, stringsAsFactors = FALSE, header = FALSE)
+      gpmdb_plasma <- read.csv(get_data_path("gpmdb_plasma.csv"), skip = header_line, stringsAsFactors = FALSE, header = FALSE)
       
       # Set column names manually
       colnames(gpmdb_plasma) <- c("rank", "accession", "total", "log_e", "EC", "description")
@@ -247,7 +247,7 @@ read_database_files <- function() {
   
   # 3. PaxDB Plasma
   message("  - Processing PaxDB Plasma...")
-  paxdb_files <- c("PaxDB_plasma.csv", "PaxDB_Plasma.csv")
+  paxdb_files <- c("paxdb_plasma.csv")
   for(file in paxdb_files) {
     if(file.exists(file)) {
       message(paste("    Processing", file))
@@ -294,7 +294,7 @@ read_database_files <- function() {
   
   # 4. HPA files - PLASMA
   message("  - Processing HPA files (Plasma)...")
-  hpa_files <- list.files(pattern = "^HPA_.*\\.csv$")
+  hpa_files <- list.files(pattern = "^hpa_.*\\.csv$")
   for(file in hpa_files) {
     if(file.exists(file)) {
       message(paste("    Processing", file))
@@ -321,10 +321,10 @@ read_database_files <- function() {
           if(!is.na(gene_name) && gene_name != "" && !grepl("[;,]", gene_name) &&
              !is.na(conc_str) && conc_str != "") {
             
-            # Clean concentration string and extract numeric
+            # Clean concentration string and extract numeric (handle scientific notation)
             tryCatch({
               clean_conc_str <- iconv(conc_str, to = "UTF-8", sub = "")
-              conc_numeric <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", clean_conc_str)))
+              conc_numeric <- suppressWarnings(as.numeric(clean_conc_str))
               
               if(!is.na(conc_numeric) && conc_numeric > 0) {
                 valid_genes <- c(valid_genes, toupper(trimws(gene_name)))

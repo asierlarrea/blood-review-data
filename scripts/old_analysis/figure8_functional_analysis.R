@@ -13,23 +13,12 @@ if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
-# Function to install packages if not available
-install_if_missing <- function(packages) {
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE)
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        stop(paste("Failed to install package:", pkg))
-      }
-    }
-  }
-}
+# Load required packages
+required_packages <- c("ggplot2", "dplyr", "tidyr", "pheatmap", "RColorBrewer", 
+                      "viridis", "scales", "gridExtra", "stringr")
+load_packages(required_packages)
 
-# Install required packages
-required_packages <- c("ggplot2", "dplyr", "tidyr", "wordcloud", "RColorBrewer", 
-                      "treemap", "scales", "gridExtra", "stringr", "ggalluvial")
-install_if_missing(required_packages)
+
 
 # Create output directory
 output_dir <- "outputs/plots/05_Functional_Analysis"
@@ -162,7 +151,7 @@ read_protein_data <- function() {
   
   # 1. PeptideAtlas
   message("  - Reading PeptideAtlas...")
-  peptideatlas <- read.csv(get_data_path("PeptideAtlas.csv"), stringsAsFactors = FALSE)
+  peptideatlas <- read.csv(get_data_path("peptideatlas.csv"), stringsAsFactors = FALSE)
   
   # Map UniProt accessions to gene symbols
   gene_symbols <- map_to_gene_symbol(peptideatlas$biosequence_accession, 
@@ -180,9 +169,9 @@ read_protein_data <- function() {
   
   # 2. PaxDb files
   message("  - Reading PaxDb files...")
-  paxdb_files <- list.files(pattern = "^PaxDb_.*\\.csv$")
+  paxdb_files <- list.files(pattern = "^paxdb_.*\\.csv$")
   for(file in paxdb_files) {
-    cell_type <- gsub("PaxDb_|\\.csv", "", file)
+    cell_type <- gsub("paxdb_|\\.csv", "", file)
     message(paste("    Reading", file, "for", cell_type))
     
     lines <- readLines(file)
@@ -230,9 +219,9 @@ read_protein_data <- function() {
   
   # 3. HPA files
   message("  - Reading HPA files...")
-  hpa_files <- list.files(pattern = "^HPA_.*\\.csv$")
+  hpa_files <- list.files(pattern = "^hpa_.*\\.csv$")
   for(file in hpa_files) {
-    technique <- gsub("HPA_|\\.csv", "", file)
+    technique <- gsub("hpa_|\\.csv", "", file)
     message(paste("    Reading", file, "for", technique))
     
     hpa_data <- read.csv(file, stringsAsFactors = FALSE)
@@ -260,7 +249,7 @@ read_protein_data <- function() {
       # Convert to UTF-8 and handle invalid characters
       conc_strings <- iconv(conc_strings, to = "UTF-8", sub = "")
       # Extract numeric values
-      concentration_values <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", conc_strings)))
+      concentration_values <- suppressWarnings(as.numeric(conc_strings))
       
       # Remove rows where concentration conversion failed
       numeric_valid <- !is.na(concentration_values) & concentration_values > 0
@@ -296,9 +285,9 @@ read_protein_data <- function() {
   
   # 4. GPMDB files
   message("  - Reading GPMDB files...")
-  gpmdb_files <- list.files(pattern = "^GPMDB_.*\\.csv$")
+  gpmdb_files <- list.files(pattern = "^gpmdb_.*\\.csv$")
   for(file in gpmdb_files) {
-    cell_type <- gsub("GPMDB_|\\.csv", "", file)
+    cell_type <- gsub("gpmdb_|\\.csv", "", file)
     message(paste("    Reading", file, "for", cell_type))
     
     lines <- readLines(file)

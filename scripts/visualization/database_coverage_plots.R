@@ -47,8 +47,8 @@ read_database_files <- function() {
   databases <- list()
   
   # 1. PeptideAtlas
-  if(file.exists(get_data_path("PeptideAtlas.csv"))) {
-    peptideatlas <- read.csv(get_data_path("PeptideAtlas.csv"), stringsAsFactors = FALSE)
+  if(file.exists(get_data_path("peptideatlas.csv"))) {
+    peptideatlas <- read.csv(get_data_path("peptideatlas.csv"), stringsAsFactors = FALSE)
     peptideatlas_clean <- peptideatlas %>%
       filter(!is.na(norm_PSMs_per_100K) & norm_PSMs_per_100K > 0) %>%
       mutate(
@@ -62,10 +62,10 @@ read_database_files <- function() {
   }
   
   # 2. HPA MS data
-  if(file.exists(get_data_path("HPA_MS.csv"))) {
-    hpa_ms <- read.csv(get_data_path("HPA_MS.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  if(file.exists(get_data_path("hpa_ms.csv"))) {
+    hpa_ms <- read.csv(get_data_path("hpa_ms.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
     # Extract concentration values and convert to numeric (handle special characters)
-    hpa_ms$Concentration_Clean <- gsub("[^0-9.]", "", hpa_ms$Concentration)
+    hpa_ms$Concentration_Clean <- as.numeric(hpa_ms$Concentration)
     hpa_ms$Concentration_Value <- suppressWarnings(as.numeric(hpa_ms$Concentration_Clean))
     hpa_ms_clean <- hpa_ms %>%
       filter(!is.na(Concentration_Value) & Concentration_Value > 0) %>%
@@ -78,24 +78,41 @@ read_database_files <- function() {
     message(paste("HPA MS:", nrow(hpa_ms_clean), "proteins"))
   }
   
-  # 3. HPA Immunoassay data
-  if(file.exists(get_data_path("HPA_Immunoassay.csv"))) {
-    hpa_immuno <- read.csv(get_data_path("HPA_Immunoassay.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
-    # Create abundance values for immunoassay data
-    hpa_immuno_clean <- hpa_immuno %>%
-      filter(!is.na(Gene) & Gene != "") %>%
+  # 3. HPA Immunoassay data (combine plasma and serum)
+  hpa_immuno_combined <- data.frame()
+  
+  # Read plasma data
+  if(file.exists(get_data_path("hpa_immunoassay_plasma.csv"))) {
+    hpa_plasma <- read.csv(get_data_path("hpa_immunoassay_plasma.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+    hpa_immuno_combined <- rbind(hpa_immuno_combined, hpa_plasma)
+  }
+  
+  # Read serum data
+  if(file.exists(get_data_path("hpa_immunoassay_serum.csv"))) {
+    hpa_serum <- read.csv(get_data_path("hpa_immunoassay_serum.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+    hpa_immuno_combined <- rbind(hpa_immuno_combined, hpa_serum)
+  }
+  
+  if(nrow(hpa_immuno_combined) > 0) {
+    # Create abundance values for immunoassay data using concentration values
+    hpa_immuno_clean <- hpa_immuno_combined %>%
+      filter(!is.na(Gene) & Gene != "" & !is.na(Concentration)) %>%
       mutate(
         Database = "HPA (Immunoassay)",
-        Abundance = row_number(), # Rank-based abundance
+        Abundance = as.numeric(Concentration), # Use actual concentration values
         Source = "Immunoassay"
-      )
+      ) %>%
+      filter(!is.na(Abundance) & Abundance > 0)
+    
     databases$HPA_Immunoassay <- hpa_immuno_clean
-    message(paste("HPA Immunoassay:", nrow(hpa_immuno_clean), "proteins"))
+    message(paste("HPA Immunoassay:", nrow(hpa_immuno_clean), "proteins (", 
+                 sum(hpa_immuno_clean$Sample_Type == "Plasma", na.rm = TRUE), "plasma,",
+                 sum(hpa_immuno_clean$Sample_Type == "Serum", na.rm = TRUE), "serum)"))
   }
   
   # 4. HPA PEA data
-  if(file.exists(get_data_path("HPA_PEA.csv"))) {
-    hpa_pea <- read.csv(get_data_path("HPA_PEA.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  if(file.exists(get_data_path("hpa_pea.csv"))) {
+    hpa_pea <- read.csv(get_data_path("hpa_pea.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
     hpa_pea_clean <- hpa_pea %>%
       filter(!is.na(Gene) & Gene != "") %>%
       mutate(
@@ -108,8 +125,8 @@ read_database_files <- function() {
   }
   
   # 5. PaxDB Plasma
-  if(file.exists(get_data_path("PaxDb_Plasma.csv"))) {
-    paxdb <- read.csv(get_data_path("PaxDb_Plasma.csv"), stringsAsFactors = FALSE)
+  if(file.exists(get_data_path("paxdb_plasma.csv"))) {
+    paxdb <- read.csv(get_data_path("paxdb_plasma.csv"), stringsAsFactors = FALSE)
     paxdb_clean <- paxdb %>%
       filter(!is.na(abundance) & abundance > 0) %>%
       mutate(
@@ -122,14 +139,14 @@ read_database_files <- function() {
   }
   
   # 6. GPMDB Plasma
-  if(file.exists(get_data_path("GPMDB_Plasma.csv"))) {
+  if(file.exists(get_data_path("gpmdb_plasma.csv"))) {
     tryCatch({
       # Read GPMDB file properly (skip header lines)
-      gpmdb_lines <- readLines(get_data_path("GPMDB_Plasma.csv"), encoding = "UTF-8")
+      gpmdb_lines <- readLines(get_data_path("gpmdb_plasma.csv"), encoding = "UTF-8")
       header_line <- which(grepl("^#,accession,total", gpmdb_lines))
       
       if(length(header_line) > 0) {
-        gpmdb <- read.csv(get_data_path("GPMDB_Plasma.csv"), skip = header_line, header = FALSE, 
+        gpmdb <- read.csv(get_data_path("gpmdb_plasma.csv"), skip = header_line, header = FALSE, 
                          stringsAsFactors = FALSE, fileEncoding = "UTF-8")
         colnames(gpmdb) <- c("rank", "accession", "total", "log_e", "EC", "description")
         

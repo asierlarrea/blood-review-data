@@ -42,8 +42,8 @@ p1 <- ggplot(plot_data, aes(x = biomarker, y = log_conc, fill = source)) +
   geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
   scale_y_continuous(name = "Concentration (log10 scale)") +
   scale_x_discrete(name = "Biomarker") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(
     title = "Biomarker Concentrations Across Data Sources",
     subtitle = "Demonstration plot showing relative concentrations",

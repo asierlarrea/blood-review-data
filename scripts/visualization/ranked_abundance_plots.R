@@ -9,27 +9,9 @@ ensure_output_dirs()
 # Creates waterfall-style plots showing protein concentrations ranked from highest to lowest
 # with biomarker genes highlighted in red
 
-# Set CRAN mirror
-if(is.null(getOption("repos")) || getOption("repos")["CRAN"] == "@CRAN@") {
-  options(repos = c(CRAN = "https://cloud.r-project.org/"))
-}
-
-# Function to install packages if not available
-install_if_missing <- function(packages) {
-  for(pkg in packages) {
-    if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-      message(paste("Installing", pkg, "..."))
-      install.packages(pkg, dependencies = TRUE)
-      if(!require(pkg, character.only = TRUE, quietly = TRUE)) {
-        stop(paste("Failed to install package:", pkg))
-      }
-    }
-  }
-}
-
-# Install required packages
+# Load required packages
 required_packages <- c("ggplot2", "dplyr", "scales", "gridExtra", "viridis")
-install_if_missing(required_packages)
+load_packages(required_packages)
 
 # Create output directory
 output_dir <- "outputs/plots/05_Ranked_Abundance"
@@ -120,11 +102,11 @@ create_all_ranked_plots <- function() {
   message("Loading plasma expression data...")
   
   # Load plasma data from previous analysis
-  if(!file.exists(get_data_path("outputs/plots/04_Biomarker_Analysis/plasma_expression_data.csv")))) {
+  if(!file.exists(get_data_path("outputs/plots/04_Biomarker_Analysis/plasma_expression_data.csv"))) {
     stop("Plasma expression data not found. Please run biomarker_plasma_analysis.R first.")
   }
   
-  plasma_data <- read.csv(get_data_path("outputs/plots/04_Biomarker_Analysis/plasma_expression_data.csv")), 
+  plasma_data <- read.csv(get_data_path("outputs/plots/04_Biomarker_Analysis/plasma_expression_data.csv"), 
                          stringsAsFactors = FALSE)
   
   # Load biomarker genes

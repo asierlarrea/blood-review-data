@@ -43,7 +43,7 @@ extract_intensity_columns <- function(df, exclude_cols) {
 cat("Loading and processing datasets...\n")
 
 # Load HPA PEA data
-hpa_pea <- read.csv(get_data_path("HPA_PEA.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+hpa_pea <- read.csv(get_data_path("hpa_pea.csv"), stringsAsFactors = FALSE, fileEncoding = "UTF-8")
 cat("HPA PEA loaded:", nrow(hpa_pea), "proteins\n")
 
 # Clean up gene names in HPA PEA

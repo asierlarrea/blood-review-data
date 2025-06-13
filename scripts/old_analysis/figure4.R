@@ -9,25 +9,17 @@ ensure_output_dirs()
 # Description: Creates an UpSet plot comparing protein overlaps across cell types
 # ============================================================================
 
-# Set CRAN mirror for package installation
-if (length(getOption("repos")) == 0 || getOption("repos")["CRAN"] == "@CRAN@") {
   options(repos = c(CRAN = "https://cloud.r-project.org/"))
 }
 
 # Load required libraries
 if (!require(UpSetR, quietly = TRUE)) {
-  cat("Installing UpSetR package...\n")
-  install.packages("UpSetR", dependencies = TRUE)
   library(UpSetR)
 }
 if (!require(ggplot2, quietly = TRUE)) {
-  cat("Installing ggplot2 package...\n")
-  install.packages("ggplot2", dependencies = TRUE)
   library(ggplot2)
 }
 if (!require(grid, quietly = TRUE)) {
-  cat("Installing grid package...\n")
-  install.packages("grid", dependencies = TRUE)
   library(grid)
 }
 
