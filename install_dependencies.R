@@ -70,6 +70,7 @@ viz_packages <- c(
   "grid",         # Grid graphics
   "RColorBrewer", # Color palettes
   "UpSetR",       # UpSet plots
+  "ggupset",      # UpSet plots
   "VennDiagram",  # Venn diagrams
   "pheatmap",     # Heatmaps
   "corrplot"      # Correlation plots

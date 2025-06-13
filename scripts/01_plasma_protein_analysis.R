@@ -16,7 +16,7 @@ source("scripts/utilities/load_packages.R")
 ensure_output_dirs()
 
 # Load required packages
-required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "ggthemes", "patchwork")
+required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "ggthemes", "patchwork", "UpSetR", "ggupset")
 load_packages(required_packages)
 
 # Parse command line arguments (simple approach)
@@ -353,14 +353,126 @@ p3 <- ggplot(violin_data, aes(x = reorder(Database, log_value, FUN = median),
 ggsave(file.path(plot_dir, "plasma_proteins_abundance_distributions.png"), p3, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 4. Create a comprehensive combined plot with all three analyses
+# 4. Create UpSet plot showing gene overlaps between databases
+message("Creating UpSet plot for gene overlaps...")
+
+# Create gene presence/absence matrix
+all_unique_genes <- unique(c(
+  peptideatlas$gene,
+  hpa_ms$gene,
+  hpa_pea$gene,
+  hpa_imm$gene,
+  gpmdb$gene,
+  paxdb$gene
+))
+
+# Remove any NA genes
+all_unique_genes <- all_unique_genes[!is.na(all_unique_genes) & all_unique_genes != ""]
+
+# Create binary matrix
+upset_matrix <- data.frame(
+  Gene = all_unique_genes,
+  PeptideAtlas = as.integer(all_unique_genes %in% peptideatlas$gene),
+  HPA_MS = as.integer(all_unique_genes %in% hpa_ms$gene),
+  HPA_PEA = as.integer(all_unique_genes %in% hpa_pea$gene),
+  HPA_Immunoassay = as.integer(all_unique_genes %in% hpa_imm$gene),
+  GPMDB = as.integer(all_unique_genes %in% gpmdb$gene),
+  PAXDB = as.integer(all_unique_genes %in% paxdb$gene),
+  stringsAsFactors = FALSE
+)
+
+# Save the classic UpSet plot as PNG using UpSetR
+upset_file <- file.path(plot_dir, "gene_overlaps_upset.png")
+png(upset_file, width = 12, height = 8, units = "in", res = 300)
+
+UpSetR::upset(
+  upset_matrix,
+  sets = c("PeptideAtlas", "HPA_MS", "HPA_PEA", "HPA_Immunoassay", "GPMDB", "PAXDB"),
+  order.by = "freq",
+  nsets = 6,
+  nintersects = 25,
+  point.size = 3.5,
+  line.size = 1.2,
+  mainbar.y.label = "Gene Intersection Size",
+  sets.x.label = "Genes per Database",
+  text.scale = c(1.3, 1.3, 1.2, 1.2, 1.4, 1.2),  # Increase text sizes
+  mb.ratio = c(0.6, 0.4),
+  keep.order = TRUE,
+  main.bar.color = "#2E86AB",
+  sets.bar.color = c("#2E86AB", "#2E86AB", "#A23B72", "#F18F01", "#2E86AB", "#2E86AB"),  # Match technology colors
+  matrix.color = "gray30",
+  shade.color = "gray90",
+  set_size.show = TRUE,
+  set_size.scale_max = max(colSums(upset_matrix[,-1])) * 1.1
+)
+
+dev.off()
+
+# Create a ggplot2-compatible UpSet plot using ggupset
+# Prepare data in the format ggupset expects (long format with list columns)
+upset_data_long <- data.frame()
+
+# Add genes from each database
+databases <- list(
+  "PeptideAtlas" = peptideatlas$gene[!is.na(peptideatlas$gene)],
+  "HPA MS" = hpa_ms$gene[!is.na(hpa_ms$gene)],
+  "HPA PEA" = hpa_pea$gene[!is.na(hpa_pea$gene)],
+  "HPA Immunoassay" = hpa_imm$gene[!is.na(hpa_imm$gene)],
+  "GPMDB" = gpmdb$gene[!is.na(gpmdb$gene)],
+  "PAXDB" = paxdb$gene[!is.na(paxdb$gene)]
+)
+
+# Create a data frame where each row is a gene and columns indicate which databases contain it
+all_genes_upset <- unique(unlist(databases))
+upset_df <- data.frame(gene = all_genes_upset, stringsAsFactors = FALSE)
+
+for(db_name in names(databases)) {
+  upset_df[[db_name]] <- upset_df$gene %in% databases[[db_name]]
+}
+
+# Convert to the format ggupset needs (list column)
+upset_df_tidy <- upset_df %>%
+  pivot_longer(cols = -gene, names_to = "database", values_to = "present") %>%
+  filter(present) %>%
+  group_by(gene) %>%
+  summarise(databases = list(database), .groups = "drop")
+
+# Create UpSet plot using ggupset
+p4 <- upset_df_tidy %>%
+  ggplot(aes(x = databases)) +
+  geom_bar(fill = "#2E86AB", alpha = 0.8) +
+  geom_text(stat = "count", aes(label = after_stat(count)), 
+            vjust = -0.5, size = 3) +
+  scale_x_upset(order_by = "freq", n_intersections = 15) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 11, hjust = 0.5),
+    axis.title = element_text(size = 11),
+    axis.text.x = element_text(size = 9, angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "gray90", fill = NA, linewidth = 0.5)
+  ) +
+  labs(
+    title = "Gene Database Intersections",
+    subtitle = "UpSet plot showing overlap patterns between databases",
+    x = "Database Combinations",
+    y = "Number of Genes"
+  )
+
+ggsave(file.path(plot_dir, "gene_overlaps_upset_ggplot.png"), p4, 
+       width = 10, height = 6, dpi = 300, bg = "white")
+
+# 5. Create a comprehensive combined plot with all four analyses
 # Layout: Gene counts by source (top left), Gene counts by technology (top right), 
-#         Abundance distributions (bottom, spanning full width)
-combined_plot <- (p1 | p2) / p3 + 
+#         Abundance distributions (bottom left), Gene intersections (bottom right)
+combined_plot <- (p1 | p2) / (p3 | p4) + 
   plot_layout(heights = c(1, 1)) +
   plot_annotation(
     title = "Comprehensive Plasma Protein Quantification Analysis",
-    subtitle = "Gene counts by source and technology (top) and abundance distributions (bottom)",
+    subtitle = "Gene counts and technology classification (top), abundance distributions and intersections (bottom)",
     theme = theme(
       plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 14, hjust = 0.5)
@@ -368,7 +480,7 @@ combined_plot <- (p1 | p2) / p3 +
   )
 
 ggsave(file.path(plot_dir, "plasma_proteins_comprehensive.png"), combined_plot, 
-       width = 16, height = 12, dpi = 300, bg = "white")
+       width = 20, height = 12, dpi = 300, bg = "white")
 
 message("Plots saved to:", plot_dir)
 
@@ -401,6 +513,8 @@ cat("Generated files:\n")
 cat("• Individual source plot: plasma_proteins_by_source.png\n")
 cat("• Technology classification plot: plasma_proteins_by_technology.png\n")
 cat("• Abundance distribution plot: plasma_proteins_abundance_distributions.png\n")
+cat("• Gene overlap UpSet plot (classic): gene_overlaps_upset.png\n")
+cat("• Gene overlap UpSet plot (ggplot2): gene_overlaps_upset_ggplot.png\n")
 cat("• Comprehensive combined plot: plasma_proteins_comprehensive.png\n")
 cat("• Data: outputs/plasma_protein_counts_summary.csv\n")
 cat("• Report: outputs/analysis_summary.txt\n")
