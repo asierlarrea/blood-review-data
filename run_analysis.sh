@@ -88,6 +88,15 @@ required_files=(
     "data/raw/gpmdb/gpmdb_serum.csv"
     "data/raw/paxdb/paxdb_serum.csv"
     "data/raw/hpa/hpa_immunoassay_serum.csv"
+    "data/raw/paxdb/paxdb_b_cell.csv"
+    "data/raw/paxdb/paxdb_cd4.csv"
+    "data/raw/paxdb/paxdb_cd8.csv"
+    "data/raw/paxdb/paxdb_monocyte.csv"
+    "data/raw/paxdb/paxdb_nk.csv"
+    "data/raw/proteomexchange/pxd004352.csv"
+    "data/raw/proteomexchange/pxd025174.csv"
+    "data/raw/proteomexchange/pxd040957_cd8.csv"
+    "data/raw/proteomexchange/pxd040957_macrophages.csv"
 )
 
 print_status "Verifying required data files..."
@@ -208,6 +217,32 @@ else
     fi
 fi
 
+# Run the cell type analysis
+print_status "Running cell type protein expression analysis..."
+echo ""
+echo "Analyzing protein expression across blood cell types:"
+echo "  • PAXDB: B cells, CD4/CD8 T cells, NK cells, monocytes, plasma, serum"
+echo "  • ProteomeXchange pxd004352: 21 immune cell subtypes"
+echo "  • ProteomeXchange pxd025174: CD4/CD8 T cell copy numbers"
+echo "  • ProteomeXchange pxd040957: CD8 T cells and macrophages"
+echo ""
+
+if [ -n "$FORCE_MAPPING" ]; then
+    if Rscript scripts/05_celltype_analysis.R "$FORCE_MAPPING"; then
+        print_success "Cell type analysis completed successfully!"
+    else
+        print_error "Cell type analysis failed!"
+        exit 1
+    fi
+else
+    if Rscript scripts/05_celltype_analysis.R; then
+        print_success "Cell type analysis completed successfully!"
+    else
+        print_error "Cell type analysis failed!"
+        exit 1
+    fi
+fi
+
 # Display results
 echo ""
 echo "==============================================================================="
@@ -231,12 +266,21 @@ echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_counts_comb
 echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_overlap_upset.png"
 echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_quantification_distributions.png"
 echo "     • outputs/plots/04_serum_protein_analysis/serum_protein_comprehensive_summary.png"
+echo "     • outputs/plots/05_celltype_analysis/celltype_gene_counts.png"
+echo "     • outputs/plots/05_celltype_analysis/data_source_coverage.png"
+echo "     • outputs/plots/05_celltype_analysis/celltype_source_matrix.png"
+echo "     • outputs/plots/05_celltype_analysis/intensity_distributions.png"
+echo "     • outputs/plots/05_celltype_analysis/technology_comparison.png"
+echo "     • outputs/plots/05_celltype_analysis/comprehensive_summary.png"
 echo ""
 echo "  📋 Data & Reports:"
 echo "     • outputs/plasma_protein_counts_summary.csv"
 echo "     • outputs/03_biomarker_plasma_analysis/biomarker_detection_summary.csv"
 echo "     • outputs/serum_protein/serum_protein_counts_summary.csv"
 echo "     • outputs/serum_protein/serum_protein_overlap_statistics.csv"
+echo "     • outputs/celltype_analysis/celltype_protein_data.csv"
+echo "     • outputs/celltype_analysis/celltype_overall_summary.csv"
+echo "     • outputs/celltype_analysis/celltype_summary_by_source.csv"
 echo ""
 echo "  📖 Documentation:"
 echo "     • scripts/plasma_protein_analysis_summary.md"
@@ -259,5 +303,6 @@ fi
 
 print_success "Analysis pipeline completed successfully!"
 echo ""
-echo "View the generated plots and reports for detailed insights into"
-echo "plasma protein quantification across different data sources and technologies." 
+echo "View the generated plots and reports for detailed insights into:"
+echo "• Plasma and serum protein quantification across different data sources and technologies"
+echo "• Blood cell type protein expression profiles (26 cell types, 14,274 unique genes)" 
