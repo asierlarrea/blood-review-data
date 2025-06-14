@@ -34,37 +34,57 @@ biomarker_file <- "data/metadata/biomarkers_list.tsv"
 biomarkers <- read_tsv(biomarker_file, show_col_types = FALSE)
 biomarker_genes <- unique(biomarkers$To)
 
-# Helper function to create distribution and violin plots for each database
-create_database_plots <- function(data, gene_col, intensity_col, database_name, biomarker_genes) {
-  # Filter out NA and infinite values
-  plot_data <- data %>%
-    filter(!is.na(.data[[gene_col]]), !is.na(.data[[intensity_col]])) %>%
+# Function to calculate z-score normalization within each database
+calculate_zscore_normalization_biomarker <- function(data, intensity_col) {
+  data %>%
     mutate(
       log_intensity = log10(.data[[intensity_col]] + 1),
+      z_score = (log_intensity - mean(log_intensity, na.rm = TRUE)) / sd(log_intensity, na.rm = TRUE)
+    )
+}
+
+# Helper function to create distribution and violin plots for each database (with z-score normalization)
+create_database_plots <- function(data, gene_col, intensity_col, database_name, biomarker_genes) {
+  # Filter out NA and infinite values and apply z-score normalization
+  plot_data <- data %>%
+    filter(!is.na(.data[[gene_col]]), !is.na(.data[[intensity_col]])) %>%
+    calculate_zscore_normalization_biomarker(intensity_col) %>%
+    mutate(
       is_biomarker = .data[[gene_col]] %in% biomarker_genes
     )
   
-  # Calculate statistics
-  stats <- plot_data %>%
+  # Calculate statistics for both log and z-score values
+  stats_log <- plot_data %>%
     group_by(is_biomarker) %>%
     summarise(
       n = n(),
       median = median(log_intensity, na.rm = TRUE),
       q1 = quantile(log_intensity, 0.25, na.rm = TRUE),
-      q3 = quantile(log_intensity, 0.75, na.rm = TRUE)
+      q3 = quantile(log_intensity, 0.75, na.rm = TRUE),
+      .groups = 'drop'
+    )
+  
+  stats_zscore <- plot_data %>%
+    group_by(is_biomarker) %>%
+    summarise(
+      n = n(),
+      median = median(z_score, na.rm = TRUE),
+      q1 = quantile(z_score, 0.25, na.rm = TRUE),
+      q3 = quantile(z_score, 0.75, na.rm = TRUE),
+      .groups = 'drop'
     )
   
   biomarker_count <- sum(plot_data$is_biomarker)
   total_count <- nrow(plot_data)
   percentage <- round(biomarker_count / length(biomarker_genes) * 100, 1)
   
-  # Distribution plot
+  # Distribution plot (log-transformed)
   dist_plot <- ggplot(plot_data) +
     geom_density(aes(x = log_intensity, fill = is_biomarker), alpha = 0.5) +
     scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
                      labels = c("All proteins", "Biomarkers")) +
     labs(
-      title = paste(database_name, "Protein Distribution"),
+      title = paste(database_name, "Protein Distribution (Log10)"),
       subtitle = sprintf("Detected biomarkers: %d (%.1f%%)", biomarker_count, percentage),
       x = "log10(Intensity + 1)",
       y = "Density",
@@ -81,20 +101,43 @@ create_database_plots <- function(data, gene_col, intensity_col, database_name, 
       legend.text = element_text(size = 9)
     )
   
-  # Violin plot
+  # Z-score distribution plot
+  dist_plot_zscore <- ggplot(plot_data) +
+    geom_density(aes(x = z_score, fill = is_biomarker), alpha = 0.5) +
+    scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
+                     labels = c("All proteins", "Biomarkers")) +
+    labs(
+      title = paste(database_name, "Protein Distribution (Z-Score)"),
+      subtitle = sprintf("Z-score normalized for better comparison | Biomarkers: %d (%.1f%%)", biomarker_count, percentage),
+      x = "Z-Score (standardized intensity)",
+      y = "Density",
+      fill = "Protein Type"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),
+      plot.subtitle = element_text(size = 10),
+      axis.title = element_text(size = 10),
+      axis.text = element_text(size = 9),
+      legend.position = "bottom",
+      legend.title = element_text(size = 10),
+      legend.text = element_text(size = 9)
+    )
+  
+  # Violin plot (log-transformed)
   violin_plot <- ggplot(plot_data, aes(x = is_biomarker, y = log_intensity, fill = is_biomarker)) +
     geom_violin(alpha = 0.5) +
     geom_boxplot(width = 0.2, alpha = 0.8) +
     scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
                      labels = c("All proteins", "Biomarkers")) +
     scale_x_discrete(labels = c("FALSE" = "All proteins", "TRUE" = "Biomarkers")) +
-      labs(
-    title = paste(database_name, "Abundance Distribution"),
-    subtitle = sprintf("Median (All): %.2f, Median (Bio): %.2f", 
-                      stats$median[1], stats$median[2]),
-    x = "",
-    y = "log10(Intensity + 1)"
-  ) +
+    labs(
+      title = paste(database_name, "Abundance Distribution (Log10)"),
+      subtitle = sprintf("Median (All): %.2f, Median (Bio): %.2f", 
+                        stats_log$median[1], stats_log$median[2]),
+      x = "",
+      y = "log10(Intensity + 1)"
+    ) +
     theme_minimal() +
     theme(
       plot.title = element_text(size = 12, face = "bold"),
@@ -104,7 +147,35 @@ create_database_plots <- function(data, gene_col, intensity_col, database_name, 
       legend.position = "none"
     )
   
-  return(list(distribution = dist_plot, violin = violin_plot))
+  # Z-score violin plot
+  violin_plot_zscore <- ggplot(plot_data, aes(x = is_biomarker, y = z_score, fill = is_biomarker)) +
+    geom_violin(alpha = 0.5) +
+    geom_boxplot(width = 0.2, alpha = 0.8) +
+    scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
+                     labels = c("All proteins", "Biomarkers")) +
+    scale_x_discrete(labels = c("FALSE" = "All proteins", "TRUE" = "Biomarkers")) +
+    labs(
+      title = paste(database_name, "Abundance Distribution (Z-Score)"),
+      subtitle = sprintf("Z-score normalized | Median (All): %.2f, Median (Bio): %.2f", 
+                        stats_zscore$median[1], stats_zscore$median[2]),
+      x = "",
+      y = "Z-Score (standardized intensity)"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),
+      plot.subtitle = element_text(size = 10),
+      axis.title = element_text(size = 10),
+      axis.text = element_text(size = 9),
+      legend.position = "none"
+    )
+  
+  return(list(
+    distribution = dist_plot, 
+    violin = violin_plot,
+    distribution_zscore = dist_plot_zscore,
+    violin_zscore = violin_plot_zscore
+  ))
 }
 
 # Process each database
@@ -195,13 +266,13 @@ paxdb_biomarkers <- unique(paxdb$gene[paxdb$gene %in% biomarker_genes])
 # Create comprehensive plots
 message("[Biomarker Analysis] Creating comprehensive plots...")
 
-# Distribution plots combined
+# Log-transformed distribution plots combined
 distribution_combined <- (peptideatlas_plots$distribution + hpa_ms_plots$distribution) /
   (hpa_pea_plots$distribution + hpa_imm_plots$distribution) /
   (gpmdb_plots$distribution + paxdb_plots$distribution) +
   plot_annotation(
-    title = "Protein Abundance Distribution Across Databases",
-    subtitle = "Comparing all proteins vs. biomarkers",
+    title = "Protein Abundance Distribution Across Databases (Log10-transformed)",
+    subtitle = "Comparing all proteins vs. biomarkers - Log10 scale",
     tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
     theme = theme(
       plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
@@ -217,13 +288,35 @@ ggsave(
   dpi = 300
 )
 
-# Violin plots combined
+# Z-score normalized distribution plots combined
+distribution_combined_zscore <- (peptideatlas_plots$distribution_zscore + hpa_ms_plots$distribution_zscore) /
+  (hpa_pea_plots$distribution_zscore + hpa_imm_plots$distribution_zscore) /
+  (gpmdb_plots$distribution_zscore + paxdb_plots$distribution_zscore) +
+  plot_annotation(
+    title = "Protein Abundance Distribution Across Databases (Z-Score Normalized)",
+    subtitle = "Comparing all proteins vs. biomarkers - Z-score normalized for better cross-source comparison",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
+    theme = theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, hjust = 0.5)
+    )
+  )
+
+ggsave(
+  file.path(output_dir, "distributions_by_database_zscore.png"),
+  distribution_combined_zscore,
+  width = 15,
+  height = 20,
+  dpi = 300
+)
+
+# Log-transformed violin plots combined
 violin_combined <- (peptideatlas_plots$violin + hpa_ms_plots$violin) /
   (hpa_pea_plots$violin + hpa_imm_plots$violin) /
   (gpmdb_plots$violin + paxdb_plots$violin) +
   plot_annotation(
-    title = "Protein Abundance Distribution Across Databases",
-    subtitle = "Comparing all proteins vs. biomarkers",
+    title = "Protein Abundance Distribution Across Databases (Log10-transformed)",
+    subtitle = "Comparing all proteins vs. biomarkers - Log10 scale",
     tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
     theme = theme(
       plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
@@ -234,6 +327,28 @@ violin_combined <- (peptideatlas_plots$violin + hpa_ms_plots$violin) /
 ggsave(
   file.path(output_dir, "abundance_distributions_by_database.png"),
   violin_combined,
+  width = 15,
+  height = 20,
+  dpi = 300
+)
+
+# Z-score normalized violin plots combined
+violin_combined_zscore <- (peptideatlas_plots$violin_zscore + hpa_ms_plots$violin_zscore) /
+  (hpa_pea_plots$violin_zscore + hpa_imm_plots$violin_zscore) /
+  (gpmdb_plots$violin_zscore + paxdb_plots$violin_zscore) +
+  plot_annotation(
+    title = "Protein Abundance Distribution Across Databases (Z-Score Normalized)",
+    subtitle = "Comparing all proteins vs. biomarkers - Z-score normalized for better cross-source comparison",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
+    theme = theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, hjust = 0.5)
+    )
+  )
+
+ggsave(
+  file.path(output_dir, "abundance_distributions_by_database_zscore.png"),
+  violin_combined_zscore,
   width = 15,
   height = 20,
   dpi = 300

@@ -238,6 +238,16 @@ ggsave(file.path(plot_dir, "plasma_proteins_by_technology.png"), p2,
 # 3. Create violin plot showing quantification value distributions
 message("Creating quantification distribution violin plot...")
 
+# Function to calculate z-score normalization by database
+calculate_zscore_normalization <- function(data) {
+  data %>%
+    group_by(Database) %>%
+    mutate(
+      z_score = (log_value - mean(log_value, na.rm = TRUE)) / sd(log_value, na.rm = TRUE)
+    ) %>%
+    ungroup()
+}
+
 # Prepare combined data for violin plot
 violin_data <- data.frame()
 
@@ -301,7 +311,10 @@ if (nrow(paxdb) > 0 && "abundance" %in% colnames(paxdb)) {
   ))
 }
 
-# Create violin plot with improved aesthetics
+# Apply z-score normalization
+violin_data_zscore <- calculate_zscore_normalization(violin_data)
+
+# Create original violin plot with improved aesthetics
 p3 <- ggplot(violin_data, aes(x = reorder(Database, log_value, FUN = median), 
                               y = log_value, fill = Technology)) +
   # Violin plots with better scaling and smoothing
@@ -351,6 +364,59 @@ p3 <- ggplot(violin_data, aes(x = reorder(Database, log_value, FUN = median),
   )
 
 ggsave(file.path(plot_dir, "plasma_proteins_abundance_distributions.png"), p3, 
+       width = 10, height = 6, dpi = 300, bg = "white")
+
+# Create Z-score normalized violin plot for better cross-source comparison
+p3z <- ggplot(violin_data_zscore, aes(x = reorder(Database, z_score, FUN = median), 
+                                      y = z_score, fill = Technology)) +
+  # Violin plots with better scaling and smoothing
+  geom_violin(alpha = 0.8, 
+              scale = "area",           # Equal area scaling for better comparison
+              trim = TRUE,              # Trim to data range
+              adjust = 1.2,             # Slightly smoother curves
+              draw_quantiles = c(0.25, 0.5, 0.75),  # Add quartile lines
+              color = "#150b0b",          # White outline for better definition
+              size = 0.3) +
+  # Refined boxplot overlay with matching colors
+  geom_boxplot(aes(fill = Technology),
+               width = 0.15, 
+               alpha = 0.6,             # More transparent to show violin underneath
+               outlier.size = 1.2,      # Larger outlier points
+               outlier.alpha = 0.7,     # More opaque outliers
+               outlier.color = "gray20", # Dark color for outliers
+               color = "gray30",        # Dark outline for box and whiskers
+               size = 0.5) +
+  # Add median points for emphasis
+  stat_summary(fun = median, 
+               geom = "point", 
+               shape = 21, 
+               size = 2.5, 
+               fill = "white", 
+               color = "gray20", 
+               stroke = 1) +
+  coord_flip() +
+  scale_fill_manual(values = c("MS" = "#2E86AB", "PEA" = "#A23B72", 
+                               "Immunoassay" = "#F18F01")) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    legend.position = "bottom",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_rect(color = "gray90", fill = NA, size = 0.5)
+  ) +
+  labs(
+    title = "Z-Score Normalized Protein Abundance Distribution by Data Source",
+    subtitle = "Z-score normalized values for direct cross-source comparison (after gene deduplication)",
+    x = "Data Source",
+    y = "Z-Score (standardized within each database)",
+    fill = "Technology",
+    caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
+  )
+
+ggsave(file.path(plot_dir, "plasma_proteins_abundance_distributions_zscore.png"), p3z, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
 # 4. Create UpSet plot showing gene overlaps between databases
@@ -465,15 +531,16 @@ p4 <- upset_df_tidy %>%
 ggsave(file.path(plot_dir, "gene_overlaps_upset_ggplot.png"), p4, 
        width = 10, height = 6, dpi = 300, bg = "white")
 
-# 5. Create a comprehensive combined plot with all four analyses
+# 5. Create a comprehensive combined plot with all analyses
 # Layout: Gene counts by source (top left), Gene counts by technology (top right), 
-#         Abundance distributions (bottom left), Gene intersections (bottom right)
-combined_plot <- (p1 | p2) / (p3 | p4) + 
-  plot_layout(heights = c(1, 1)) +
+#         Original abundance distributions (middle left), Z-score normalized distributions (middle right),
+#         Gene intersections (bottom)
+combined_plot <- (p1 | p2) / (p3 | p3z) / p4 + 
+  plot_layout(heights = c(1, 1, 1)) +
   plot_annotation(
     title = "Comprehensive Plasma Protein Quantification Analysis",
-    subtitle = "Gene counts and technology classification (top), abundance distributions and intersections (bottom)",
-    tag_levels = list(c('(a)', '(b)', '(c)', '(d)')),
+    subtitle = "Gene counts (top), original vs z-score normalized abundance distributions (middle), intersections (bottom)",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)')),
     theme = theme(
       plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
       plot.subtitle = element_text(size = 14, hjust = 0.5)
@@ -481,6 +548,22 @@ combined_plot <- (p1 | p2) / (p3 | p4) +
   )
 
 ggsave(file.path(plot_dir, "plasma_proteins_comprehensive.png"), combined_plot, 
+       width = 20, height = 18, dpi = 300, bg = "white")
+
+# Create an additional comprehensive plot with just z-score comparisons
+combined_plot_zscore <- (p1 | p2) / (p3z | p4) + 
+  plot_layout(heights = c(1, 1)) +
+  plot_annotation(
+    title = "Comprehensive Plasma Protein Analysis with Z-Score Normalization",
+    subtitle = "Gene counts and technology classification (top), z-score normalized distributions and intersections (bottom)",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)')),
+    theme = theme(
+      plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 14, hjust = 0.5)
+    )
+  )
+
+ggsave(file.path(plot_dir, "plasma_proteins_comprehensive_zscore.png"), combined_plot_zscore, 
        width = 20, height = 12, dpi = 300, bg = "white")
 
 message("Plots saved to:", plot_dir)

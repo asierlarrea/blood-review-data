@@ -213,6 +213,16 @@ dev.off()
 # 4. Create quantification value distributions
 message("Creating quantification distribution plots...")
 
+# Function to calculate z-score normalization by database
+calculate_zscore_normalization_serum <- function(data) {
+  data %>%
+    group_by(Database) %>%
+    mutate(
+      z_score = (log_value - mean(log_value, na.rm = TRUE)) / sd(log_value, na.rm = TRUE)
+    ) %>%
+    ungroup()
+}
+
 # Prepare data for distribution plots
 gpmdb_dist <- gpmdb_serum %>% 
   filter(!is.na(total) & total > 0) %>%
@@ -232,6 +242,9 @@ dist_data <- bind_rows(
   paxdb_dist %>% select(gene, Database, log_value),
   hpa_dist %>% select(gene, Database, log_value)
 )
+
+# Apply z-score normalization
+dist_data_zscore <- calculate_zscore_normalization_serum(dist_data)
 
 p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_histogram(alpha = 0.7, bins = 50) +
@@ -258,7 +271,34 @@ p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
 ggsave(file.path(plot_dir, "serum_protein_quantification_distributions.png"), 
        p4, width = 10, height = 12, dpi = 300, bg = "white")
 
-# 5. Density plots for direct comparison
+# 4z. Z-score normalized histogram plots
+p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
+  geom_histogram(alpha = 0.7, bins = 50) +
+  facet_wrap(~Database, scales = "free", ncol = 1, 
+             labeller = labeller(Database = c("GPMDB" = "(a) GPMDB", 
+                                             "PAXDB" = "(b) PAXDB", 
+                                             "HPA Immunoassay" = "(c) HPA Immunoassay"))) +
+  scale_fill_viridis_d(option = "plasma") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12)
+  ) +
+  labs(
+    title = "Distribution of Z-Score Normalized Protein Quantification Values",
+    subtitle = "Z-score normalized values for direct cross-database comparison",
+    x = "Z-Score (standardized within each database)",
+    y = "Number of Proteins",
+    caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_quantification_distributions_zscore.png"), 
+       p4z, width = 10, height = 12, dpi = 300, bg = "white")
+
+# 5. Density plots for direct comparison (log10)
 p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_density(alpha = 0.6) +
   scale_fill_viridis_d(option = "plasma") +
@@ -270,7 +310,7 @@ p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
     legend.position = "bottom"
   ) +
   labs(
-    title = "Protein Quantification Value Distributions Comparison",
+    title = "Protein Quantification Value Distributions Comparison (Log10)",
     subtitle = "Density plots of log10-transformed values across serum databases",
     x = "Log10(Quantification Value)",
     y = "Density",
@@ -279,6 +319,29 @@ p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
 
 ggsave(file.path(plot_dir, "serum_protein_quantification_density.png"), 
        p5, width = 10, height = 6, dpi = 300, bg = "white")
+
+# 5z. Z-score normalized density plots for direct comparison
+p5z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
+  geom_density(alpha = 0.6) +
+  scale_fill_viridis_d(option = "plasma") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    legend.position = "bottom"
+  ) +
+  labs(
+    title = "Z-Score Normalized Protein Quantification Value Distributions",
+    subtitle = "Z-score normalized density plots for direct cross-database comparison",
+    x = "Z-Score (standardized within each database)",
+    y = "Density",
+    fill = "Database",
+    caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_quantification_density_zscore.png"), 
+       p5z, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 6. Create overlap statistics table
 message("Creating overlap statistics...")
@@ -352,18 +415,44 @@ p6 <- p1 + p2 +
 ggsave(file.path(plot_dir, "serum_protein_comprehensive_summary.png"), 
        p6, width = 12, height = 12, dpi = 300, bg = "white")
 
-# 8. Create an extended comprehensive plot with distributions
+# 8. Create an extended comprehensive plot with distributions (log10)
 p7 <- p1 + p2 + p5 + 
   plot_layout(ncol = 1) +
   plot_annotation(
-    title = "Comprehensive Serum Protein Analysis with Quantification Distributions",
-    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases",
+    title = "Comprehensive Serum Protein Analysis with Log10 Quantification Distributions",
+    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases - Log10 scale",
     tag_levels = list(c('(a)', '(b)', '(c)')),
     theme = theme(plot.title = element_text(size = 18, face = "bold"))
   )
 
 ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive.png"), 
        p7, width = 12, height = 18, dpi = 300, bg = "white")
+
+# 8z. Create an extended comprehensive plot with Z-score normalized distributions
+p7z <- p1 + p2 + p5z + 
+  plot_layout(ncol = 1) +
+  plot_annotation(
+    title = "Comprehensive Serum Protein Analysis with Z-Score Normalized Distributions",
+    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases - Z-score normalized for direct comparison",
+    tag_levels = list(c('(a)', '(b)', '(c)')),
+    theme = theme(plot.title = element_text(size = 18, face = "bold"))
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive_zscore.png"), 
+       p7z, width = 12, height = 18, dpi = 300, bg = "white")
+
+# 9. Create a comprehensive plot comparing log10 vs z-score normalized distributions
+p8 <- p5 + p5z + 
+  plot_layout(ncol = 1) +
+  plot_annotation(
+    title = "Serum Protein Quantification: Log10 vs Z-Score Normalized Comparison",
+    subtitle = "Comparing original log10 values (top) vs z-score normalized values (bottom)",
+    tag_levels = list(c('(a)', '(b)')),
+    theme = theme(plot.title = element_text(size = 16, face = "bold"))
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_log10_vs_zscore_comparison.png"), 
+       p8, width = 12, height = 12, dpi = 300, bg = "white")
 
 # Print summary information
 message("\n=== SERUM PROTEIN ANALYSIS SUMMARY ===")

@@ -19,7 +19,7 @@ ensure_output_dirs()
 
 # Load required packages
 required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", 
-                      "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel")
+                      "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel", "tibble")
 load_packages(required_packages)
 
 # Parse command line arguments
@@ -433,23 +433,41 @@ top_celltypes <- overall_summary %>%
   slice_head(n = 8) %>% 
   pull(celltype)
 
+# Function to calculate z-score normalization by source
+calculate_zscore_normalization <- function(data) {
+  data %>%
+    group_by(source) %>%
+    mutate(
+      log_intensity = log10(intensity),
+      z_score = (log_intensity - mean(log_intensity, na.rm = TRUE)) / sd(log_intensity, na.rm = TRUE)
+    ) %>%
+    ungroup()
+}
+
+# Prepare intensity data with z-score normalization
 intensity_sample <- all_results %>%
   filter(celltype %in% top_celltypes, !is.na(intensity), intensity > 0) %>%
+  calculate_zscore_normalization() %>%
   group_by(celltype) %>%
   sample_n(size = min(1000, n()), replace = FALSE) %>%  # Sample for performance
   ungroup()
 
-p4 <- intensity_sample %>%
+# Plot 4: Original log10 intensity distributions - REMOVED
+# Using z-score normalized version instead for better cross-source comparison
+
+# Plot 4z: Z-score normalized intensity distributions
+p4z <- intensity_sample %>%
   mutate(celltype_display = format_celltype_names(celltype)) %>%
-  ggplot(aes(x = log10(intensity), fill = celltype)) +
+  ggplot(aes(x = z_score, fill = celltype)) +
   geom_density(alpha = 0.7) +
   facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
   scale_fill_manual(values = celltype_colors[1:length(top_celltypes)]) +
   labs(
-    title = "Protein Intensity Distributions",
-    subtitle = "Log10-transformed intensity values for top 8 cell types",
-    x = "Log10(Intensity)",
-    y = "Density"
+    title = "Z-Score Normalized Protein Intensity Distributions",
+    subtitle = "Z-score normalized intensities (by source) for top 8 cell types - directly comparable across sources",
+    x = "Z-Score (standardized log10 intensity)",
+    y = "Density",
+    caption = "Z-scores calculated within each data source: (log10(intensity) - mean) / sd"
   ) +
   theme_minimal() +
   theme(
@@ -459,49 +477,182 @@ p4 <- intensity_sample %>%
     strip.text = element_text(size = 10, face = "bold")
   )
 
-ggsave(file.path(plot_dir, "intensity_distributions.png"), p4, 
+ggsave(file.path(plot_dir, "intensity_distributions_zscore.png"), p4z, 
        width = 12, height = 10, dpi = 300, bg = "white")
 
-# Plot 5: Technology comparison (PAXDB vs ProteomeXchange)
-tech_comparison <- all_results %>%
-  mutate(
-    technology = case_when(
-      str_detect(source, "PAXDB") ~ "PAXDB",
-      str_detect(source, "ProteomeXchange") ~ "ProteomeXchange",
-      TRUE ~ "Other"
-    )
-  ) %>%
-  group_by(technology, celltype) %>%
-  summarise(gene_count = n_distinct(gene), .groups = "drop") %>%
-  pivot_wider(names_from = technology, values_from = gene_count, values_fill = 0) %>%
-  filter(PAXDB > 0 | ProteomeXchange > 0)
+# Plot 4a has been removed - using z-score normalized version instead
 
-p5 <- tech_comparison %>%
-  mutate(celltype_display = format_celltype_names(celltype)) %>%
-  ggplot(aes(x = PAXDB, y = ProteomeXchange)) +
-  geom_point(size = 3, alpha = 0.7, color = "steelblue") +
-  geom_text_repel(aes(label = celltype_display), size = 3, max.overlaps = 15) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed", alpha = 0.5) +
-  scale_x_continuous(labels = comma_format()) +
-  scale_y_continuous(labels = comma_format()) +
+# Plot 4az: Z-score normalized intensity distributions faceted by source
+p4az <- intensity_sample %>%
+  mutate(
+    celltype_display = format_celltype_names(celltype),
+    source_display = format_source_names(source)
+  ) %>%
+  ggplot(aes(x = z_score, fill = source_display)) +
+  geom_density(alpha = 0.7) +
+  facet_grid(celltype_display ~ source_display, scales = "free") +
+  scale_fill_brewer(type = "qual", palette = "Set2") +
   labs(
-    title = "PAXDB vs ProteomeXchange Coverage",
-    subtitle = "Gene counts per cell type by technology platform",
-    x = "PAXDB Gene Count",
-    y = "ProteomeXchange Gene Count",
-    caption = "Diagonal line represents equal coverage"
+    title = "Z-Score Normalized Protein Intensity Distributions by Source",
+    subtitle = "Z-score normalized intensities for top 8 cell types - all sources on same scale",
+    x = "Z-Score (standardized log10 intensity)",
+    y = "Density",
+    fill = "Data Source",
+    caption = "Z-scores calculated within each data source for direct comparison"
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12)
+    plot.subtitle = element_text(size = 12),
+    legend.position = "bottom",
+    strip.text = element_text(size = 8, face = "bold"),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8)
   )
 
-ggsave(file.path(plot_dir, "technology_comparison.png"), p5, 
-       width = 10, height = 8, dpi = 300, bg = "white")
+ggsave(file.path(plot_dir, "intensity_distributions_by_source_zscore.png"), p4az, 
+       width = 16, height = 12, dpi = 300, bg = "white")
+
+# Plot 4b: Cross-source correlation analysis
+# Function to calculate correlations between sources for each cell type
+calculate_source_correlations <- function(data) {
+  # Prepare data for correlation analysis using z-score normalized values
+  correlation_data <- data %>%
+    filter(celltype %in% top_celltypes, !is.na(intensity), intensity > 0) %>%
+    calculate_zscore_normalization() %>%  # Apply z-score normalization
+    mutate(source_display = format_source_names(source)) %>%
+    select(gene, celltype, source_display, z_score) %>%  # Use z_score instead of intensity
+    # Only keep genes present in multiple sources within each cell type
+    group_by(gene, celltype) %>%
+    filter(n() > 1) %>%
+    ungroup() %>%
+    # Convert to wide format for correlation
+    pivot_wider(names_from = source_display, values_from = z_score, values_fill = NA) %>%
+    filter(complete.cases(.))  # Only complete cases for correlation
+  
+  return(correlation_data)
+}
+
+# Calculate correlations
+correlation_data <- calculate_source_correlations(all_results)
+
+# Create correlation plots for each cell type
+if (nrow(correlation_data) > 0) {
+  # Get source pairs for correlation
+  source_cols <- setdiff(names(correlation_data), c("gene", "celltype"))
+  
+  # Create correlation matrix plots
+  correlation_plots <- list()
+  
+  for (ct in top_celltypes) {
+    ct_data <- correlation_data %>% filter(celltype == ct)
+    
+    if (nrow(ct_data) > 10 && length(source_cols) > 1) {  # Need sufficient data
+      # Calculate correlation matrix
+      cor_matrix <- ct_data %>%
+        select(all_of(source_cols)) %>%
+        cor(use = "complete.obs", method = "spearman")
+      
+      # Convert to long format for ggplot
+      cor_long <- cor_matrix %>%
+        as.data.frame() %>%
+        rownames_to_column("source1") %>%
+        pivot_longer(cols = -source1, names_to = "source2", values_to = "correlation") %>%
+        filter(source1 != source2)  # Remove diagonal
+      
+      # Create plot for this cell type
+      correlation_plots[[ct]] <- cor_long %>%
+        ggplot(aes(x = source1, y = source2, fill = correlation)) +
+        geom_tile(color = "white") +
+        geom_text(aes(label = sprintf("%.2f", correlation)), size = 3) +
+        scale_fill_gradient2(low = "red", mid = "white", high = "blue", 
+                           midpoint = 0, limits = c(-1, 1)) +
+        labs(
+          title = format_celltype_names(ct),
+          x = "", y = "",
+          fill = "Spearman\nCorrelation"
+        ) +
+        theme_minimal() +
+        theme(
+          axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+          axis.text.y = element_text(size = 8),
+          plot.title = element_text(size = 10, face = "bold")
+        )
+    }
+  }
+  
+  # Combine correlation plots
+  if (length(correlation_plots) > 0) {
+    p4b <- wrap_plots(correlation_plots, ncol = 2)
+    p4b <- p4b + plot_annotation(
+      title = "Cross-Source Expression Correlations",
+      subtitle = "Spearman correlations of gene expression between data sources for each cell type",
+      caption = paste0("Based on ", nrow(correlation_data), " genes present in multiple sources")
+    )
+  } else {
+    # Fallback: create scatter plots for source pairs
+    source_pairs <- combn(source_cols, 2, simplify = FALSE)
+    
+    if (length(source_pairs) > 0) {
+      scatter_plots <- list()
+      
+      for (i in seq_along(source_pairs)) {
+        if (i > 6) break  # Limit number of plots
+        
+        pair <- source_pairs[[i]]
+        source1 <- pair[1]
+        source2 <- pair[2]
+        
+        plot_data <- correlation_data %>%
+          filter(!is.na(.data[[source1]]), !is.na(.data[[source2]])) %>%
+          sample_n(min(500, nrow(.)))  # Sample for performance
+        
+        if (nrow(plot_data) > 10) {
+          cor_val <- cor(plot_data[[source1]], plot_data[[source2]], 
+                        method = "spearman", use = "complete.obs")
+          
+          scatter_plots[[i]] <- plot_data %>%
+            ggplot(aes(x = .data[[source1]], y = .data[[source2]])) +
+            geom_point(alpha = 0.5, size = 1) +
+            geom_smooth(method = "lm", se = TRUE, color = "red") +
+            labs(
+              title = paste(source1, "vs", source2),
+              subtitle = sprintf("ρ = %.3f", cor_val),
+              x = paste("Z-Score", source1),
+              y = paste("Z-Score", source2)
+            ) +
+            theme_minimal() +
+            theme(
+              plot.title = element_text(size = 10, face = "bold"),
+              plot.subtitle = element_text(size = 9)
+            )
+        }
+      }
+      
+      if (length(scatter_plots) > 0) {
+        p4b <- wrap_plots(scatter_plots, ncol = 2)
+        p4b <- p4b + plot_annotation(
+          title = "Cross-Source Expression Correlations (Z-Score Normalized)",
+          subtitle = "Z-score normalized intensity correlations between data sources",
+          caption = paste0("Spearman correlations based on ", nrow(correlation_data), " overlapping genes (z-score normalized)")
+        )
+      }
+    }
+  }
+}
+
+# Save the correlation plot if it exists
+if (exists("p4b")) {
+  ggsave(file.path(plot_dir, "source_correlations.png"), p4b, 
+         width = 12, height = 10, dpi = 300, bg = "white")
+}
+
+# Plot 4c has been replaced by the correlation analysis (Plot 4b)
+
+# Plot 5: Technology comparison has been removed
 
 # Plot 6: Comprehensive summary dashboard
-p6_top <- (p1 | p4) 
+p6_top <- (p1 | p4z) 
 p6_bottom <- p3
 p6_comprehensive <- p6_top / p6_bottom + 
   plot_annotation(
