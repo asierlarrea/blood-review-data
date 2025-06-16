@@ -317,10 +317,10 @@ p_detailed_log <- peptideatlas_transformed %>%
   )
 
 # Save plots with high resolution PNG format
-ggsave(file.path(plot_dir, "log_correlation_plot.png"), p_detailed_log, width = 10, height = 8, dpi = 300)
-ggsave(file.path(plot_dir, "zscore_correlation_plot.png"), p1_zscore, width = 10, height = 8, dpi = 300)
-ggsave(file.path(plot_dir, "transformation_comparison.png"), p3_comparison, width = 8, height = 6, dpi = 300)
-ggsave(file.path(plot_dir, "comprehensive_plot.png"), comprehensive_plot, width = 18, height = 12, dpi = 300)
+ggsave(file.path(plot_dir, "01_log_correlation_plot.png"), p_detailed_log, width = 10, height = 8, dpi = 300)
+ggsave(file.path(plot_dir, "02_zscore_correlation_plot.png"), p1_zscore, width = 10, height = 8, dpi = 300)
+ggsave(file.path(plot_dir, "03_transformation_comparison.png"), p3_comparison, width = 8, height = 6, dpi = 300)
+ggsave(file.path(plot_dir, "00_comprehensive_plot.png"), comprehensive_plot, width = 18, height = 12, dpi = 300)
 
 # Print summary statistics
 cat("\n=== PeptideAtlas Quantification Analysis Summary ===\n")

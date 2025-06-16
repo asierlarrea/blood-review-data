@@ -51,7 +51,8 @@ data_packages <- c(
   "readr",        # Reading CSV/TSV files
   "stringr",      # String manipulation
   "data.table",   # Fast data processing
-  "optparse"      # Command line argument parsing
+  "argparse",     # Command line argument parsing
+  "crayon"        # Colored terminal output
 )
 install_if_missing(data_packages)
 

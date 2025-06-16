@@ -262,10 +262,6 @@ dist_data <- bind_rows(
 # Apply z-score normalization
 dist_data_zscore <- calculate_zscore_normalization_serum(dist_data)
 
-# Apply quantile normalization
-message("Applying quantile normalization...")
-dist_data_quantile <- apply_quantile_normalization_simple(dist_data, "log_value", "Database")
-
 p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_histogram(alpha = 0.7, bins = 50) +
   facet_wrap(~Database, scales = "free", ncol = 1, 
@@ -318,33 +314,6 @@ p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
 ggsave(file.path(plot_dir, "04_serum_protein_quantification_distributions_zscore.png"), 
        p4z, width = 10, height = 12, dpi = 300, bg = "white")
 
-# 4q. Quantile normalized histogram plots
-p4q <- ggplot(dist_data_quantile, aes(x = quantile_normalized, fill = Database)) +
-  geom_histogram(alpha = 0.7, bins = 50) +
-  facet_wrap(~Database, scales = "free", ncol = 1, 
-             labeller = labeller(Database = c("GPMDB" = "(a) GPMDB", 
-                                             "PAXDB" = "(b) PAXDB", 
-                                             "HPA Immunoassay" = "(c) HPA Immunoassay"))) +
-  scale_fill_viridis_d(option = "plasma") +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    axis.title = element_text(size = 12),
-    legend.position = "none",
-    strip.text = element_text(face = "bold", size = 12)
-  ) +
-  labs(
-    title = "Distribution of Quantile Normalized Protein Quantification Values",
-    subtitle = "Quantile normalized values for direct cross-database comparison",
-    x = "Quantile Normalized Value",
-    y = "Number of Proteins",
-    caption = "Quantile normalization forces identical distributions across databases"
-  )
-
-ggsave(file.path(plot_dir, "05_serum_protein_quantification_distributions_quantile.png"), 
-       p4q, width = 10, height = 12, dpi = 300, bg = "white")
-
 # 5. Density plots for direct comparison (log10)
 p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_density(alpha = 0.6) +
@@ -366,52 +335,6 @@ p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
 
 ggsave(file.path(plot_dir, "06_serum_protein_quantification_density.png"), 
        p5, width = 10, height = 6, dpi = 300, bg = "white")
-
-# 5z. Z-score normalized density plots for direct comparison
-p5z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
-  geom_density(alpha = 0.6) +
-  scale_fill_viridis_d(option = "plasma") +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    axis.title = element_text(size = 12),
-    legend.position = "bottom"
-  ) +
-  labs(
-    title = "Z-Score Normalized Protein Quantification Value Distributions",
-    subtitle = "Z-score normalized density plots for direct cross-database comparison",
-    x = "Z-Score (standardized within each database)",
-    y = "Density",
-    fill = "Database",
-    caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
-  )
-
-ggsave(file.path(plot_dir, "serum_protein_quantification_density_zscore.png"), 
-       p5z, width = 10, height = 6, dpi = 300, bg = "white")
-
-# 5q. Quantile normalized density plots for direct comparison
-p5q <- ggplot(dist_data_quantile, aes(x = quantile_normalized, fill = Database)) +
-  geom_density(alpha = 0.6) +
-  scale_fill_viridis_d(option = "plasma") +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    axis.title = element_text(size = 12),
-    legend.position = "bottom"
-  ) +
-  labs(
-    title = "Quantile Normalized Protein Quantification Value Distributions",
-    subtitle = "Quantile normalized density plots for direct cross-database comparison",
-    x = "Quantile Normalized Value",
-    y = "Density",
-    fill = "Database",
-    caption = "Quantile normalization forces identical distributions across databases"
-  )
-
-ggsave(file.path(plot_dir, "serum_protein_quantification_density_quantile.png"), 
-       p5q, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 6. Create overlap statistics table
 message("Creating overlap statistics...")

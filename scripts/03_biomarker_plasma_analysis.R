@@ -360,30 +360,32 @@ waterfall_plots <- list(
 )
 
 # Save individual waterfall plots
-for (db_name in names(waterfall_plots)) {
-  ggsave(
-    file.path(output_dir, paste0("waterfall_", db_name, ".png")),
-    waterfall_plots[[db_name]],
-    width = 12,
-    height = 6,
-    dpi = 300,
-    bg = "white"
-  )
-}
+# for (db_name in names(waterfall_plots)) {
+#   ggsave(
+#     file.path(output_dir, paste0("waterfall_", db_name, ".png")),
+#     waterfall_plots[[db_name]],
+#     width = 12,
+#     height = 6,
+#     dpi = 300,
+#     bg = "white"
+#   )
+# }
 
 # Select only the databases we want to show in the combined plot
 selected_waterfall_plots <- list(
   peptideatlas = waterfall_plots$peptideatlas,
   hpa_pea = waterfall_plots$hpa_pea,
   hpa_imm = waterfall_plots$hpa_imm,
-  gpmdb = waterfall_plots$gpmdb
+  gpmdb = waterfall_plots$gpmdb,
+  paxdb = waterfall_plots$paxdb,
+  hpa_ms = waterfall_plots$hpa_ms
 )
 
 # Combine selected waterfall plots into one figure
 combined_waterfall <- ggpubr::ggarrange(
   plotlist = selected_waterfall_plots,
   ncol = 2,
-  nrow = 2,
+  nrow = 3,
   labels = "AUTO",
   font.label = list(size = 12, face = "bold"),
   common.legend = TRUE,
@@ -392,7 +394,7 @@ combined_waterfall <- ggpubr::ggarrange(
 
 # Save combined waterfall plot
 ggsave(
-  file.path(output_dir, "combined_waterfall.png"),
+  file.path(output_dir, "02_combined_waterfall.png"),
   combined_waterfall,
   width = 20,
   height = 16,
@@ -461,7 +463,7 @@ upset_plot <- upset(
 )
 
 # Save individual UpSet plot
-png(file.path(output_dir, "biomarker_technology_overlap.png"), 
+png(file.path(output_dir, "03_biomarker_technology_overlap.png"), 
     width = 12, height = 8, units = "in", res = 300)
 print(upset_plot)
 dev.off()
@@ -741,7 +743,7 @@ final_combined_plot <- ggpubr::ggarrange(
 
 # Save the final combined plot
 ggsave(
-  file.path(output_dir, "final_combined_analysis.png"),
+  file.path(output_dir, "00_final_combined_analysis.png"),
   final_combined_plot,
   width = 20,  # Reduced total width
   height = 20,  # Keep height the same
@@ -754,7 +756,7 @@ unlink(temp_upset_file)
 
 # Also save individual plots for flexibility
 ggsave(
-  file.path(output_dir, "biomarker_profile_matrix.png"),
+  file.path(output_dir, "01_biomarker_profile_matrix.png"),
   profile_plot,
   width = 15,
   height = 20,

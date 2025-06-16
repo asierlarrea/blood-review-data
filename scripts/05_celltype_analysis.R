@@ -430,7 +430,7 @@ p_cd8_cor <- ggplot(plot_data, aes(x = source1, y = source2, fill = correlation)
   )
 
 # Save CD8 correlation plot separately
-ggsave(file.path(plot_dir, "cd8_correlation.png"), p_cd8_cor, 
+ggsave(file.path(plot_dir, "04_cd8_correlation.png"), p_cd8_cor, 
        width = 8, height = 7, dpi = 300, bg = "white")
 
 # Define color palette for cell types
@@ -469,7 +469,7 @@ p1 <- overall_summary %>%
     panel.grid.minor = element_blank()
   )
 
-ggsave(file.path(plot_dir, "celltype_gene_counts.png"), p1, 
+ggsave(file.path(plot_dir, "03_celltype_gene_counts.png"), p1, 
        width = 12, height = 8, dpi = 300, bg = "white")
 
 # Plot 2: Data source coverage
@@ -505,9 +505,6 @@ p2 <- source_summary %>%
     panel.grid.major.y = element_blank(),
     panel.grid.minor = element_blank()
   )
-
-ggsave(file.path(plot_dir, "data_source_coverage.png"), p2, 
-       width = 10, height = 6, dpi = 300, bg = "white")
 
 # Plot 3: Cell type by source heatmap
 # First format source names, then aggregate data that might have multiple sources mapping to same display name
@@ -554,7 +551,7 @@ p3 <- heatmap_data %>%
   )
 
 # Save heatmap separately
-ggsave(file.path(plot_dir, "celltype_source_matrix.png"), p3, 
+ggsave(file.path(plot_dir, "02_celltype_source_matrix.png"), p3, 
        width = 12, height = 10, dpi = 300, bg = "white")
 
 # Prepare data for intensity distributions
@@ -646,7 +643,7 @@ p4z <- intensity_sample %>%
   )
 
 # Save intensity distribution plot separately
-ggsave(file.path(plot_dir, "intensity_distributions_zscore.png"), p4z, 
+ggsave(file.path(plot_dir, "05_intensity_distributions_zscore.png"), p4z, 
        width = 12, height = 8, dpi = 300, bg = "white")
 
 # Plot 4q: Quantile normalized intensity distributions using violin plots
@@ -673,9 +670,6 @@ p4q <- intensity_sample_quantile %>%
     axis.text.y = element_text(size = 10),
     panel.grid.minor = element_blank()
   )
-
-ggsave(file.path(plot_dir, "intensity_distributions_quantile.png"), p4q, 
-       width = 12, height = 8, dpi = 300, bg = "white")
 
 # Plot 4az: Z-score normalized intensity distributions by source using violin plots
 p4az <- intensity_sample %>%
@@ -708,9 +702,6 @@ p4az <- intensity_sample %>%
     panel.grid.minor = element_blank()
   )
 
-ggsave(file.path(plot_dir, "intensity_distributions_by_source_zscore.png"), p4az, 
-       width = 16, height = 12, dpi = 300, bg = "white")
-
 # Plot 4aq: Quantile normalized intensity distributions by source using violin plots
 p4aq <- intensity_sample_quantile %>%
   mutate(
@@ -741,9 +732,6 @@ p4aq <- intensity_sample_quantile %>%
     axis.text.y = element_text(size = 8),
     panel.grid.minor = element_blank()
   )
-
-ggsave(file.path(plot_dir, "intensity_distributions_by_source_quantile.png"), p4aq, 
-       width = 16, height = 12, dpi = 300, bg = "white")
 
 # Plot 4b: Cross-source correlation analysis
 # Function to calculate correlations between sources for each cell type
@@ -875,7 +863,7 @@ if (nrow(correlation_data) > 0) {
 
 # Save the correlation plot if it exists
 if (exists("p4b")) {
-  ggsave(file.path(plot_dir, "source_correlations.png"), p4b, 
+  ggsave(file.path(plot_dir, "01_source_correlations.png"), p4b, 
          width = 12, height = 10, dpi = 300, bg = "white")
 }
 
@@ -886,7 +874,7 @@ p6_top <- (p1 | p3)  # Switched p4z to p3
 p6_bottom <- (p4z | p_cd8_cor)  # Switched p3 to p4z
 p6_comprehensive <- p6_top / p6_bottom + theme(plot.title = element_text(size = 16, face = "bold"))
 
-ggsave(file.path(plot_dir, "comprehensive_summary.png"), p6_comprehensive, 
+ggsave(file.path(plot_dir, "00_comprehensive_summary.png"), p6_comprehensive, 
        width = 20, height = 14, dpi = 300, bg = "white")
 
 message(sprintf("  Plots saved to: %s", plot_dir))
