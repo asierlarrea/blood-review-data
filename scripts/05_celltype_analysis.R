@@ -319,9 +319,119 @@ format_celltype_names <- function(celltype) {
 format_source_names <- function(source) {
   case_when(
     str_detect(source, "ProteomeXchange_pxd") ~ str_extract(source, "pxd\\d+") %>% str_to_upper(),
+    str_detect(source, "gpmdb_") ~ "GPMDB",
+    str_detect(source, "paxdb_") ~ "PAXDB",
     TRUE ~ source
   )
 }
+
+# Create CD8 T Cell correlation analysis
+message("  Creating CD8 T cell correlation analysis...")
+# Filter data for CD8 T cells and prepare for correlation analysis
+cd8_data <- all_results %>%
+  filter(str_detect(celltype, "CD8|T8")) %>%  # Include all CD8 T cell subtypes
+  group_by(gene, source) %>%
+  summarise(
+    intensity = median(intensity, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  # Calculate z-scores within each source
+  group_by(source) %>%
+  mutate(
+    z_score = scale(log10(intensity))[,1]
+  ) %>%
+  ungroup()
+
+# Get unique sources and create empty matrices
+sources <- unique(cd8_data$source)
+n_sources <- length(sources)
+cor_matrix <- matrix(NA, n_sources, n_sources)
+n_genes_matrix <- matrix(NA, n_sources, n_sources)
+rownames(cor_matrix) <- colnames(cor_matrix) <- sources
+rownames(n_genes_matrix) <- colnames(n_genes_matrix) <- sources
+
+# Fill matrices
+for(i in 1:n_sources) {
+  for(j in 1:n_sources) {
+    source1 <- sources[i]
+    source2 <- sources[j]
+    
+    if(i == j) {
+      # Diagonal: correlation = 1, n_genes = total genes in source
+      cor_matrix[i,j] <- 1
+      n_genes_matrix[i,j] <- cd8_data %>%
+        filter(source == source1) %>%
+        pull(gene) %>%
+        n_distinct()
+    } else {
+      # Get shared genes between sources
+      shared_data <- cd8_data %>%
+        filter(source %in% c(source1, source2)) %>%
+        group_by(gene) %>%
+        filter(n() == 2) %>%
+        ungroup() %>%
+        select(gene, source, z_score) %>%
+        pivot_wider(names_from = source, values_from = z_score)
+      
+      n_shared <- nrow(shared_data)
+      
+      if(n_shared > 0) {
+        # Calculate correlation if there are shared genes
+        cor_val <- cor(shared_data[[source1]], shared_data[[source2]], 
+                      method = "spearman", use = "complete.obs")
+        cor_matrix[i,j] <- cor_val
+        n_genes_matrix[i,j] <- n_shared
+      }
+    }
+  }
+}
+
+# Convert to long format for plotting
+plot_data <- data.frame(
+  source1 = rep(sources, each = n_sources),
+  source2 = rep(sources, times = n_sources),
+  correlation = as.vector(cor_matrix),
+  n_genes = as.vector(n_genes_matrix)
+) %>%
+  mutate(
+    source1 = format_source_names(source1),
+    source2 = format_source_names(source2),
+    # Format label based on whether it's a diagonal cell
+    label = case_when(
+      source1 == source2 ~ sprintf("n=%d", n_genes),
+      !is.na(correlation) ~ sprintf("%.2f\nn=%d", correlation, n_genes),
+      TRUE ~ "No shared\ngenes"
+    )
+  )
+
+# Create correlation plot
+p_cd8_cor <- ggplot(plot_data, aes(x = source1, y = source2, fill = correlation)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = label), 
+            color = ifelse(plot_data$correlation > 0.5 | plot_data$source1 == plot_data$source2, 
+                          "white", "black"),
+            size = 2.5) +
+  scale_fill_gradient2(low = "#d73027", mid = "white", high = "#4575b4",
+                      midpoint = 0, limits = c(-1, 1), na.value = "gray90") +
+  labs(
+    title = "(D) CD8 T Cell Expression Correlation Across Sources",
+    subtitle = "Correlation coefficients and number of shared genes (n) between sources",
+    x = "Data Source",
+    y = "Data Source",
+    fill = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid = element_blank(),
+    legend.position = "right"
+  )
+
+# Save CD8 correlation plot separately
+ggsave(file.path(plot_dir, "cd8_correlation.png"), p_cd8_cor, 
+       width = 8, height = 7, dpi = 300, bg = "white")
 
 # Define color palette for cell types
 n_celltypes <- length(unique(all_results$celltype))
@@ -343,7 +453,7 @@ p1 <- overall_summary %>%
   scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.1))) +
   coord_flip() +
   labs(
-    title = "Gene Coverage by Cell Type",
+    title = "(A) Gene Coverage by Cell Type",
     subtitle = "Total unique genes detected per cell type across all data sources",
     x = "Cell Type",
     y = "Number of Unique Genes",
@@ -429,7 +539,7 @@ p3 <- heatmap_data %>%
                      name = "Log10\nGenes", 
                      labels = function(x) ifelse(x == 0, "0", paste0("10^", round(x, 1)))) +
   labs(
-    title = "Cell Type × Data Source Matrix",
+    title = "(B) Cell Type × Data Source Matrix",
     subtitle = "Gene counts per cell type and data source",
     x = "Data Source",
     y = "Cell Type"
@@ -443,14 +553,11 @@ p3 <- heatmap_data %>%
     panel.grid = element_blank()
   )
 
+# Save heatmap separately
 ggsave(file.path(plot_dir, "celltype_source_matrix.png"), p3, 
        width = 12, height = 10, dpi = 300, bg = "white")
 
-# Plot 4: Intensity distributions by cell type (sample of top cell types)
-top_celltypes <- overall_summary %>% 
-  slice_head(n = 8) %>% 
-  pull(celltype)
-
+# Prepare data for intensity distributions
 # Function to calculate z-score normalization by source
 calculate_zscore_normalization <- function(data) {
   data %>%
@@ -476,6 +583,11 @@ calculate_quantile_normalization <- function(data) {
   return(data_quantile)
 }
 
+# Get top cell types
+top_celltypes <- overall_summary %>% 
+  slice_head(n = 8) %>% 
+  pull(celltype)
+
 # Prepare intensity data with both z-score and quantile normalization
 intensity_sample <- all_results %>%
   filter(celltype %in% top_celltypes, !is.na(intensity), intensity > 0) %>%
@@ -487,46 +599,69 @@ intensity_sample <- all_results %>%
 # Apply quantile normalization to the sampled data
 intensity_sample_quantile <- calculate_quantile_normalization(intensity_sample)
 
-# Plot 4: Original log10 intensity distributions - REMOVED
-# Using z-score normalized version instead for better cross-source comparison
-
-# Plot 4z: Z-score normalized intensity distributions
+# Plot 4z: Z-score normalized intensity distributions using boxplots
 p4z <- intensity_sample %>%
-  mutate(celltype_display = format_celltype_names(celltype)) %>%
-  ggplot(aes(x = z_score, fill = celltype)) +
-  geom_density(alpha = 0.7) +
-  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
-  scale_fill_manual(values = celltype_colors[1:length(top_celltypes)]) +
+  mutate(
+    celltype_display = format_celltype_names(celltype),
+    source_display = format_source_names(source)
+  ) %>%
+  ggplot(aes(x = source_display, y = z_score, fill = source_display)) +
+  geom_boxplot(outlier.size = 0.3, alpha = 0.7) +
+  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
+  scale_fill_brewer(type = "qual", palette = "Set2") +
   labs(
-    title = "Z-Score Normalized Protein Intensity Distributions",
-    subtitle = "Z-score normalized intensities (by source) for top 8 cell types - directly comparable across sources",
-    x = "Z-Score (standardized log10 intensity)",
-    y = "Density",
+    title = "(C) Intensity Distributions Across Cell Types and Sources",
+    subtitle = "Z-score normalized intensities by source for each cell type",
+    x = "Data Source",
+    y = "Z-Score (standardized log10 intensity)",
+    fill = "Data Source",
     caption = "Z-scores calculated within each data source: (log10(intensity) - mean) / sd"
   ) +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 14, face = "bold"),
     plot.subtitle = element_text(size = 12),
-    legend.position = "none",
-    strip.text = element_text(size = 10, face = "bold")
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 10),
+    panel.grid.minor = element_blank()
+  ) +
+  # Add faceting by cell type to group distributions
+  facet_wrap(~ celltype_display, scales = "free_x", ncol = 4) +
+  theme(
+    strip.text = element_text(size = 10, face = "bold"),
+    panel.spacing = unit(0.5, "lines"),
+    strip.background = element_rect(fill = "gray95", color = NA),
+    panel.border = element_rect(fill = NA, color = "gray80")
+  ) +
+  # Add stats annotation
+  stat_summary(
+    fun.data = function(x) {
+      return(c(y = max(x) + 0.2, label = length(x)))
+    },
+    geom = "text",
+    aes(label = ..label..),
+    size = 2.5,
+    position = position_dodge(width = 0.75)
   )
 
+# Save intensity distribution plot separately
 ggsave(file.path(plot_dir, "intensity_distributions_zscore.png"), p4z, 
-       width = 12, height = 10, dpi = 300, bg = "white")
+       width = 12, height = 8, dpi = 300, bg = "white")
 
-# Plot 4q: Quantile normalized intensity distributions
+# Plot 4q: Quantile normalized intensity distributions using violin plots
 p4q <- intensity_sample_quantile %>%
   mutate(celltype_display = format_celltype_names(celltype)) %>%
-  ggplot(aes(x = quantile_normalized, fill = celltype)) +
-  geom_density(alpha = 0.7) +
-  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
+  ggplot(aes(x = celltype_display, y = quantile_normalized, fill = celltype)) +
+  geom_violin(trim = TRUE, alpha = 0.7) +
+  geom_boxplot(width = 0.2, alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
   scale_fill_manual(values = celltype_colors[1:length(top_celltypes)]) +
   labs(
-    title = "Quantile Normalized Protein Intensity Distributions",
-    subtitle = "Quantile normalized intensities for top 8 cell types - identical distributions across sources",
-    x = "Quantile Normalized Value",
-    y = "Density",
+    title = "(B) Quantile Normalized Protein Intensity Distributions",
+    subtitle = "Quantile normalized intensities for top 8 cell types",
+    x = "Cell Type",
+    y = "Quantile Normalized Value",
     caption = "Quantile normalization forces identical distributions across data sources"
   ) +
   theme_minimal() +
@@ -534,29 +669,31 @@ p4q <- intensity_sample_quantile %>%
     plot.title = element_text(size = 14, face = "bold"),
     plot.subtitle = element_text(size = 12),
     legend.position = "none",
-    strip.text = element_text(size = 10, face = "bold")
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+    axis.text.y = element_text(size = 10),
+    panel.grid.minor = element_blank()
   )
 
 ggsave(file.path(plot_dir, "intensity_distributions_quantile.png"), p4q, 
-       width = 12, height = 10, dpi = 300, bg = "white")
+       width = 12, height = 8, dpi = 300, bg = "white")
 
-# Plot 4a has been removed - using z-score normalized version instead
-
-# Plot 4az: Z-score normalized intensity distributions faceted by source
+# Plot 4az: Z-score normalized intensity distributions by source using violin plots
 p4az <- intensity_sample %>%
   mutate(
     celltype_display = format_celltype_names(celltype),
     source_display = format_source_names(source)
   ) %>%
-  ggplot(aes(x = z_score, fill = source_display)) +
-  geom_density(alpha = 0.7) +
-  facet_grid(celltype_display ~ source_display, scales = "free") +
+  ggplot(aes(x = source_display, y = z_score, fill = source_display)) +
+  geom_violin(trim = TRUE, alpha = 0.7) +
+  geom_boxplot(width = 0.2, alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
+  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
   scale_fill_brewer(type = "qual", palette = "Set2") +
   labs(
-    title = "Z-Score Normalized Protein Intensity Distributions by Source",
+    title = "(C) Z-Score Normalized Protein Intensity Distributions by Source",
     subtitle = "Z-score normalized intensities for top 8 cell types - all sources on same scale",
-    x = "Z-Score (standardized log10 intensity)",
-    y = "Density",
+    x = "Data Source",
+    y = "Z-Score (standardized log10 intensity)",
     fill = "Data Source",
     caption = "Z-scores calculated within each data source for direct comparison"
   ) +
@@ -564,30 +701,33 @@ p4az <- intensity_sample %>%
   theme(
     plot.title = element_text(size = 14, face = "bold"),
     plot.subtitle = element_text(size = 12),
-    legend.position = "bottom",
-    strip.text = element_text(size = 8, face = "bold"),
-    axis.text.x = element_text(size = 8),
-    axis.text.y = element_text(size = 8)
+    legend.position = "none",
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 8),
+    panel.grid.minor = element_blank()
   )
 
 ggsave(file.path(plot_dir, "intensity_distributions_by_source_zscore.png"), p4az, 
        width = 16, height = 12, dpi = 300, bg = "white")
 
-# Plot 4aq: Quantile normalized intensity distributions faceted by source
+# Plot 4aq: Quantile normalized intensity distributions by source using violin plots
 p4aq <- intensity_sample_quantile %>%
   mutate(
     celltype_display = format_celltype_names(celltype),
     source_display = format_source_names(source)
   ) %>%
-  ggplot(aes(x = quantile_normalized, fill = source_display)) +
-  geom_density(alpha = 0.7) +
-  facet_grid(celltype_display ~ source_display, scales = "free") +
+  ggplot(aes(x = source_display, y = quantile_normalized, fill = source_display)) +
+  geom_violin(trim = TRUE, alpha = 0.7) +
+  geom_boxplot(width = 0.2, alpha = 0.7, outlier.shape = NA) +
+  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
+  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
   scale_fill_brewer(type = "qual", palette = "Set2") +
   labs(
-    title = "Quantile Normalized Protein Intensity Distributions by Source",
-    subtitle = "Quantile normalized intensities for top 8 cell types - identical distributions across sources",
-    x = "Quantile Normalized Value",
-    y = "Density",
+    title = "(D) Quantile Normalized Protein Intensity Distributions by Source",
+    subtitle = "Quantile normalized intensities for top 8 cell types",
+    x = "Data Source",
+    y = "Quantile Normalized Value",
     fill = "Data Source",
     caption = "Quantile normalization forces identical distributions across data sources"
   ) +
@@ -595,10 +735,11 @@ p4aq <- intensity_sample_quantile %>%
   theme(
     plot.title = element_text(size = 14, face = "bold"),
     plot.subtitle = element_text(size = 12),
-    legend.position = "bottom",
-    strip.text = element_text(size = 8, face = "bold"),
-    axis.text.x = element_text(size = 8),
-    axis.text.y = element_text(size = 8)
+    legend.position = "none",
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 8),
+    panel.grid.minor = element_blank()
   )
 
 ggsave(file.path(plot_dir, "intensity_distributions_by_source_quantile.png"), p4aq, 
@@ -738,22 +879,12 @@ if (exists("p4b")) {
          width = 12, height = 10, dpi = 300, bg = "white")
 }
 
-# Plot 4c has been replaced by the correlation analysis (Plot 4b)
-
 # Plot 5: Technology comparison has been removed
 
 # Plot 6: Comprehensive summary dashboard
-p6_top <- (p1 | p4z) 
-p6_bottom <- p3
-p6_comprehensive <- p6_top / p6_bottom + 
-  plot_annotation(
-    title = "Cell Type Protein Expression Analysis - Comprehensive Summary",
-    subtitle = paste0("Analysis of ", length(unique(all_results$gene)), 
-                     " unique genes across ", length(unique(all_results$celltype)), 
-                     " cell types from ", length(unique(all_results$source)), " data sources"),
-    caption = "Generated by: 05_celltype_analysis.R"
-  ) &
-  theme(plot.title = element_text(size = 16, face = "bold"))
+p6_top <- (p1 | p3)  # Switched p4z to p3
+p6_bottom <- (p4z | p_cd8_cor)  # Switched p3 to p4z
+p6_comprehensive <- p6_top / p6_bottom + theme(plot.title = element_text(size = 16, face = "bold"))
 
 ggsave(file.path(plot_dir, "comprehensive_summary.png"), p6_comprehensive, 
        width = 20, height = 14, dpi = 300, bg = "white")
