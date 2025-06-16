@@ -7,6 +7,7 @@
 
 # Load utilities and set up output directories
 source("scripts/utilities/load_packages.R")
+source("scripts/config/analysis_config.R")
 ensure_output_dirs()
 
 # Load required packages
@@ -17,11 +18,28 @@ load_packages(required_packages)
 args <- commandArgs(trailingOnly = TRUE)
 force_mapping <- "--force-mapping" %in% args
 
+# Parse formats argument
+formats_arg <- NULL
+if (length(args) > 0) {
+  formats_idx <- which(args == "--formats")
+  if (length(formats_idx) > 0 && formats_idx < length(args)) {
+    formats_arg <- args[formats_idx + 1]
+  }
+}
+
+# Set plot formats if provided
+if (!is.null(formats_arg)) {
+  set_plot_formats(formats_arg)
+}
+
 # Load gene mapping utility
 source("scripts/data_processing/simple_id_mapping.R")
 
 # Load gene deduplication utility
 source("scripts/utilities/gene_deduplication.R")
+
+# Load quantile normalization utility
+source("scripts/utilities/quantile_normalization_functions.R")
 
 # Set output directory
 output_dir <- get_output_path("03_biomarker_plasma_analysis", subdir = "plots")
@@ -45,7 +63,7 @@ calculate_zscore_normalization_biomarker <- function(data, intensity_col) {
 
 # Helper function to create distribution and violin plots for each database (with z-score normalization)
 create_database_plots <- function(data, gene_col, intensity_col, database_name, biomarker_genes) {
-  # Filter out NA and infinite values and apply z-score normalization
+  # Filter out NA and infinite values and apply all normalization methods
   plot_data <- data %>%
     filter(!is.na(.data[[gene_col]]), !is.na(.data[[intensity_col]])) %>%
     calculate_zscore_normalization_biomarker(intensity_col) %>%
@@ -53,7 +71,15 @@ create_database_plots <- function(data, gene_col, intensity_col, database_name, 
       is_biomarker = .data[[gene_col]] %in% biomarker_genes
     )
   
-  # Calculate statistics for both log and z-score values
+  # Apply quantile normalization for single database (will just return same values but adds column)
+  temp_data <- plot_data
+  temp_data$Database <- database_name
+  temp_data_quantile <- apply_quantile_normalization_simple(temp_data, "log_intensity", "Database")
+  
+  # Add quantile_normalized back to plot_data
+  plot_data$quantile_normalized <- temp_data_quantile$quantile_normalized
+  
+  # Calculate statistics for log, z-score, and quantile normalized values
   stats_log <- plot_data %>%
     group_by(is_biomarker) %>%
     summarise(
@@ -71,6 +97,16 @@ create_database_plots <- function(data, gene_col, intensity_col, database_name, 
       median = median(z_score, na.rm = TRUE),
       q1 = quantile(z_score, 0.25, na.rm = TRUE),
       q3 = quantile(z_score, 0.75, na.rm = TRUE),
+      .groups = 'drop'
+    )
+  
+  stats_quantile <- plot_data %>%
+    group_by(is_biomarker) %>%
+    summarise(
+      n = n(),
+      median = median(quantile_normalized, na.rm = TRUE),
+      q1 = quantile(quantile_normalized, 0.25, na.rm = TRUE),
+      q3 = quantile(quantile_normalized, 0.75, na.rm = TRUE),
       .groups = 'drop'
     )
   
@@ -170,11 +206,59 @@ create_database_plots <- function(data, gene_col, intensity_col, database_name, 
       legend.position = "none"
     )
   
+  # Quantile normalized distribution plot
+  dist_plot_quantile <- ggplot(plot_data) +
+    geom_density(aes(x = quantile_normalized, fill = is_biomarker), alpha = 0.5) +
+    scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
+                     labels = c("All proteins", "Biomarkers")) +
+    labs(
+      title = paste(database_name, "Protein Distribution (Quantile Normalized)"),
+      subtitle = sprintf("Quantile normalized for cross-database comparison | Biomarkers: %d (%.1f%%)", biomarker_count, percentage),
+      x = "Quantile Normalized Value",
+      y = "Density",
+      fill = "Protein Type"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),
+      plot.subtitle = element_text(size = 10),
+      axis.title = element_text(size = 10),
+      axis.text = element_text(size = 9),
+      legend.position = "bottom",
+      legend.title = element_text(size = 10),
+      legend.text = element_text(size = 9)
+    )
+  
+  # Quantile normalized violin plot
+  violin_plot_quantile <- ggplot(plot_data, aes(x = is_biomarker, y = quantile_normalized, fill = is_biomarker)) +
+    geom_violin(alpha = 0.5) +
+    geom_boxplot(width = 0.2, alpha = 0.8) +
+    scale_fill_manual(values = c("FALSE" = "#69b3a2", "TRUE" = "#E69F00"),
+                     labels = c("All proteins", "Biomarkers")) +
+    scale_x_discrete(labels = c("FALSE" = "All proteins", "TRUE" = "Biomarkers")) +
+    labs(
+      title = paste(database_name, "Abundance Distribution (Quantile Normalized)"),
+      subtitle = sprintf("Quantile normalized | Median (All): %.2f, Median (Bio): %.2f", 
+                        stats_quantile$median[1], stats_quantile$median[2]),
+      x = "",
+      y = "Quantile Normalized Value"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),
+      plot.subtitle = element_text(size = 10),
+      axis.title = element_text(size = 10),
+      axis.text = element_text(size = 9),
+      legend.position = "none"
+    )
+  
   return(list(
     distribution = dist_plot, 
     violin = violin_plot,
     distribution_zscore = dist_plot_zscore,
-    violin_zscore = violin_plot_zscore
+    violin_zscore = violin_plot_zscore,
+    distribution_quantile = dist_plot_quantile,
+    violin_quantile = violin_plot_quantile
   ))
 }
 
@@ -310,6 +394,28 @@ ggsave(
   dpi = 300
 )
 
+# Quantile normalized distribution plots combined
+distribution_combined_quantile <- (peptideatlas_plots$distribution_quantile + hpa_ms_plots$distribution_quantile) /
+  (hpa_pea_plots$distribution_quantile + hpa_imm_plots$distribution_quantile) /
+  (gpmdb_plots$distribution_quantile + paxdb_plots$distribution_quantile) +
+  plot_annotation(
+    title = "Protein Abundance Distribution Across Databases (Quantile Normalized)",
+    subtitle = "Comparing all proteins vs. biomarkers - Quantile normalized for cross-database comparison",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
+    theme = theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, hjust = 0.5)
+    )
+  )
+
+ggsave(
+  file.path(output_dir, "distributions_by_database_quantile.png"),
+  distribution_combined_quantile,
+  width = 15,
+  height = 20,
+  dpi = 300
+)
+
 # Log-transformed violin plots combined
 violin_combined <- (peptideatlas_plots$violin + hpa_ms_plots$violin) /
   (hpa_pea_plots$violin + hpa_imm_plots$violin) /
@@ -349,6 +455,28 @@ violin_combined_zscore <- (peptideatlas_plots$violin_zscore + hpa_ms_plots$violi
 ggsave(
   file.path(output_dir, "abundance_distributions_by_database_zscore.png"),
   violin_combined_zscore,
+  width = 15,
+  height = 20,
+  dpi = 300
+)
+
+# Quantile normalized violin plots combined
+violin_combined_quantile <- (peptideatlas_plots$violin_quantile + hpa_ms_plots$violin_quantile) /
+  (hpa_pea_plots$violin_quantile + hpa_imm_plots$violin_quantile) /
+  (gpmdb_plots$violin_quantile + paxdb_plots$violin_quantile) +
+  plot_annotation(
+    title = "Protein Abundance Distribution Across Databases (Quantile Normalized)",
+    subtitle = "Comparing all proteins vs. biomarkers - Quantile normalized for cross-database comparison",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)')),
+    theme = theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, hjust = 0.5)
+    )
+  )
+
+ggsave(
+  file.path(output_dir, "abundance_distributions_by_database_quantile.png"),
+  violin_combined_quantile,
   width = 15,
   height = 20,
   dpi = 300

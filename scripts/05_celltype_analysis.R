@@ -15,6 +15,7 @@
 
 # Load utilities and set up output directories
 source("scripts/utilities/load_packages.R")
+source("scripts/config/analysis_config.R")
 ensure_output_dirs()
 
 # Load required packages
@@ -26,9 +27,26 @@ load_packages(required_packages)
 args <- commandArgs(trailingOnly = TRUE)
 force_mapping <- "--force-mapping" %in% args
 
+# Parse formats argument
+formats_arg <- NULL
+if (length(args) > 0) {
+  formats_idx <- which(args == "--formats")
+  if (length(formats_idx) > 0 && formats_idx < length(args)) {
+    formats_arg <- args[formats_idx + 1]
+  }
+}
+
+# Set plot formats if provided
+if (!is.null(formats_arg)) {
+  set_plot_formats(formats_arg)
+}
+
 # Load gene mapping and deduplication utilities
 source("scripts/data_processing/simple_id_mapping.R")
 source("scripts/utilities/gene_deduplication.R")
+
+# Load quantile normalization utility
+source("scripts/utilities/quantile_normalization_functions.R")
 
 # Load specialized processors
 source("scripts/data_processing/proteomexchange_processor.R")
@@ -444,13 +462,30 @@ calculate_zscore_normalization <- function(data) {
     ungroup()
 }
 
-# Prepare intensity data with z-score normalization
+# Function to calculate quantile normalization by source
+calculate_quantile_normalization <- function(data) {
+  # First apply z-score normalization to get log_intensity
+  data_with_log <- data %>%
+    group_by(source) %>%
+    mutate(log_intensity = log10(intensity)) %>%
+    ungroup()
+  
+  # Apply quantile normalization across sources
+  data_quantile <- apply_quantile_normalization_simple(data_with_log, "log_intensity", "source")
+  
+  return(data_quantile)
+}
+
+# Prepare intensity data with both z-score and quantile normalization
 intensity_sample <- all_results %>%
   filter(celltype %in% top_celltypes, !is.na(intensity), intensity > 0) %>%
   calculate_zscore_normalization() %>%
   group_by(celltype) %>%
   sample_n(size = min(1000, n()), replace = FALSE) %>%  # Sample for performance
   ungroup()
+
+# Apply quantile normalization to the sampled data
+intensity_sample_quantile <- calculate_quantile_normalization(intensity_sample)
 
 # Plot 4: Original log10 intensity distributions - REMOVED
 # Using z-score normalized version instead for better cross-source comparison
@@ -478,6 +513,31 @@ p4z <- intensity_sample %>%
   )
 
 ggsave(file.path(plot_dir, "intensity_distributions_zscore.png"), p4z, 
+       width = 12, height = 10, dpi = 300, bg = "white")
+
+# Plot 4q: Quantile normalized intensity distributions
+p4q <- intensity_sample_quantile %>%
+  mutate(celltype_display = format_celltype_names(celltype)) %>%
+  ggplot(aes(x = quantile_normalized, fill = celltype)) +
+  geom_density(alpha = 0.7) +
+  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
+  scale_fill_manual(values = celltype_colors[1:length(top_celltypes)]) +
+  labs(
+    title = "Quantile Normalized Protein Intensity Distributions",
+    subtitle = "Quantile normalized intensities for top 8 cell types - identical distributions across sources",
+    x = "Quantile Normalized Value",
+    y = "Density",
+    caption = "Quantile normalization forces identical distributions across data sources"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    legend.position = "none",
+    strip.text = element_text(size = 10, face = "bold")
+  )
+
+ggsave(file.path(plot_dir, "intensity_distributions_quantile.png"), p4q, 
        width = 12, height = 10, dpi = 300, bg = "white")
 
 # Plot 4a has been removed - using z-score normalized version instead
@@ -511,6 +571,37 @@ p4az <- intensity_sample %>%
   )
 
 ggsave(file.path(plot_dir, "intensity_distributions_by_source_zscore.png"), p4az, 
+       width = 16, height = 12, dpi = 300, bg = "white")
+
+# Plot 4aq: Quantile normalized intensity distributions faceted by source
+p4aq <- intensity_sample_quantile %>%
+  mutate(
+    celltype_display = format_celltype_names(celltype),
+    source_display = format_source_names(source)
+  ) %>%
+  ggplot(aes(x = quantile_normalized, fill = source_display)) +
+  geom_density(alpha = 0.7) +
+  facet_grid(celltype_display ~ source_display, scales = "free") +
+  scale_fill_brewer(type = "qual", palette = "Set2") +
+  labs(
+    title = "Quantile Normalized Protein Intensity Distributions by Source",
+    subtitle = "Quantile normalized intensities for top 8 cell types - identical distributions across sources",
+    x = "Quantile Normalized Value",
+    y = "Density",
+    fill = "Data Source",
+    caption = "Quantile normalization forces identical distributions across data sources"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    legend.position = "bottom",
+    strip.text = element_text(size = 8, face = "bold"),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8)
+  )
+
+ggsave(file.path(plot_dir, "intensity_distributions_by_source_quantile.png"), p4aq, 
        width = 16, height = 12, dpi = 300, bg = "white")
 
 # Plot 4b: Cross-source correlation analysis

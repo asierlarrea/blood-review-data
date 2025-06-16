@@ -47,14 +47,40 @@ check_command() {
 
 # Parse command line arguments
 FORCE_MAPPING=""
+PLOT_FORMATS="svg"  # Default to SVG only
 while [[ $# -gt 0 ]]; do
     case $1 in
         --force-mapping)
             FORCE_MAPPING="--force-mapping"
             shift
             ;;
+        --formats)
+            PLOT_FORMATS="$2"
+            shift 2
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--force-mapping] [--formats FORMAT_LIST]"
+            echo ""
+            echo "Options:"
+            echo "  --force-mapping  Force re-mapping of protein IDs to gene symbols"
+            echo "  --formats LIST   Comma-separated list of output formats (default: svg)"
+            echo "                   Supported formats: svg, png, pdf, jpeg, tiff"
+            echo "                   Example: svg,png or png,svg,pdf"
+            echo "  --help, -h       Show this help message"
+            echo ""
+            echo "Example usage:"
+            echo "  $0                          # Run with default settings (SVG output)"
+            echo "  $0 --formats svg,png        # Generate both SVG and PNG formats"
+            echo "  $0 --force-mapping --formats png  # Force mapping and PNG output"
+            exit 0
+            ;;
         *)
             print_error "Unknown option: $1"
+            echo "Usage: $0 [--force-mapping] [--formats FORMAT_LIST]"
+            echo "  --force-mapping: Force re-mapping of protein IDs to gene symbols"
+            echo "  --formats:       Comma-separated list of output formats (default: svg)"
+            echo "                   Example: svg,png or png,svg,pdf"
+            echo "Use --help for more information."
             exit 1
             ;;
     esac
@@ -123,7 +149,14 @@ mkdir -p outputs
 mkdir -p plots
 
 # Run the plasma protein analysis
-print_status "Running plasma protein analysis..."
+print_status "Running plasma protein analysis (modular pipeline)..."
+echo ""
+echo "🚀 Using modular analysis pipeline with:"
+echo "  • Centralized configuration"
+echo "  • Unified data loading"
+echo "  • Standardized plotting themes"
+echo "  • Enhanced normalization comparisons"
+echo "  • Plot formats: $PLOT_FORMATS"
 echo ""
 echo "Analyzing protein quantification across:"
 echo "  • PeptideAtlas (MS)"
@@ -134,20 +167,18 @@ echo "  • GPMDB (MS)"
 echo "  • PAXDB (Expression data)"
 echo ""
 
+# Build arguments for R scripts
+R_ARGS=""
 if [ -n "$FORCE_MAPPING" ]; then
-    if Rscript scripts/01_plasma_protein_analysis.R "$FORCE_MAPPING"; then
-        print_success "Plasma protein analysis completed successfully!"
-    else
-        print_error "Plasma protein analysis failed!"
-        exit 1
-    fi
+    R_ARGS="$R_ARGS $FORCE_MAPPING"
+fi
+R_ARGS="$R_ARGS --formats $PLOT_FORMATS"
+
+if Rscript scripts/01_plasma_protein_analysis.R $R_ARGS; then
+    print_success "Plasma protein analysis completed successfully!"
 else
-    if Rscript scripts/01_plasma_protein_analysis.R; then
-        print_success "Plasma protein analysis completed successfully!"
-    else
-        print_error "Plasma protein analysis failed!"
-        exit 1
-    fi
+    print_error "Plasma protein analysis failed!"
+    exit 1
 fi
 
 # Run the PeptideAtlas quantification analysis
@@ -158,38 +189,20 @@ echo "  • n_observations vs norm_PSMs_per_100K"
 echo "  • Distribution analysis and correlation"
 echo ""
 
-if [ -n "$FORCE_MAPPING" ]; then
-    if Rscript scripts/02_peptideatlas_quantification_analysis.R "$FORCE_MAPPING"; then
-        print_success "PeptideAtlas quantification analysis completed successfully!"
-    else
-        print_error "PeptideAtlas quantification analysis failed!"
-        exit 1
-    fi
+if Rscript scripts/02_peptideatlas_quantification_analysis.R $R_ARGS; then
+    print_success "PeptideAtlas quantification analysis completed successfully!"
 else
-    if Rscript scripts/02_peptideatlas_quantification_analysis.R; then
-        print_success "PeptideAtlas quantification analysis completed successfully!"
-    else
-        print_error "PeptideAtlas quantification analysis failed!"
-        exit 1
-    fi
+    print_error "PeptideAtlas quantification analysis failed!"
+    exit 1
 fi
 
 # Run the biomarker plasma analysis
 print_status "Running biomarker plasma analysis..."
-if [ -n "$FORCE_MAPPING" ]; then
-    if Rscript scripts/03_biomarker_plasma_analysis.R "$FORCE_MAPPING"; then
-        print_success "Biomarker plasma analysis completed successfully!"
-    else
-        print_error "Biomarker plasma analysis failed!"
-        exit 1
-    fi
+if Rscript scripts/03_biomarker_plasma_analysis.R $R_ARGS; then
+    print_success "Biomarker plasma analysis completed successfully!"
 else
-    if Rscript scripts/03_biomarker_plasma_analysis.R; then
-        print_success "Biomarker plasma analysis completed successfully!"
-    else
-        print_error "Biomarker plasma analysis failed!"
-        exit 1
-    fi
+    print_error "Biomarker plasma analysis failed!"
+    exit 1
 fi
 
 # Run the serum protein analysis
@@ -201,20 +214,11 @@ echo "  • PAXDB (Expression data)"
 echo "  • HPA Immunoassay"
 echo ""
 
-if [ -n "$FORCE_MAPPING" ]; then
-    if Rscript scripts/04_serum_protein_analysis.R "$FORCE_MAPPING"; then
-        print_success "Serum protein analysis completed successfully!"
-    else
-        print_error "Serum protein analysis failed!"
-        exit 1
-    fi
+if Rscript scripts/04_serum_protein_analysis.R $R_ARGS; then
+    print_success "Serum protein analysis completed successfully!"
 else
-    if Rscript scripts/04_serum_protein_analysis.R; then
-        print_success "Serum protein analysis completed successfully!"
-    else
-        print_error "Serum protein analysis failed!"
-        exit 1
-    fi
+    print_error "Serum protein analysis failed!"
+    exit 1
 fi
 
 # Run the cell type analysis
@@ -227,20 +231,28 @@ echo "  • ProteomeXchange pxd025174: CD4/CD8 T cell copy numbers"
 echo "  • ProteomeXchange pxd040957: CD8 T cells and macrophages"
 echo ""
 
-if [ -n "$FORCE_MAPPING" ]; then
-    if Rscript scripts/05_celltype_analysis.R "$FORCE_MAPPING"; then
-        print_success "Cell type analysis completed successfully!"
-    else
-        print_error "Cell type analysis failed!"
-        exit 1
-    fi
+if Rscript scripts/05_celltype_analysis.R $R_ARGS; then
+    print_success "Cell type analysis completed successfully!"
 else
-    if Rscript scripts/05_celltype_analysis.R; then
-        print_success "Cell type analysis completed successfully!"
-    else
-        print_error "Cell type analysis failed!"
-        exit 1
-    fi
+    print_error "Cell type analysis failed!"
+    exit 1
+fi
+
+# Run the integration analysis
+print_status "Running integration analysis..."
+echo ""
+echo "Comparing quantile normalization approaches:"
+echo "  • Z-Score normalization (within databases)"
+echo "  • Quantile normalization within databases"
+echo "  • Quantile normalization across databases"
+echo "  • Cross-database consistency evaluation"
+echo ""
+
+if Rscript scripts/06_integration_analysis.R $R_ARGS; then
+    print_success "Integration analysis completed successfully!"
+else
+    print_error "Integration analysis failed!"
+    exit 1
 fi
 
 # Display results
@@ -251,9 +263,22 @@ echo "==========================================================================
 echo ""
 print_success "Generated files:"
 echo "  📊 Plots:"
+echo "     🚀 Analysis Outputs:"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_source.png"
 echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_by_technology.png"
-echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_comprehensive.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_overview.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_abundance_distributions.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_zscore_distributions.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_quantification_distributions_log10.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_quantification_distributions_zscore.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_quantification_density_log10.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_quantification_density_zscore.png"
+echo "     • outputs/plots/01_plasma_protein_analysis/plasma_proteins_log10_vs_zscore_comparison.png"
+echo "     📋 Data Tables:"
+echo "     • outputs/tables/01_plasma_protein_analysis/plasma_protein_summary.csv"
+echo "     • outputs/tables/01_plasma_protein_analysis/plasma_proteins_normalization_statistics.csv"
+echo "     📖 Reports:"
+echo "     • outputs/reports/01_plasma_protein_analysis/plasma_protein_analysis_report.md"
 echo "     • outputs/plots/02_peptideatlas_quantification_analysis/correlation_plot.png"
 echo "     • outputs/plots/02_peptideatlas_quantification_analysis/distribution_plot.png"
 echo "     • outputs/plots/02_peptideatlas_quantification_analysis/comprehensive_plot.png"
@@ -272,6 +297,7 @@ echo "     • outputs/plots/05_celltype_analysis/celltype_source_matrix.png"
 echo "     • outputs/plots/05_celltype_analysis/intensity_distributions.png"
 echo "     • outputs/plots/05_celltype_analysis/technology_comparison.png"
 echo "     • outputs/plots/05_celltype_analysis/comprehensive_summary.png"
+echo "     • outputs/plots/07_plasma_databases_dot_plot/plasma_databases_comparison.svg"
 echo ""
 echo "  📋 Data & Reports:"
 echo "     • outputs/plasma_protein_counts_summary.csv"
@@ -303,6 +329,17 @@ fi
 
 print_success "Analysis pipeline completed successfully!"
 echo ""
+
+echo "🚀 ANALYSIS FEATURES:"
+echo "• Modular code architecture with centralized configuration"
+echo "• Enhanced normalization comparisons for better cross-database analysis"
+echo "• Standardized plotting themes and consistent styling"
+echo "• Automatic report generation with comprehensive statistics"
+echo "• Improved error handling and data validation"
+echo ""
+
 echo "View the generated plots and reports for detailed insights into:"
 echo "• Plasma and serum protein quantification across different data sources and technologies"
+echo "• Enhanced normalization comparisons for better cross-database analysis"
+echo "• Comprehensive statistical summaries of normalization methods"
 echo "• Blood cell type protein expression profiles (26 cell types, 14,274 unique genes)" 

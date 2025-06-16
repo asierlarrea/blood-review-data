@@ -12,6 +12,7 @@
 
 # Load utilities and set up output directories
 source("scripts/utilities/load_packages.R")
+source("scripts/config/analysis_config.R")
 ensure_output_dirs()
 
 # Load required packages
@@ -22,11 +23,28 @@ load_packages(required_packages)
 args <- commandArgs(trailingOnly = TRUE)
 force_mapping <- "--force-mapping" %in% args
 
+# Parse formats argument
+formats_arg <- NULL
+if (length(args) > 0) {
+  formats_idx <- which(args == "--formats")
+  if (length(formats_idx) > 0 && formats_idx < length(args)) {
+    formats_arg <- args[formats_idx + 1]
+  }
+}
+
+# Set plot formats if provided
+if (!is.null(formats_arg)) {
+  set_plot_formats(formats_arg)
+}
+
 # Load gene mapping utility
 source("scripts/data_processing/simple_id_mapping.R")
 
 # Load gene deduplication utility
 source("scripts/utilities/gene_deduplication.R")
+
+# Load quantile normalization utility
+source("scripts/utilities/quantile_normalization_functions.R")
 
 # Set output directory
 output_dir <- get_output_path("", subdir = "serum_protein")
@@ -246,6 +264,10 @@ dist_data <- bind_rows(
 # Apply z-score normalization
 dist_data_zscore <- calculate_zscore_normalization_serum(dist_data)
 
+# Apply quantile normalization
+message("Applying quantile normalization...")
+dist_data_quantile <- apply_quantile_normalization_simple(dist_data, "log_value", "Database")
+
 p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_histogram(alpha = 0.7, bins = 50) +
   facet_wrap(~Database, scales = "free", ncol = 1, 
@@ -298,6 +320,33 @@ p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
 ggsave(file.path(plot_dir, "serum_protein_quantification_distributions_zscore.png"), 
        p4z, width = 10, height = 12, dpi = 300, bg = "white")
 
+# 4q. Quantile normalized histogram plots
+p4q <- ggplot(dist_data_quantile, aes(x = quantile_normalized, fill = Database)) +
+  geom_histogram(alpha = 0.7, bins = 50) +
+  facet_wrap(~Database, scales = "free", ncol = 1, 
+             labeller = labeller(Database = c("GPMDB" = "(a) GPMDB", 
+                                             "PAXDB" = "(b) PAXDB", 
+                                             "HPA Immunoassay" = "(c) HPA Immunoassay"))) +
+  scale_fill_viridis_d(option = "plasma") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12)
+  ) +
+  labs(
+    title = "Distribution of Quantile Normalized Protein Quantification Values",
+    subtitle = "Quantile normalized values for direct cross-database comparison",
+    x = "Quantile Normalized Value",
+    y = "Number of Proteins",
+    caption = "Quantile normalization forces identical distributions across databases"
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_quantification_distributions_quantile.png"), 
+       p4q, width = 10, height = 12, dpi = 300, bg = "white")
+
 # 5. Density plots for direct comparison (log10)
 p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_density(alpha = 0.6) +
@@ -342,6 +391,29 @@ p5z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
 
 ggsave(file.path(plot_dir, "serum_protein_quantification_density_zscore.png"), 
        p5z, width = 10, height = 6, dpi = 300, bg = "white")
+
+# 5q. Quantile normalized density plots for direct comparison
+p5q <- ggplot(dist_data_quantile, aes(x = quantile_normalized, fill = Database)) +
+  geom_density(alpha = 0.6) +
+  scale_fill_viridis_d(option = "plasma") +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    legend.position = "bottom"
+  ) +
+  labs(
+    title = "Quantile Normalized Protein Quantification Value Distributions",
+    subtitle = "Quantile normalized density plots for direct cross-database comparison",
+    x = "Quantile Normalized Value",
+    y = "Density",
+    fill = "Database",
+    caption = "Quantile normalization forces identical distributions across databases"
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_quantification_density_quantile.png"), 
+       p5q, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 6. Create overlap statistics table
 message("Creating overlap statistics...")
@@ -441,18 +513,31 @@ p7z <- p1 + p2 + p5z +
 ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive_zscore.png"), 
        p7z, width = 12, height = 18, dpi = 300, bg = "white")
 
-# 9. Create a comprehensive plot comparing log10 vs z-score normalized distributions
-p8 <- p5 + p5z + 
+# 8q. Create an extended comprehensive plot with Quantile normalized distributions
+p7q <- p1 + p2 + p5q + 
   plot_layout(ncol = 1) +
   plot_annotation(
-    title = "Serum Protein Quantification: Log10 vs Z-Score Normalized Comparison",
-    subtitle = "Comparing original log10 values (top) vs z-score normalized values (bottom)",
-    tag_levels = list(c('(a)', '(b)')),
+    title = "Comprehensive Serum Protein Analysis with Quantile Normalized Distributions",
+    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases - Quantile normalized for cross-database comparison",
+    tag_levels = list(c('(a)', '(b)', '(c)')),
+    theme = theme(plot.title = element_text(size = 18, face = "bold"))
+  )
+
+ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive_quantile.png"), 
+       p7q, width = 12, height = 18, dpi = 300, bg = "white")
+
+# 9. Create a comprehensive plot comparing all three normalization methods
+p8 <- p5 + p5z + p5q + 
+  plot_layout(ncol = 1) +
+  plot_annotation(
+    title = "Serum Protein Quantification: Three Normalization Methods Comparison",
+    subtitle = "Comparing Log10 (top), Z-Score (middle), and Quantile Normalized (bottom) values",
+    tag_levels = list(c('(a)', '(b)', '(c)')),
     theme = theme(plot.title = element_text(size = 16, face = "bold"))
   )
 
-ggsave(file.path(plot_dir, "serum_protein_log10_vs_zscore_comparison.png"), 
-       p8, width = 12, height = 12, dpi = 300, bg = "white")
+ggsave(file.path(plot_dir, "serum_protein_three_methods_comparison.png"), 
+       p8, width = 12, height = 16, dpi = 300, bg = "white")
 
 # Print summary information
 message("\n=== SERUM PROTEIN ANALYSIS SUMMARY ===")
