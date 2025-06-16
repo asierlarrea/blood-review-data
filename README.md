@@ -7,24 +7,37 @@ A comprehensive analysis pipeline for blood proteomics data integration and visu
 ```
 blood-review-data/
 ├── 📁 data/                    # All data files organized by type
-│   ├── raw/                   # Original CSV and data files
-│   ├── processed/             # Cleaned and processed data  
-│   └── metadata/              # Documentation and metadata files
-├── 📁 scripts/                # All analysis scripts organized by function
-│   ├── analysis/              # Main Figure*.R and analysis scripts
+│   ├── raw/                   # Original data files from different sources
+│   │   ├── gpmdb/            # GPMDB database files
+│   │   ├── hpa/              # Human Protein Atlas data
+│   │   ├── paxdb/            # PaxDB database files
+│   │   ├── peptideatlas/     # PeptideAtlas data
+│   │   └── proteomexchange/  # ProteomeXchange datasets
+│   ├── processed/            # Cleaned and processed data
+│   ├── metadata/            # Documentation and metadata files
+│   └── cache/               # Cached data for faster processing
+├── 📁 scripts/                # All analysis scripts
+│   ├── 01_plasma_protein_analysis.R           # Plasma protein analysis
+│   ├── 02_peptideatlas_quantification_analysis.R  # PeptideAtlas analysis
+│   ├── 03_biomarker_plasma_analysis.R         # Biomarker analysis
+│   ├── 04_serum_protein_analysis.R            # Serum protein analysis
+│   ├── 05_celltype_analysis.R                 # Cell type analysis
 │   ├── visualization/         # Specialized plotting scripts
-│   ├── data_processing/       # Data cleaning and ID mapping
-│   └── utilities/             # Helper functions and utilities
+│   ├── data_processing/      # Data cleaning and ID mapping
+│   ├── utilities/            # Helper functions and utilities
+│   └── config/              # Analysis configuration
 ├── 📁 outputs/                # All generated outputs
-│   ├── plots/                 # Generated visualizations
-│   ├── tables/                # Generated tables and summaries
-│   ├── reports/               # Analysis reports and documentation
-│   └── logs/                  # Script execution logs
+│   ├── plots/                # Generated visualizations
+│   ├── tables/               # Generated tables and summaries
+│   ├── reports/              # Analysis reports and documentation
+│   ├── logs/                 # Script execution logs
+│   ├── plasma_protein/       # Plasma protein analysis results
+│   ├── serum_protein/        # Serum protein analysis results
+│   └── celltype_analysis/    # Cell type analysis results
 ├── 📁 manuscript/             # Manuscript files and bibliography
-├── 📁 docs/                   # Documentation and README files
 ├── 📁 config/                 # Configuration and dependency files
-├── run_analysis.sh            # Main analysis pipeline runner
-└── README.md                  # This file
+├── run_analysis.R            # Main analysis pipeline runner
+└── README.md                 # This file
 ```
 
 ## 🚀 Quick Start
@@ -32,13 +45,13 @@ blood-review-data/
 ### 1. Install Dependencies
 ```bash
 # Install R packages automatically
-Rscript config/install_dependencies.R
+Rscript install_dependencies.R
 ```
 
 ### 2. Run Complete Analysis
 ```bash
 # Run all analysis scripts with organized outputs
-./run_analysis.sh
+Rscript run_analysis.R
 ```
 
 ### 3. Check Results
@@ -49,18 +62,19 @@ All outputs will be organized in the `outputs/` directory:
 
 ## 📊 Analysis Components
 
-### Core Analysis Scripts (`scripts/analysis/`)
-- **figure2.R** - UpSet plot of plasma proteins
-- **figure3.R** - Cell type bubble plot
-- **figure4.R** - Cell type UpSet plot
-- **figure5.R** - Intensity distribution boxplots
-- **figure6-9.R** - Extended database and functional analysis
+### Core Analysis Scripts (`scripts/`)
+- **01_plasma_protein_analysis.R** - Comprehensive plasma protein analysis
+- **02_peptideatlas_quantification_analysis.R** - PeptideAtlas quantification analysis
+- **03_biomarker_plasma_analysis.R** - Biomarker analysis in plasma
+- **04_serum_protein_analysis.R** - Serum protein analysis
+- **05_celltype_analysis.R** - Cell type-specific analysis
 
 ### Visualization Scripts (`scripts/visualization/`)
 - **database_coverage_plots.R** - Individual database coverage analysis
 - **database_detailed_comparison.R** - Manuscript-specific database statistics
 - **variation_distribution_plot.R** - PEA vs MS/MS variability analysis
 - **ranked_abundance_plots.R** - Ranked protein abundance visualizations
+- **ranked_abundance_plots_improved.R** - Enhanced protein abundance visualizations
 
 ### Data Processing (`scripts/data_processing/`)
 - **ID mapping scripts** - Protein identifier mapping and standardization
@@ -132,12 +146,14 @@ get_data_path("my_data.csv", "raw")        # data/raw/my_data.csv
 
 ## 📊 Output Organization
 
-### Plot Categories (`outputs/plots/`)
-- **01_Database_Analysis** - Database coverage and correlations
-- **02_Coverage_Analysis** - Cell type data completeness
-- **03_Abundance_Analysis** - Protein concentration distributions
-- **04_Cell_Type_Comparison** - Comparative cell type analysis
-- **05_Functional_Analysis** - Protein functional categories
+### Output Categories (`outputs/`)
+- **plots/** - Generated visualizations
+- **tables/** - Data tables and summaries
+- **reports/** - Analysis reports
+- **logs/** - Script execution logs
+- **plasma_protein/** - Plasma protein analysis results
+- **serum_protein/** - Serum protein analysis results
+- **celltype_analysis/** - Cell type analysis results
 
 ### Key Visualizations
 1. **Database Coverage**: Individual database protein counts and overlaps
@@ -189,6 +205,6 @@ For questions or issues:
 
 ---
 
-**Last updated**: December 2024  
-**Pipeline version**: 2.0 (Organized Structure)  
+**Last updated**: March 2024  
+**Pipeline version**: 2.1 (Reorganized Structure)  
 **R compatibility**: R ≥ 4.0.0 
