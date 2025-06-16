@@ -13,10 +13,11 @@
 # Load utilities and set up output directories
 source("scripts/utilities/load_packages.R")
 source("scripts/config/analysis_config.R")
+source("scripts/utilities/plot_themes.R")
 ensure_output_dirs()
 
 # Load required packages
-required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "ggthemes", "patchwork", "UpSetR", "ggupset", "viridis")
+required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "ggthemes", "patchwork", "UpSetR", "ggupset", "viridis", "ggvenn")
 load_packages(required_packages)
 
 # Parse command line arguments (simple approach)
@@ -160,7 +161,7 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
     fill = "Technology"
   )
 
-ggsave(file.path(plot_dir, "serum_protein_counts_by_source.png"), 
+ggsave(file.path(plot_dir, "01_serum_protein_counts_by_source.png"), 
        p1, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 2. Grouped bar plot by technology and total
@@ -195,9 +196,6 @@ p2 <- ggplot(summary_data, aes(x = reorder(Category, Count), y = Count, fill = T
     fill = "Category Type"
   )
 
-ggsave(file.path(plot_dir, "serum_protein_counts_combined.png"), 
-       p2, width = 10, height = 6, dpi = 300, bg = "white")
-
 # 3. Venn diagram data preparation and UpSet plot
 message("Creating overlap analysis...")
 
@@ -223,7 +221,7 @@ p3 <- UpSetR::upset(
   sets.x.label = "Total Genes per Database"
 )
 
-png(file.path(plot_dir, "serum_protein_overlap_upset.png"), 
+png(file.path(plot_dir, "02_serum_protein_overlap_upset.png"), 
     width = 12, height = 8, units = "in", res = 300, bg = "white")
 print(p3)
 dev.off()
@@ -290,7 +288,7 @@ p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
     y = "Number of Proteins"
   )
 
-ggsave(file.path(plot_dir, "serum_protein_quantification_distributions.png"), 
+ggsave(file.path(plot_dir, "03_serum_protein_quantification_distributions.png"), 
        p4, width = 10, height = 12, dpi = 300, bg = "white")
 
 # 4z. Z-score normalized histogram plots
@@ -317,7 +315,7 @@ p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
     caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
   )
 
-ggsave(file.path(plot_dir, "serum_protein_quantification_distributions_zscore.png"), 
+ggsave(file.path(plot_dir, "04_serum_protein_quantification_distributions_zscore.png"), 
        p4z, width = 10, height = 12, dpi = 300, bg = "white")
 
 # 4q. Quantile normalized histogram plots
@@ -344,7 +342,7 @@ p4q <- ggplot(dist_data_quantile, aes(x = quantile_normalized, fill = Database))
     caption = "Quantile normalization forces identical distributions across databases"
   )
 
-ggsave(file.path(plot_dir, "serum_protein_quantification_distributions_quantile.png"), 
+ggsave(file.path(plot_dir, "05_serum_protein_quantification_distributions_quantile.png"), 
        p4q, width = 10, height = 12, dpi = 300, bg = "white")
 
 # 5. Density plots for direct comparison (log10)
@@ -366,7 +364,7 @@ p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
     fill = "Database"
   )
 
-ggsave(file.path(plot_dir, "serum_protein_quantification_density.png"), 
+ggsave(file.path(plot_dir, "06_serum_protein_quantification_density.png"), 
        p5, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 5z. Z-score normalized density plots for direct comparison
@@ -474,83 +472,183 @@ overlap_stats <- rbind(overlap_stats, data.frame(
 
 write.csv(overlap_stats, file.path(output_dir, "serum_protein_overlap_statistics.csv"), row.names = FALSE)
 
-# 7. Create a comprehensive summary plot
-p6 <- p1 + p2 + 
-  plot_layout(ncol = 1) +
-  plot_annotation(
-    title = "Comprehensive Serum Protein Analysis",
-    subtitle = "Comparison across GPMDB, PAXDB, and HPA databases",
-    tag_levels = list(c('(a)', '(b)')),
-    theme = theme(plot.title = element_text(size = 18, face = "bold"))
+# Create comprehensive panel
+message("\nCreating comprehensive panel...")
+
+#' Create comprehensive panel for Serum Protein Analysis (Script 04)
+#' 
+#' Panel Layout:
+#' +-------------------+-------------------+
+#' | A: Database       | B: Overlap        |
+#' |    Coverage       |    (Venn)         |
+#' +-------------------+-------------------+
+#' | C: Correlation    | D: Distribution   |
+#' |    Analysis       |    (Violin)       |
+#' +-------------------+-------------------+
+#'
+create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot_dir) {
+  
+  message("Creating comprehensive serum analysis panel...")
+  
+  # A: Database Coverage
+  coverage_data <- data.frame(
+    Database = c("GPMDB", "PAXDB", "HPA Immunoassay"),
+    Count = c(stats_summary$gpmdb_serum, stats_summary$paxdb_serum, stats_summary$hpa_immunoassay_serum),
+    Technology = c("MS", "MS", "Immunoassay")
+  ) %>%
+    arrange(desc(Count))
+  
+  panel_A <- ggplot(coverage_data, aes(x = reorder(Database, Count), y = Count, fill = Technology)) +
+    geom_col(alpha = 0.8) +
+    geom_text(aes(label = scales::comma(Count)), hjust = -0.1, size = 3.5) +
+    coord_flip() +
+    scale_fill_manual(values = c("MS" = "#4E79A7", "Immunoassay" = "#E15759")) +
+    theme_blood_proteomics() +
+    theme(plot.title = element_text(size = 12, face = "bold")) +
+    labs(
+      title = "(A) Serum Database Coverage",
+      subtitle = "Unique proteins per database",
+      x = "Database",
+      y = "Number of Proteins",
+      fill = "Technology"
+    )
+  
+  # B: Venn Diagram
+  gene_lists <- list(
+    GPMDB = all_serum_data$gene[all_serum_data$source == "GPMDB"],
+    PAXDB = all_serum_data$gene[all_serum_data$source == "PAXDB"],
+    `HPA Immunoassay` = all_serum_data$gene[all_serum_data$source == "HPA Immunoassay"]
   )
+  
+  # Calculate overlap statistics for subtitle
+  total_unique <- length(unique(unlist(gene_lists)))
+  overlap_all <- length(Reduce(intersect, gene_lists))
+  overlap_percent <- round(overlap_all / total_unique * 100, 1)
+  
+  panel_B <- ggvenn(
+    gene_lists,
+    fill_color = c("#4E79A7", "#56B4E9", "#E15759"),
+    stroke_size = 0.5,
+    set_name_size = 4
+  ) +
+    theme_void() +
+    labs(
+      title = "(B) Database Overlap",
+      subtitle = sprintf("%d proteins in all databases (%.1f%%)", overlap_all, overlap_percent)
+    ) +
+    theme(
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 10, hjust = 0.5)
+    )
+  
+  # C: Correlation Analysis
+  # First, create a wide format dataset with z-scores for MS databases only
+  correlation_data <- bind_rows(
+    gpmdb_serum %>% 
+      select(gene, total) %>% 
+      mutate(source = "GPMDB", value = total),
+    paxdb_serum %>% 
+      select(gene, abundance) %>% 
+      mutate(source = "PAXDB", value = abundance)
+  ) %>%
+    group_by(gene, source) %>%
+    summarise(
+      log_value = log10(value),
+      .groups = "drop"
+    ) %>%
+    group_by(source) %>%
+    mutate(
+      z_score = scale(log_value)[,1]
+    ) %>%
+    ungroup() %>%
+    select(gene, source, z_score) %>%
+    pivot_wider(
+      names_from = source,
+      values_from = z_score
+    ) %>%
+    na.omit()
+  
+  # Calculate correlation
+  cor_value <- cor(correlation_data$GPMDB, correlation_data$PAXDB)
+  
+  # Create correlation plot
+  panel_C <- ggplot(correlation_data, aes(x = GPMDB, y = PAXDB)) +
+    geom_point(alpha = 0.6, color = "#4E79A7", size = 1) +
+    geom_smooth(method = "lm", color = "#E15759", se = TRUE, linewidth = 0.5) +
+    theme_blood_proteomics() +
+    theme(plot.title = element_text(size = 12, face = "bold")) +
+    labs(
+      title = "(C) Cross-Database Correlation",
+      subtitle = sprintf("Pearson r = %.3f (MS databases only)", cor_value),
+      x = "GPMDB (z-score)",
+      y = "PAXDB (z-score)"
+    )
+  
+  # D: Distribution Violin Plot
+  distribution_data <- bind_rows(
+    gpmdb_serum %>% 
+      select(gene, total) %>% 
+      mutate(source = "GPMDB", value = total),
+    paxdb_serum %>% 
+      select(gene, abundance) %>% 
+      mutate(source = "PAXDB", value = abundance),
+    hpa_serum %>% 
+      select(gene, expr) %>% 
+      mutate(source = "HPA Immunoassay", value = expr)
+  ) %>%
+    group_by(gene, source) %>%
+    summarise(
+      log_value = log10(value),
+      .groups = "drop"
+    ) %>%
+    group_by(source) %>%
+    mutate(
+      z_score = scale(log_value)[,1]
+    ) %>%
+    ungroup()
+  
+  panel_D <- ggplot(distribution_data, aes(x = source, y = z_score, fill = source)) +
+    geom_violin(alpha = 0.7, scale = "width") +
+    geom_boxplot(width = 0.2, alpha = 0.8, outlier.alpha = 0.3) +
+    scale_fill_manual(values = c("GPMDB" = "#4E79A7", "PAXDB" = "#56B4E9", "HPA Immunoassay" = "#E15759")) +
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 12, face = "bold"),
+      legend.position = "none",
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    labs(
+      title = "(D) Abundance Distribution",
+      subtitle = "Z-score normalized values across databases",
+      x = "Database",
+      y = "Z-score"
+    )
+  
+  # Combine panels
+  comprehensive_panel <- (panel_A | panel_B) / (panel_C | panel_D) +
+    plot_layout(heights = c(1, 1)) +
+    plot_annotation(
+      title = "Comprehensive Serum Protein Analysis",
+      subtitle = paste0("Cross-database analysis of serum proteins across ", 
+                       length(unique(all_serum_data$source)), " databases"),
+      theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+    )
+  
+  # Save in SVG format with standardized name
+  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.svg"), 
+         comprehensive_panel, width = 16, height = 12, device = "svg")
+  
+  return(comprehensive_panel)
+}
 
-ggsave(file.path(plot_dir, "serum_protein_comprehensive_summary.png"), 
-       p6, width = 12, height = 12, dpi = 300, bg = "white")
+# Prepare data for comprehensive panel
+all_serum_data <- bind_rows(
+  gpmdb_serum %>% mutate(source = "GPMDB"),
+  paxdb_serum %>% mutate(source = "PAXDB"),
+  hpa_serum %>% mutate(source = "HPA Immunoassay")
+)
 
-# 8. Create an extended comprehensive plot with distributions (log10)
-p7 <- p1 + p2 + p5 + 
-  plot_layout(ncol = 1) +
-  plot_annotation(
-    title = "Comprehensive Serum Protein Analysis with Log10 Quantification Distributions",
-    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases - Log10 scale",
-    tag_levels = list(c('(a)', '(b)', '(c)')),
-    theme = theme(plot.title = element_text(size = 18, face = "bold"))
-  )
-
-ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive.png"), 
-       p7, width = 12, height = 18, dpi = 300, bg = "white")
-
-# 8z. Create an extended comprehensive plot with Z-score normalized distributions
-p7z <- p1 + p2 + p5z + 
-  plot_layout(ncol = 1) +
-  plot_annotation(
-    title = "Comprehensive Serum Protein Analysis with Z-Score Normalized Distributions",
-    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases - Z-score normalized for direct comparison",
-    tag_levels = list(c('(a)', '(b)', '(c)')),
-    theme = theme(plot.title = element_text(size = 18, face = "bold"))
-  )
-
-ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive_zscore.png"), 
-       p7z, width = 12, height = 18, dpi = 300, bg = "white")
-
-# 8q. Create an extended comprehensive plot with Quantile normalized distributions
-p7q <- p1 + p2 + p5q + 
-  plot_layout(ncol = 1) +
-  plot_annotation(
-    title = "Comprehensive Serum Protein Analysis with Quantile Normalized Distributions",
-    subtitle = "Complete comparison across GPMDB, PAXDB, and HPA databases - Quantile normalized for cross-database comparison",
-    tag_levels = list(c('(a)', '(b)', '(c)')),
-    theme = theme(plot.title = element_text(size = 18, face = "bold"))
-  )
-
-ggsave(file.path(plot_dir, "serum_protein_extended_comprehensive_quantile.png"), 
-       p7q, width = 12, height = 18, dpi = 300, bg = "white")
-
-# 9. Create a comprehensive plot comparing all three normalization methods
-p8 <- p5 + p5z + p5q + 
-  plot_layout(ncol = 1) +
-  plot_annotation(
-    title = "Serum Protein Quantification: Three Normalization Methods Comparison",
-    subtitle = "Comparing Log10 (top), Z-Score (middle), and Quantile Normalized (bottom) values",
-    tag_levels = list(c('(a)', '(b)', '(c)')),
-    theme = theme(plot.title = element_text(size = 16, face = "bold"))
-  )
-
-ggsave(file.path(plot_dir, "serum_protein_three_methods_comparison.png"), 
-       p8, width = 12, height = 16, dpi = 300, bg = "white")
-
-# Print summary information
-message("\n=== SERUM PROTEIN ANALYSIS SUMMARY ===")
-message(sprintf("GPMDB serum proteins: %s", scales::comma(stats_summary$gpmdb_serum)))
-message(sprintf("PAXDB serum proteins: %s", scales::comma(stats_summary$paxdb_serum)))
-message(sprintf("HPA Immunoassay serum proteins: %s", scales::comma(stats_summary$hpa_immunoassay_serum)))
-message(sprintf("MS technologies total: %s", scales::comma(stats_summary$ms_technologies)))
-message(sprintf("Total across all sources: %s", scales::comma(stats_summary$total_across_sources)))
-message(sprintf("Three-way overlap: %s", scales::comma(three_way_overlap)))
-
-message("\n=== OUTPUT FILES ===")
-message(sprintf("Summary statistics: %s", file.path(output_dir, "serum_protein_counts_summary.csv")))
-message(sprintf("Overlap statistics: %s", file.path(output_dir, "serum_protein_overlap_statistics.csv")))
-message(sprintf("Plots directory: %s", plot_dir))
+# Create comprehensive panel
+create_serum_comprehensive_panel(all_serum_data, stats_summary, plot_dir)
 
 message("\n=== ANALYSIS COMPLETE ===") 

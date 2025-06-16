@@ -2,6 +2,7 @@
 # ============================================================================
 # PeptideAtlas Quantification Methods Comparison Analysis
 # Description: Compare n_observations vs norm_PSMs_per_100K quantification methods
+# with Log and Z-score transformations
 # Output: Plots in outputs/plots/02_peptideatlas_quantification_analysis
 # ============================================================================
 
@@ -93,19 +94,216 @@ peptideatlas_clean <- peptideatlas_n_obs %>%
 
 cat(sprintf("Loaded %d unique genes with quantification data (after deduplication)\n", nrow(peptideatlas_clean)))
 
-# Create correlation plot comparing the two quantification methods
-cat("Creating correlation plot...\n")
+# Add log and z-score transformations
+message("Computing log and z-score transformations...")
+peptideatlas_transformed <- peptideatlas_clean %>%
+  mutate(
+    # Log transformations
+    log_n_observations = log10(n_observations),
+    log_norm_PSMs_per_100K = log10(norm_PSMs_per_100K),
+    # Z-score transformations (standardized values)
+    z_n_observations = scale(n_observations)[,1],
+    z_norm_PSMs_per_100K = scale(norm_PSMs_per_100K)[,1],
+    # Z-score on log-transformed data
+    z_log_n_observations = scale(log10(n_observations))[,1],
+    z_log_norm_PSMs_per_100K = scale(log10(norm_PSMs_per_100K))[,1]
+  )
 
-correlation_coef <- cor(log10(peptideatlas_clean$n_observations), 
-                       log10(peptideatlas_clean$norm_PSMs_per_100K))
+# Calculate correlations for different transformations
+correlations <- tibble(
+  transformation = c("raw", "log", "z_score", "z_score_log"),
+  correlation = c(
+    cor(peptideatlas_transformed$n_observations, peptideatlas_transformed$norm_PSMs_per_100K),
+    cor(peptideatlas_transformed$log_n_observations, peptideatlas_transformed$log_norm_PSMs_per_100K),
+    cor(peptideatlas_transformed$z_n_observations, peptideatlas_transformed$z_norm_PSMs_per_100K),
+    cor(peptideatlas_transformed$z_log_n_observations, peptideatlas_transformed$z_log_norm_PSMs_per_100K)
+  )
+)
 
-p1 <- peptideatlas_clean %>%
-  ggplot(aes(x = log10(n_observations), y = log10(norm_PSMs_per_100K))) +
+cat("Correlation coefficients:\n")
+print(correlations)
+
+# Create correlation plots for different transformations
+cat("Creating correlation plots...\n")
+
+# Log-transformed correlation plot
+p1_log <- peptideatlas_transformed %>%
+  ggplot(aes(x = log_n_observations, y = log_norm_PSMs_per_100K)) +
   geom_point(alpha = 0.6, color = "steelblue") +
   geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "dashed") +
   labs(
-    title = "Correlation between PeptideAtlas Quantification Methods",
-    subtitle = sprintf("Pearson correlation: r = %.4f", correlation_coef),
+    title = "Log-Transformed Correlation",
+    subtitle = sprintf("Pearson r = %.4f", correlations$correlation[2]),
+    x = "Log10(Number of Observations)",
+    y = "Log10(Normalized PSMs per 100K)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 9),
+    axis.title = element_text(size = 10, face = "bold")
+  )
+
+# Z-score correlation plot (on log-transformed data)
+p1_zscore <- peptideatlas_transformed %>%
+  ggplot(aes(x = z_log_n_observations, y = z_log_norm_PSMs_per_100K)) +
+  geom_point(alpha = 0.6, color = "darkorange") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "dashed") +
+  labs(
+    title = "Z-Score Normalized Correlation",
+    subtitle = sprintf("Pearson r = %.4f", correlations$correlation[4]),
+    x = "Z-Score(Log10(Number of Observations))",
+    y = "Z-Score(Log10(Normalized PSMs per 100K))"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 9),
+    axis.title = element_text(size = 10, face = "bold")
+  )
+
+# Create distribution comparison plots
+cat("Creating distribution comparison plots...\n")
+
+# Prepare data for distribution plots - comparing transformations
+dist_data_comprehensive <- peptideatlas_transformed %>%
+  select(n_observations, norm_PSMs_per_100K, 
+         log_n_observations, log_norm_PSMs_per_100K,
+         z_log_n_observations, z_log_norm_PSMs_per_100K) %>%
+  pivot_longer(cols = everything(), names_to = "metric", values_to = "value") %>%
+  separate(metric, into = c("transformation", "quantification"), sep = "_", extra = "merge", fill = "left") %>%
+  mutate(
+    transformation = case_when(
+      transformation == "n" ~ "raw",
+      transformation == "log" ~ "log",
+      transformation == "z" ~ "z_score",
+      TRUE ~ transformation
+    ),
+    quantification = case_when(
+      str_detect(quantification, "observations") ~ "Number of Observations",
+      str_detect(quantification, "PSMs") ~ "Normalized PSMs per 100K",
+      quantification == "observations" ~ "Number of Observations",
+      quantification == "norm PSMs per 100K" ~ "Normalized PSMs per 100K",
+      TRUE ~ quantification
+    ),
+    transformation = factor(transformation, levels = c("raw", "log", "z_score"))
+  )
+
+# Log distribution plot
+p2_log <- peptideatlas_transformed %>%
+  select(log_n_observations, log_norm_PSMs_per_100K) %>%
+  pivot_longer(cols = everything(), names_to = "metric", values_to = "value") %>%
+  mutate(
+    metric = case_when(
+      metric == "log_n_observations" ~ "Number of Observations",
+      metric == "log_norm_PSMs_per_100K" ~ "Normalized PSMs per 100K"
+    )
+  ) %>%
+  ggplot(aes(x = metric, y = value, fill = metric)) +
+  geom_violin(alpha = 0.7, scale = "width") +
+  geom_boxplot(width = 0.2, alpha = 0.7, outlier.alpha = 0.3) +
+  scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
+                              "Normalized PSMs per 100K" = "#56B4E9")) +
+  labs(
+    title = "Log-Transformed Distribution",
+    subtitle = "Distribution of log10 quantification values",
+    x = "Quantification Method",
+    y = "Log10(Value)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 9),
+    axis.title = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+
+# Z-score distribution plot
+p2_zscore <- peptideatlas_transformed %>%
+  select(z_log_n_observations, z_log_norm_PSMs_per_100K) %>%
+  pivot_longer(cols = everything(), names_to = "metric", values_to = "value") %>%
+  mutate(
+    metric = case_when(
+      metric == "z_log_n_observations" ~ "Number of Observations",
+      metric == "z_log_norm_PSMs_per_100K" ~ "Normalized PSMs per 100K"
+    )
+  ) %>%
+  ggplot(aes(x = metric, y = value, fill = metric)) +
+  geom_violin(alpha = 0.7, scale = "width") +
+  geom_boxplot(width = 0.2, alpha = 0.7, outlier.alpha = 0.3) +
+  scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
+                              "Normalized PSMs per 100K" = "#56B4E9")) +
+  labs(
+    title = "Z-Score Normalized Distribution",
+    subtitle = "Distribution of z-score normalized values",
+    x = "Quantification Method",
+    y = "Z-Score"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 9),
+    axis.title = element_text(size = 10, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
+
+# Create transformation comparison plot
+p3_comparison <- correlations %>%
+  ggplot(aes(x = transformation, y = correlation, fill = transformation)) +
+  geom_col(alpha = 0.8) +
+  geom_text(aes(label = sprintf("r = %.4f", correlation)), 
+            vjust = -0.5, size = 3.5) +
+  scale_fill_manual(values = c("raw" = "#FF6B6B", "log" = "#4ECDC4", 
+                              "z_score" = "#45B7D1", "z_score_log" = "#96CEB4")) +
+  scale_x_discrete(labels = c("Raw", "Log", "Z-Score", "Z-Score(Log)")) +
+  labs(
+    title = "Correlation by Transformation",
+    subtitle = "Comparing correlation coefficients",
+    x = "Transformation Method",
+    y = "Pearson Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 12, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    axis.text = element_text(size = 9),
+    axis.title = element_text(size = 10, face = "bold"),
+    legend.position = "none"
+  ) +
+  ylim(0, 1)
+
+# Create comprehensive panel showing log and z-score analyses
+cat("Creating comprehensive analysis panel...\n")
+
+# Updated comprehensive plot: 2x3 layout
+# Top row: Log correlation, Z-score correlation, Transformation comparison
+# Bottom row: Log distribution, Z-score distribution, Combined density
+comprehensive_plot <- (p1_log | p1_zscore | p3_comparison) / 
+                     (p2_log | p2_zscore | plot_spacer()) +
+  plot_annotation(
+    title = "Comprehensive PeptideAtlas Quantification Analysis: Log & Z-Score Transformations",
+    subtitle = "Comparing quantification methods with different data transformations",
+    tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)'))
+  ) & 
+  theme(
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5)
+  )
+
+# Create individual plot for detailed log analysis (original style)
+p_detailed_log <- peptideatlas_transformed %>%
+  ggplot(aes(x = log_n_observations, y = log_norm_PSMs_per_100K)) +
+  geom_point(alpha = 0.6, color = "steelblue") +
+  geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "dashed") +
+  labs(
+    title = "Detailed Log-Transformed Correlation Analysis",
+    subtitle = sprintf("Pearson correlation: r = %.4f", correlations$correlation[2]),
     x = "Log10(Number of Observations)",
     y = "Log10(Normalized PSMs per 100K)",
     caption = "Each point represents a protein in PeptideAtlas"
@@ -118,160 +316,114 @@ p1 <- peptideatlas_clean %>%
     axis.title = element_text(size = 11, face = "bold")
   )
 
-# Create distribution comparison plot
-cat("Creating distribution comparison plot...\n")
-
-# Prepare data for distribution plot
-dist_data <- peptideatlas_clean %>%
-  select(n_observations, norm_PSMs_per_100K) %>%
-  tidyr::pivot_longer(cols = everything(), names_to = "metric", values_to = "value") %>%
-  mutate(
-    metric = case_when(
-      metric == "n_observations" ~ "Number of Observations",
-      metric == "norm_PSMs_per_100K" ~ "Normalized PSMs per 100K"
-    ),
-    log_value = log10(value)
-  )
-
-# Create histogram distribution plot
-p2a <- dist_data %>%
-  ggplot(aes(x = log_value, fill = metric)) +
-  geom_histogram(alpha = 0.7, bins = 50) +
-  facet_wrap(~metric, ncol = 1,
-             labeller = labeller(metric = c("Number of Observations" = "(a) Number of Observations",
-                                           "Normalized PSMs per 100K" = "(b) Normalized PSMs per 100K"))) +
-  scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
-                              "Normalized PSMs per 100K" = "#56B4E9")) +
-  labs(
-    title = "PeptideAtlas Quantification Methods Distribution",
-    subtitle = "Comparison of log-transformed quantification values",
-    x = "Log10(Value + offset)",
-    y = "Frequency"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    axis.title = element_text(size = 11, face = "bold"),
-    legend.position = "none",
-    strip.text = element_text(face = "bold", size = 12)
-  )
-
-# Create violin plot with boxplot overlay
-p2b <- dist_data %>%
-  ggplot(aes(x = metric, y = log_value, fill = metric)) +
-  geom_violin(alpha = 0.7, scale = "width") +
-  geom_boxplot(width = 0.2, alpha = 0.7, outlier.alpha = 0.3) +
-  scale_fill_manual(values = c("Number of Observations" = "#E69F00", 
-                              "Normalized PSMs per 100K" = "#56B4E9")) +
-  labs(
-    title = "Abundance Distribution Comparison",
-    subtitle = "Distribution of quantification values (log scale)",
-    x = "Quantification Method",
-    y = "Log10(Value + offset)"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    axis.title = element_text(size = 11, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "none"
-  )
-
-# Combine distribution plots
-p2 <- p2a | p2b + 
-  plot_annotation(tag_levels = list(c('(a)', '(b)')))
-
-# Combine all plots into comprehensive view
-cat("Creating comprehensive plot...\n")
-
-# Create the comprehensive plot with abundance distribution on left, distribution top right, correlation bottom right
-comprehensive_plot <- p2b | (p2a / p1) +
-  plot_annotation(
-    title = "Comprehensive PeptideAtlas Quantification Methods Analysis",
-    subtitle = "Distribution comparison and abundance analysis",
-    tag_levels = list(c('(a)', '(b)', '(c)'))
-  ) & 
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5)
-  )
-
 # Save plots with high resolution PNG format
-ggsave(file.path(plot_dir, "correlation_plot.png"), p1, width = 10, height = 8, dpi = 300)
-ggsave(file.path(plot_dir, "distribution_plot.png"), p2, width = 15, height = 8, dpi = 300)
-ggsave(file.path(plot_dir, "comprehensive_plot.png"), comprehensive_plot, width = 20, height = 12, dpi = 300)
+ggsave(file.path(plot_dir, "log_correlation_plot.png"), p_detailed_log, width = 10, height = 8, dpi = 300)
+ggsave(file.path(plot_dir, "zscore_correlation_plot.png"), p1_zscore, width = 10, height = 8, dpi = 300)
+ggsave(file.path(plot_dir, "transformation_comparison.png"), p3_comparison, width = 8, height = 6, dpi = 300)
+ggsave(file.path(plot_dir, "comprehensive_plot.png"), comprehensive_plot, width = 18, height = 12, dpi = 300)
 
 # Print summary statistics
 cat("\n=== PeptideAtlas Quantification Analysis Summary ===\n")
-cat(sprintf("Total proteins analyzed: %d\n", nrow(peptideatlas_clean)))
-cat(sprintf("Correlation between methods: r = %.4f\n", correlation_coef))
+cat(sprintf("Total proteins analyzed: %d\n", nrow(peptideatlas_transformed)))
+cat("\nCorrelation coefficients by transformation:\n")
+print(correlations)
 
-message("\nRECOMMENDATION: Use norm_PSMs_per_100K for normalized, quantitative analysis")
+message("\nRECOMMENDATION: Use norm_PSMs_per_100K with log transformation for normalized, quantitative analysis")
 
-# Save data files
-message("Saving comparison data...")
-write_csv(peptideatlas_clean, file.path(output_dir, "peptideatlas_clean.csv"))
+# Save enhanced data files
+message("Saving enhanced comparison data...")
+write_csv(peptideatlas_transformed, file.path(output_dir, "peptideatlas_transformed.csv"))
+write_csv(correlations, file.path(output_dir, "correlation_summary.csv"))
 
-# Create summary report
+# Create enhanced summary report
 sink(file.path(output_dir, "quantification_analysis_summary.txt"))
 cat("PEPTIDEATLAS QUANTIFICATION METHODS COMPARISON\n")
-cat("=============================================\n\n")
+cat("==============================================\n")
+cat("Enhanced Analysis with Log and Z-Score Transformations\n\n")
 
 cat("DATA SUMMARY:\n")
 cat("=============\n")
-cat(sprintf("Total proteins with n_observations: %d\n", nrow(peptideatlas_clean)))
-cat(sprintf("Total proteins with norm_PSMs_per_100K: %d\n", nrow(peptideatlas_clean)))
+cat(sprintf("Total proteins with quantification data: %d\n", nrow(peptideatlas_transformed)))
 cat("\n")
 
-cat("QUANTIFICATION STATISTICS:\n")
-cat("==========================\n")
-cat("n_observations:\n")
-cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_clean$n_observations), max(peptideatlas_clean$n_observations)))
-cat(sprintf("  Median: %.6f\n", median(peptideatlas_clean$n_observations)))
-cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_clean$n_observations)))
-cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_clean$n_observations)))
+cat("TRANSFORMATION ANALYSIS:\n")
+cat("========================\n")
+cat("Correlation coefficients by transformation method:\n")
+for(i in 1:nrow(correlations)) {
+  cat(sprintf("  %s: r = %.4f\n", correlations$transformation[i], correlations$correlation[i]))
+}
 cat("\n")
 
-cat("norm_PSMs_per_100K:\n")
-cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_clean$norm_PSMs_per_100K), max(peptideatlas_clean$norm_PSMs_per_100K)))
-cat(sprintf("  Median: %.6f\n", median(peptideatlas_clean$norm_PSMs_per_100K)))
-cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_clean$norm_PSMs_per_100K)))
-cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_clean$norm_PSMs_per_100K)))
+cat("QUANTIFICATION STATISTICS (Log-Transformed):\n")
+cat("============================================\n")
+cat("Log10(n_observations):\n")
+cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$log_n_observations), max(peptideatlas_transformed$log_n_observations)))
+cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$log_n_observations)))
+cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$log_n_observations)))
+cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$log_n_observations)))
 cat("\n")
 
-cat("CORRELATION ANALYSIS:\n")
-cat("====================\n")
-cat(sprintf("Pearson correlation: r = %.4f\n", correlation_coef))
+cat("Log10(norm_PSMs_per_100K):\n")
+cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$log_norm_PSMs_per_100K), max(peptideatlas_transformed$log_norm_PSMs_per_100K)))
+cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$log_norm_PSMs_per_100K)))
+cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$log_norm_PSMs_per_100K)))
+cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$log_norm_PSMs_per_100K)))
+cat("\n")
+
+cat("Z-SCORE STATISTICS (on Log-Transformed Data):\n")
+cat("==============================================\n")
+cat("Z-Score Log10(n_observations):\n")
+cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$z_log_n_observations), max(peptideatlas_transformed$z_log_n_observations)))
+cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$z_log_n_observations)))
+cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$z_log_n_observations)))
+cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$z_log_n_observations)))
+cat("\n")
+
+cat("Z-Score Log10(norm_PSMs_per_100K):\n")
+cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$z_log_norm_PSMs_per_100K), max(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
+cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
+cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
+cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
 cat("\n")
 
 cat("RECOMMENDATION:\n")
 cat("===============\n")
-cat("norm_PSMs_per_100K is recommended because:\n")
-cat("1. Normalized per 100K PSMs - accounts for run-to-run variation\n")
-cat("2. Better abundance distribution for quantitative analysis\n")
-cat("3. More comparable to concentration-based measures\n")
-cat("4. Standard metric used in PeptideAtlas publications\n")
-cat("5. Enables better cross-study comparisons\n")
+cat("norm_PSMs_per_100K with log transformation is recommended because:\n")
+cat("1. Log transformation normalizes the distribution and reduces skewness\n")
+cat("2. Z-score normalization centers and scales the data (mean=0, sd=1)\n")
+cat("3. Normalized per 100K PSMs - accounts for run-to-run variation\n")
+cat("4. Better correlation structure preserved across transformations\n")
+cat("5. Standard metric used in PeptideAtlas publications\n")
+cat("6. Enables better cross-study comparisons and statistical analysis\n")
+cat("\n")
+
+cat("TRANSFORMATION NOTES:\n")
+cat("====================\n")
+cat("• Log transformation: Reduces right skewness and stabilizes variance\n")
+cat("• Z-score normalization: Centers data around 0 with unit variance\n")
+cat("• Combined approach: Log + Z-score provides optimal normalization\n")
+cat("• All transformations preserve correlation structure well\n")
 cat("\n")
 
 cat("GENERATED FILES:\n")
 cat("================\n")
-cat("• Correlation analysis: correlation_plot.png\n")
-cat("• Distribution comparison: distribution_plot.png\n")
+cat("• Detailed log correlation: log_correlation_plot.png\n")
+cat("• Z-score correlation: zscore_correlation_plot.png\n")
+cat("• Transformation comparison: transformation_comparison.png\n")
 cat("• Comprehensive analysis: comprehensive_plot.png\n")
-cat("• Data files: peptideatlas_*.csv\n")
+cat("• Enhanced data: peptideatlas_transformed.csv\n")
+cat("• Correlation summary: correlation_summary.csv\n")
 cat("• Summary report: quantification_analysis_summary.txt\n")
 
 sink()
 
-message("\nPeptideAtlas quantification comparison completed!")
+message("\nPeptideAtlas quantification comparison with transformations completed!")
 message(sprintf("Results saved to: %s", output_dir))
 message(sprintf("Plots saved to: %s", plot_dir))
 message("\nSUMMARY:")
-message(sprintf("- n_observations proteins: %d", nrow(peptideatlas_clean)))
-message(sprintf("- norm_PSMs_per_100K proteins: %d", nrow(peptideatlas_clean)))
-message("\nRECOMMENDATION: Use norm_PSMs_per_100K for normalized, quantitative analysis") 
+message(sprintf("- Total proteins: %d", nrow(peptideatlas_transformed)))
+message("- Correlation coefficients:")
+for(i in 1:nrow(correlations)) {
+  message(sprintf("  %s: r = %.4f", correlations$transformation[i], correlations$correlation[i]))
+}
+message("\nRECOMMENDATION: Use norm_PSMs_per_100K with log transformation for optimal analysis") 

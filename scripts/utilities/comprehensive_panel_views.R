@@ -379,13 +379,12 @@ create_biomarker_comprehensive_panel <- function(all_databases_data, biomarker_g
 #' | A: Database       | B: Technology     |
 #' |    Coverage       |    Comparison     |
 #' +-------------------+-------------------+
-#' | C: Database Overlap (UpSet-style)    |
-#' +---------------------------------------+
-#' | D: Distribution Comparison            |
-#' |    (3 normalization methods)         |
+#' | C: Database Overlap (UpSet plot)     |
 #' +---------------------------------------+
 #'
 create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot_dir) {
+  
+  message("Creating comprehensive serum analysis panel...")
   
   # A: Database Coverage
   coverage_data <- data.frame(
@@ -432,61 +431,43 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
       fill = "Type"
     )
   
-  # C: Database Overlap (simplified representation)
-  # Create intersection data
-  overlap_data <- data.frame(
-    Intersection = c("GPMDB only", "PAXDB only", "HPA only", "GPMDB+PAXDB", "GPMDB+HPA", "PAXDB+HPA", "All three"),
-    Count = c(100, 200, 50, 150, 75, 25, 300), # Placeholder - would need actual overlap calculation
-    Databases = c(1, 1, 1, 2, 2, 2, 3)
+  # C: Database Overlap (UpSet plot)
+  # Create gene lists for overlap analysis
+  gene_lists <- list(
+    GPMDB = all_serum_data$gene[all_serum_data$source == "GPMDB"],
+    PAXDB = all_serum_data$gene[all_serum_data$source == "PAXDB"],
+    HPA_Immunoassay = all_serum_data$gene[all_serum_data$source == "HPA Immunoassay"]
   )
   
-  panel_C <- ggplot(overlap_data, aes(x = reorder(Intersection, Count), y = Count, fill = factor(Databases))) +
-    geom_col(alpha = 0.8) +
-    geom_text(aes(label = Count), hjust = -0.1, size = 3) +
-    coord_flip() +
-    scale_fill_viridis_d(name = "# Databases", option = "plasma") +
-    theme_blood_proteomics() +
-    theme(plot.title = element_text(size = 12, face = "bold")) +
-    labs(
-      title = "(C) Cross-Database Overlap",
-      subtitle = "Proteins found in multiple databases",
-      x = "Database Intersection",
-      y = "Number of Proteins"
-    )
+  # Create a temporary file for the UpSet plot
+  temp_upset_file <- tempfile(fileext = ".png")
+  png(temp_upset_file, width = 12, height = 8, units = "in", res = 300, bg = "white")
+  print(UpSetR::upset(
+    fromList(gene_lists),
+    nsets = 3,
+    sets = c("GPMDB", "PAXDB", "HPA_Immunoassay"),
+    keep.order = TRUE,
+    order.by = "freq",
+    decreasing = TRUE,
+    text.scale = 1.2,
+    point.size = 3,
+    line.size = 1.2,
+    mainbar.y.label = "Number of Genes",
+    sets.x.label = "Total Genes per Database"
+  ))
+  dev.off()
   
-  # D: Normalization Distribution Comparison
-  norm_data <- all_serum_data %>%
-    select(gene, source, log_abundance, z_score, quantile_normalized) %>%
-    pivot_longer(cols = c(log_abundance, z_score, quantile_normalized),
-                names_to = "method", values_to = "value") %>%
-    mutate(
-      method = factor(method,
-                     levels = c("log_abundance", "z_score", "quantile_normalized"),
-                     labels = c("Log10", "Z-Score", "Quantile"))
-    )
+  # Read the UpSet plot as a raster image
+  upset_img <- png::readPNG(temp_upset_file)
+  upset_grob <- grid::rasterGrob(upset_img, interpolate = TRUE)
   
-  panel_D <- ggplot(norm_data, aes(x = value, fill = source)) +
-    geom_density(alpha = 0.6) +
-    facet_wrap(~ method, scales = "free", ncol = 3) +
-    scale_fill_manual(values = get_plot_colors("databases"), name = "Database") +
-    theme_blood_proteomics() +
-    theme(
-      strip.text = element_text(face = "bold", size = 10),
-      legend.position = "bottom",
-      plot.title = element_text(size = 12, face = "bold")
-    ) +
-    labs(
-      title = "(D) Normalization Methods Comparison",
-      subtitle = "Distribution density across serum databases",
-      x = "Normalized Value",
-      y = "Density"
-    )
+  # Clean up temporary file
+  unlink(temp_upset_file)
   
   # Combine panels
-  comprehensive_panel <- (panel_A | panel_B) / panel_C / panel_D +
-                         plot_layout(heights = c(1, 1, 1.2))
-  
-  comprehensive_panel <- comprehensive_panel +
+  comprehensive_panel <- (panel_A | panel_B) / 
+    wrap_elements(upset_grob) +
+    plot_layout(heights = c(1, 1.2)) +
     plot_annotation(
       title = "Comprehensive Serum Protein Analysis",
       subtitle = paste0("Cross-database analysis of serum proteins across ", 
@@ -494,8 +475,9 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
       theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
     )
   
-  save_plot_standard(comprehensive_panel, "00_COMPREHENSIVE_serum_analysis_panel", plot_dir,
-                    width = 16, height = 14)
+  # Save in SVG format with standardized name
+  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.svg"), 
+         comprehensive_panel, width = 16, height = 12, device = "svg")
   
   return(comprehensive_panel)
 }
