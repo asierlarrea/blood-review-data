@@ -51,7 +51,8 @@ data_packages <- c(
   "readr",        # Reading CSV/TSV files
   "stringr",      # String manipulation
   "data.table",   # Fast data processing
-  "optparse"      # Command line argument parsing
+  "argparse",     # Command line argument parsing
+  "crayon"        # Colored terminal output
 )
 install_if_missing(data_packages)
 
@@ -70,6 +71,7 @@ viz_packages <- c(
   "grid",         # Grid graphics
   "RColorBrewer", # Color palettes
   "UpSetR",       # UpSet plots
+  "ggupset",      # UpSet plots
   "VennDiagram",  # Venn diagrams
   "pheatmap",     # Heatmaps
   "corrplot"      # Correlation plots
