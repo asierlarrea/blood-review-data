@@ -238,22 +238,6 @@ else
     exit 1
 fi
 
-# Run the integration analysis
-print_status "Running integration analysis..."
-echo ""
-echo "Comparing quantile normalization approaches:"
-echo "  • Z-Score normalization (within databases)"
-echo "  • Quantile normalization within databases"
-echo "  • Quantile normalization across databases"
-echo "  • Cross-database consistency evaluation"
-echo ""
-
-if Rscript scripts/06_integration_analysis.R $R_ARGS; then
-    print_success "Integration analysis completed successfully!"
-else
-    print_error "Integration analysis failed!"
-    exit 1
-fi
 
 # Display results
 echo ""
