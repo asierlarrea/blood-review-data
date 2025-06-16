@@ -452,31 +452,32 @@ create_correlation_heatmap_for_panel <- function(correlation_matrix, data) {
       )
     )
   
-  # Create simplified heatmap for panel
+  # Create enhanced heatmap for panel
   p <- ggplot(corr_data, aes(x = database1, y = database2, fill = correlation)) +
-    geom_tile(color = "white", size = 0.3) +
+    geom_tile(color = "white", size = 0.4) +
     geom_text(aes(label = sprintf("%.2f", correlation)), 
               color = ifelse(abs(corr_data$correlation) > 0.6, "white", "black"),
-              size = 2) +
-    scale_fill_gradient2(low = "#d73027", mid = "white", high = "#4575b4",
+              size = 2.5, fontface = "bold") +
+    scale_fill_gradient2(low = "#d73027", mid = "white", high = "#1a73e8",
                         midpoint = 0, limit = c(-1, 1), space = "Lab",
                         name = "Correlation") +
     theme_blood_proteomics() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-      axis.text.y = element_text(size = 8),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 9, face = "bold"),
+      axis.text.y = element_text(size = 9, face = "bold"),
       axis.title = element_blank(),
       panel.grid = element_blank(),
       panel.border = element_blank(),
-      plot.title = element_text(size = 12, face = "bold"),
+      plot.title = element_text(size = 13, face = "bold"),
       plot.subtitle = element_text(size = 10),
-      legend.title = element_text(size = 9),
+      legend.title = element_text(size = 9, face = "bold"),
       legend.text = element_text(size = 8),
-      legend.position = "bottom"
+      legend.position = "bottom",
+      legend.key.width = unit(1.2, "cm")
     ) +
     labs(
-      title = "(G) Cross-Database Correlations",
-      subtitle = "Z-score correlation matrix"
+      title = "G. CROSS-DATABASE CORRELATIONS",
+      subtitle = "Pairwise correlation matrix (z-scores)"
     ) +
     coord_fixed()
   
@@ -688,33 +689,33 @@ create_ms_venn_diagram_for_panel <- function(data) {
   intersection_count <- length(intersect(gpmdb_genes, peptideatlas_genes))
   overlap_percent <- round(intersection_count / length(union(gpmdb_genes, peptideatlas_genes)) * 100, 1)
   
-  # Create compact Venn diagram with ggvenn for panel
+  # Create enhanced Venn diagram with ggvenn for panel
   venn_plot <- ggvenn(
     venn_data,
     fill_color = c("#E31A1C", "#1F78B4"),
     stroke_color = "white",
-    stroke_size = 0.6,
+    stroke_size = 0.8,
     stroke_alpha = 1,
-    fill_alpha = 0.7,
+    fill_alpha = 0.75,
     set_name_color = "black",
-    set_name_size = 3.5,
+    set_name_size = 4,
     text_color = "black",
-    text_size = 3.2
+    text_size = 3.8
   ) +
   theme_void() +
   labs(
-    title = "(D) MS Databases Comparison",
+    title = "D. MS DATABASES COMPARISON",
     subtitle = sprintf("GPMDB (%s) vs PeptideAtlas (%s)", 
                       scales::comma(length(gpmdb_genes)), 
                       scales::comma(length(peptideatlas_genes))),
-    caption = sprintf("Overlap: %s proteins (%.1f%%)", 
+    caption = sprintf("Shared: %s proteins (%.1f%% overlap)", 
                      scales::comma(intersection_count), overlap_percent)
   ) +
   theme(
-    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 10, hjust = 0.5, color = "gray40"),
-    plot.caption = element_text(size = 9, hjust = 0.5, color = "gray50"),
-    plot.margin = margin(5, 5, 5, 5),
+    plot.title = element_text(size = 13, face = "bold", hjust = 0.5, color = "#2c3e50"),
+    plot.subtitle = element_text(size = 10, hjust = 0.5, color = "#34495e"),
+    plot.caption = element_text(size = 9, hjust = 0.5, color = "#7f8c8d", face = "bold"),
+    plot.margin = margin(10, 10, 10, 10),
     panel.background = element_rect(fill = "white", color = NA),
     plot.background = element_rect(fill = "white", color = NA)
   )
@@ -878,20 +879,24 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
       intersection_id = map_chr(databases, ~paste(sort(.x), collapse = "-"))
     ) %>%
     ggplot(aes(x = databases, fill = intersection_id)) +
-    geom_bar() +
-    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.2, size = 3) +
+    geom_bar(alpha = 0.85) +
+    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 3.2, fontface = "bold") +
     scale_x_upset(order_by = "freq") +
     scale_fill_manual(values = intersection_colors, guide = "none") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 12, face = "bold"),
-      axis.text.x = element_text(size = 8),
+      plot.title = element_text(size = 13, face = "bold"),
+      plot.subtitle = element_text(size = 10),
+      axis.text.x = element_text(size = 9),
+      axis.text.y = element_text(size = 9),
       panel.grid.major.x = element_blank(),
-      panel.grid.minor.x = element_blank()
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(C) Database Overlap Analysis (UpSet Plot)",
-      subtitle = "Protein intersections and shared sets across databases",
+      title = "C. DATABASE OVERLAP ANALYSIS",
+      subtitle = "Protein intersections across databases (UpSet plot)",
       x = "Database Combinations",
       y = "Number of Proteins"
     )
@@ -1152,33 +1157,41 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   # Debug: Check data structure
   message(sprintf("  - Normalized data: %d rows, %d columns", nrow(normalized_data), ncol(normalized_data)))
   message(sprintf("  - Summary stats: %d rows, %d columns", nrow(summary_stats), ncol(summary_stats)))
-  message(sprintf("  - Normalized data columns: %s", paste(colnames(normalized_data), collapse = ", ")))
-  message(sprintf("  - Summary stats columns: %s", paste(colnames(summary_stats), collapse = ", ")))
   
-  # Panel A: Data Coverage by Source
+  # === SECTION 1: COVERAGE ANALYSIS ===
+  
+  # Panel A: Data Coverage by Source (Enhanced)
   source_data <- summary_stats %>%
     filter(!source %in% c("Total Across Sources", "MS Technologies Combined")) %>%
     rename(count = unique_genes) %>%
     arrange(desc(count))
   
   panel_A <- ggplot(source_data, aes(x = reorder(source, count), y = count, fill = technology)) +
-    geom_col(alpha = 0.8) +
-    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 3) +
+    geom_col(alpha = 0.85, width = 0.7) +
+    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 3.2, fontface = "bold") +
     coord_flip() +
     scale_fill_manual(values = get_plot_colors("technology"), name = "Technology") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 12, face = "bold"),
-      legend.position = "bottom"
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      legend.position = "bottom",
+      legend.box = "horizontal",
+      legend.title = element_text(size = 9, face = "bold"),
+      legend.text = element_text(size = 8),
+      axis.text.y = element_text(size = 9),
+      panel.grid.major.x = element_line(color = "grey90", size = 0.3),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(A) Database Coverage",
-      subtitle = "Unique proteins per database",
+      title = "A. DATABASE COVERAGE",
+      subtitle = "Unique proteins quantified per database",
       x = "Database",
       y = "Number of Proteins"
     )
   
-  # Panel B: Technology Classification
+  # Panel B: Technology Classification (Enhanced)
   tech_summary <- summary_stats %>%
     filter(!source %in% c("Total Across Sources", "MS Technologies Combined")) %>%
     group_by(technology) %>%
@@ -1189,91 +1202,103 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     )
   
   panel_B <- ggplot(tech_summary, aes(x = technology, y = total_proteins, fill = technology)) +
-    geom_col(alpha = 0.8) +
+    geom_col(alpha = 0.85, width = 0.6) +
     geom_text(aes(label = paste0(scales::comma(total_proteins), "\n(", databases, " DBs)")), 
-              vjust = -0.5, size = 3, fontface = "bold") +  # Increased vjust and made text bold
+              vjust = -0.3, size = 3.2, fontface = "bold", lineheight = 0.9) +
     scale_fill_manual(values = get_plot_colors("technology")) +
-    scale_y_continuous(expand = expansion(mult = c(0, 0.25))) +  # More space above bars
+    scale_y_continuous(expand = expansion(mult = c(0, 0.25)), labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 12, face = "bold"),
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
       legend.position = "none",
-      axis.text.x = element_text(size = 10)  # Ensure x-axis labels are readable
+      axis.text.x = element_text(size = 10, face = "bold"),
+      axis.text.y = element_text(size = 9),
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(B) Technology Comparison",
-      subtitle = "Total proteins by detection method",
+      title = "B. TECHNOLOGY CLASSIFICATION",
+      subtitle = "Protein detection methods comparison",
       x = "Technology Type",
       y = "Total Proteins"
     )
   
-  # Panel C: Z-Score Distribution Only
-  # Check if required columns exist
-  required_cols <- c("gene", "source", "z_score")
-  missing_cols <- setdiff(required_cols, colnames(normalized_data))
-  if (length(missing_cols) > 0) {
-    message(sprintf("❌ Error: Missing columns for panel C: %s", paste(missing_cols, collapse = ", ")))
-    return(NULL)
-  }
+  # === SECTION 2: OVERLAP ANALYSIS ===
   
-  panel_E_zscore <- ggplot(normalized_data, aes(x = z_score, fill = source)) +
-    geom_density(alpha = 0.6) +
-    scale_fill_manual(values = get_plot_colors("databases"), name = "Database") +
-    theme_blood_proteomics() +
-    theme(
-      legend.position = "bottom",
-      plot.title = element_text(size = 12, face = "bold"),
-      plot.subtitle = element_text(size = 10),
-      legend.text = element_text(size = 8),
-      legend.title = element_text(size = 9)
-    ) +
-    labs(
-      title = "(E) Z-Score Distribution",
-      subtitle = "Normalized values across databases",
-      x = "Z-Score",
-      y = "Density"
-    )
-  
-  # Panel C: UpSet Plot for Protein Overlap (renamed from D)
-  # Create deduplicated data for UpSet
+  # Panel C: UpSet Plot for Protein Overlap (Enhanced)
   upset_data_panel <- normalized_data %>%
     select(gene, source, technology) %>%
     distinct() %>%
     filter(!is.na(gene), gene != "")
   
-  # Create gene lists
   gene_lists_panel <- split(upset_data_panel$gene, upset_data_panel$source)
   gene_lists_panel <- lapply(gene_lists_panel, function(x) unique(x[!is.na(x) & x != ""]))
   
-  # Create technology mapping for colors
   tech_mapping_panel <- upset_data_panel %>%
     select(source, technology) %>%
     distinct() %>%
     deframe()
   
-  # Create color mapping based on technology
   tech_colors_panel <- get_plot_colors("technology")
   set_colors_panel <- tech_colors_panel[tech_mapping_panel[names(gene_lists_panel)]]
   
-  # Create UpSet plot for panel (now panel C)
-  panel_C <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel)
+  panel_C <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
+    theme(
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
+    ) +
+    labs(
+      title = "C. DATABASE OVERLAP ANALYSIS",
+      subtitle = "Protein intersections across databases (UpSet plot)"
+    )
   
-  # Update the UpSet plot title to reflect new position
-  panel_C <- panel_C +
-    labs(title = "(C) Database Overlap Analysis (UpSet Plot)")
+  # Panel D: MS Databases Venn Diagram (Enhanced)
+  panel_D <- create_ms_venn_diagram_for_panel(normalized_data) +
+    theme(
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      plot.caption = element_text(size = 9, color = "#7f8c8d"),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
+      plot.margin = margin(10, 10, 10, 10)
+    ) +
+    labs(
+      title = "D. MS DATABASES COMPARISON",
+      subtitle = "GPMDB vs PeptideAtlas protein overlap"
+    )
   
-  # Panel D: MS Databases Venn Diagram (new)
-  panel_D <- create_ms_venn_diagram_for_panel(normalized_data)
+  # === SECTION 3: QUANTIFICATION ANALYSIS ===
   
-  # Panel F: Plasma Databases Dot Plot
-  # Create reference ordering based on PeptideAtlas
+  # Panel E: Z-Score Distribution (Enhanced)
+  panel_E <- ggplot(normalized_data, aes(x = z_score, fill = source)) +
+    geom_density(alpha = 0.7, adjust = 1.2) +
+    scale_fill_manual(values = get_plot_colors("databases"), name = "Database") +
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      legend.position = "bottom",
+      legend.title = element_text(size = 9, face = "bold"),
+      legend.text = element_text(size = 8),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
+      panel.grid.major = element_line(color = "grey90", size = 0.3)
+    ) +
+    guides(fill = guide_legend(ncol = 3, override.aes = list(alpha = 0.8))) +
+    labs(
+      title = "E. NORMALIZED ABUNDANCE DISTRIBUTION",
+      subtitle = "Z-score normalized protein abundances",
+      x = "Z-Score",
+      y = "Density"
+    )
+  
+  # Panel F: Cross-Database Dot Plot (Enhanced)
   peptideatlas_data <- normalized_data %>%
     filter(source == "PeptideAtlas") %>%
     arrange(z_score) %>%
     mutate(order = row_number()) %>%
     select(gene, order)
   
-  # Filter other databases to only include genes present in PeptideAtlas
   dot_plot_data <- normalized_data %>%
     inner_join(peptideatlas_data, by = "gene") %>%
     group_by(gene, source) %>%
@@ -1283,19 +1308,38 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       .groups = "drop"
     )
   
-  # Create simplified dot plot for panel
-  panel_F <- create_plasma_databases_dot_plot_for_panel(dot_plot_data)
+  db_colors <- get_plot_colors("databases")
+  db_colors["PeptideAtlas"] <- "#1a1a1a"  # Darker reference color
   
-  # Update dot plot title
-  panel_F <- panel_F +
-    labs(title = "(F) Cross-Database Protein Abundance Comparison")
+  panel_F <- ggplot(dot_plot_data, aes(x = order, y = z_score, color = source)) +
+    geom_point(alpha = 0.7, size = 0.6) +
+    scale_color_manual(values = db_colors, name = "Database") +
+    scale_x_continuous(labels = scales::comma) +
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.position = "bottom",
+      legend.title = element_text(size = 9, face = "bold"),
+      legend.text = element_text(size = 8),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3)
+    ) +
+    guides(color = guide_legend(ncol = 3, override.aes = list(size = 2, alpha = 0.9))) +
+    labs(
+      title = "F. CROSS-DATABASE ABUNDANCE COMPARISON",
+      subtitle = "Protein abundances ordered by PeptideAtlas reference",
+      x = "Proteins (ordered by PeptideAtlas z-score)",
+      y = "Z-Score"
+    )
   
-  # Panel G: Correlation Heatmap
-  # Prepare correlation data for panel
+  # Panel G: Correlation Heatmap (Enhanced)
   correlation_data_panel <- normalized_data %>%
     select(gene, source, z_score, technology) %>%
     group_by(gene) %>%
-    filter(n() > 1) %>%  # Only genes present in multiple databases
+    filter(n() > 1) %>%
     ungroup() %>%
     group_by(gene, source) %>%
     summarise(
@@ -1304,47 +1348,82 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       .groups = "drop"
     )
   
-  # Create wide format for correlation matrix
   correlation_matrix_data_panel <- correlation_data_panel %>%
     select(gene, source, z_score) %>%
     pivot_wider(names_from = source, values_from = z_score) %>%
     column_to_rownames("gene")
   
-  # Calculate correlation matrix
   correlation_matrix_panel <- cor(correlation_matrix_data_panel, use = "pairwise.complete.obs")
   
-  # Create simplified correlation heatmap for panel
-  panel_G <- create_correlation_heatmap_for_panel(correlation_matrix_panel, normalized_data)
-  
-  # Update correlation heatmap title
-  panel_G <- panel_G +
-    labs(title = "(G) Cross-Database Correlations")
-  
-  # Panel H: Violin plot of abundance distribution by data source
-  panel_H <- create_abundance_boxplot_for_panel(normalized_data)
-  
-  # Combine panels using patchwork - three-row layout
-  # Row 1: (A) Database Coverage | (B) Technology Types
-  # Row 2: (C) UpSet Plot | (D) MS Venn Diagram
-  # Row 3: (E) Z-Score Distribution | (F) Dot Plot | (G) Correlation Heatmap | (H) Abundance Violin Plot
-  comprehensive_panel <- (panel_A | panel_B) / 
-                         (panel_C | panel_D) /
-                         (panel_E_zscore | panel_F | panel_G | panel_H) +
-                         plot_layout(heights = c(1, 1.2, 1))
-  
-  comprehensive_panel <- comprehensive_panel +
-    plot_annotation(
-      title = "Comprehensive Plasma Protein Analysis",
-      subtitle = paste0("Cross-database analysis of ", nrow(normalized_data), " protein measurements across ", 
-                       length(unique(normalized_data$source)), " databases"),
-      theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
+  panel_G <- create_correlation_heatmap_for_panel(correlation_matrix_panel, normalized_data) +
+    theme(
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
+    ) +
+    labs(
+      title = "G. CROSS-DATABASE CORRELATIONS",
+      subtitle = "Pairwise correlation matrix (z-scores)"
     )
   
-  # Save the comprehensive panel
-  save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 24, height = 15)
+  # Panel H: Abundance Violin Plot (Enhanced)
+  panel_H <- ggplot(normalized_data, aes(x = reorder(source, z_score, median), y = z_score, fill = technology)) +
+    geom_violin(alpha = 0.8, scale = "width", trim = TRUE, width = 0.8) +
+    geom_boxplot(width = 0.12, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
+                 show.legend = FALSE, color = "black", fill = "white") +
+    stat_summary(fun = median, geom = "point", shape = 20, size = 1.5, color = "red", alpha = 0.8) +
+    scale_fill_manual(values = get_plot_colors("technology"), name = "Technology") +
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
+      legend.position = "bottom",
+      legend.title = element_text(size = 9, face = "bold"),
+      legend.text = element_text(size = 8),
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3)
+    ) +
+    labs(
+      title = "H. ABUNDANCE DISTRIBUTION BY DATABASE",
+      subtitle = "Z-score distributions with statistical summaries",
+      x = "Database (ordered by median abundance)",
+      y = "Z-Score"
+    )
   
-  message("✅ Comprehensive panel created successfully!")
+  # === COMBINE PANELS WITH ENHANCED LAYOUT ===
+  
+  # Enhanced 3-row layout with all four quantification plots in bottom row
+  # Row 1: Coverage (A-B)
+  # Row 2: Overlap (C-D) 
+  # Row 3: Quantification (E-F-G-H)
+  comprehensive_panel <- (panel_A | panel_B) / 
+                         (panel_C | panel_D) /
+                         (panel_E | panel_F | panel_G | panel_H) +
+                         plot_layout(heights = c(1.1, 1.2, 1.0))
+  
+  # Add overall title and enhanced annotations
+  comprehensive_panel <- comprehensive_panel +
+    plot_annotation(
+      title = "Comprehensive Plasma Protein Analysis Dashboard",
+      subtitle = sprintf("Cross-database analysis of %s protein measurements across %d databases | Coverage → Overlap → Quantification", 
+                        scales::comma(nrow(normalized_data)), 
+                        length(unique(normalized_data$source))),
+      caption = paste0("Analysis Pipeline: Data integration → Normalization → Correlation analysis | ",
+                      "Generated: ", Sys.Date()),
+      theme = theme(
+        plot.title = element_text(size = 18, face = "bold", hjust = 0.5, color = "#2c3e50"),
+        plot.subtitle = element_text(size = 12, hjust = 0.5, color = "#34495e", lineheight = 1.2),
+        plot.caption = element_text(size = 10, hjust = 0.5, color = "#7f8c8d"),
+        plot.margin = margin(20, 20, 15, 20)
+      )
+    )
+  
+  # Save with enhanced specifications
+  save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
+                    width = 26, height = 18)
+  
+  message("✅ Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)
 }
 
