@@ -840,8 +840,17 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     ungroup() %>%
     select(gene, databases)
   
+  # Count frequencies and filter out those below 48
+  intersection_counts <- upset_data_wide %>%
+    count(databases) %>%
+    filter(n >= 48) %>%
+    arrange(desc(n))
+  
   # Create UpSet plot using ggupset with single blue color
   panel_plot <- upset_data_wide %>%
+    # Only include combinations that meet the threshold
+    filter(map_chr(databases, paste, collapse = ",") %in% 
+           map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
     ggplot(aes(x = databases)) +
     geom_bar(fill = "#4575b4", alpha = 0.85) +  # Single blue color for all bars
     geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 3.2, fontface = "bold") +
@@ -849,8 +858,8 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 13, face = "bold"),
-      plot.subtitle = element_text(size = 10),
+      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_blank(),
       axis.text.x = element_text(size = 9),
       axis.text.y = element_text(size = 9),
       panel.grid.major.x = element_blank(),
@@ -859,7 +868,8 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     ) +
     labs(
       title = "(C)",
-      subtitle = NULL
+      x = "Database Combinations",
+      y = "Number of Proteins"
     )
   
   return(panel_plot)
