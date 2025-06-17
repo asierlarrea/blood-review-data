@@ -858,10 +858,8 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(C) DATABASE OVERLAP ANALYSIS",
-      subtitle = "Protein intersections across databases (UpSet plot)",
-      x = "Database Combinations",
-      y = "Number of Proteins"
+      title = "(C)",
+      subtitle = NULL
     )
   
   return(panel_plot)
@@ -883,7 +881,7 @@ create_plasma_databases_dot_plot_for_panel <- function(data) {
     geom_point(alpha = 0.6, size = 0.5) +
     scale_color_manual(values = db_colors, name = "Database") +
     labs(
-      title = "(F) Cross-Database Protein Abundance Comparison",
+      title = "(F)",
       subtitle = "Z-score normalized values ordered by PeptideAtlas",
       x = "Proteins (ordered)",
       y = "Z-Score"
@@ -1154,7 +1152,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      plot.subtitle = element_blank(),
       legend.position = "bottom",
       legend.box = "horizontal",
       legend.title = element_text(size = 9, face = "bold"),
@@ -1164,8 +1162,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(A) DATABASE COVERAGE",
-      subtitle = "Unique proteins quantified per database",
+      title = "(A)",
       x = "Database",
       y = "Number of Proteins"
     )
@@ -1189,7 +1186,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      plot.subtitle = element_blank(),
       legend.position = "none",
       axis.text.x = element_text(size = 10, face = "bold"),
       axis.text.y = element_text(size = 9),
@@ -1197,8 +1194,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(B) TECHNOLOGY CLASSIFICATION",
-      subtitle = "Protein detection methods comparison",
+      title = "(B)",
       x = "Technology Type",
       y = "Total Proteins"
     )
@@ -1222,7 +1218,11 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   tech_colors_panel <- get_plot_colors("technology")
   set_colors_panel <- tech_colors_panel[tech_mapping_panel[names(gene_lists_panel)]]
   
-  panel_C <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel)
+  panel_C <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
+    labs(
+      title = "(C)",
+      subtitle = NULL
+    )
   
   # Panel E: Abundance Distribution (Enhanced)
   panel_E <- ggplot(normalized_data, aes(x = reorder(source, z_score, median), y = z_score, fill = technology)) +
@@ -1234,7 +1234,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      plot.subtitle = element_blank(),
       axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
       legend.position = "bottom",
       legend.title = element_text(size = 9, face = "bold"),
@@ -1243,8 +1243,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(D) ABUNDANCE DISTRIBUTION BY DATABASE",
-      subtitle = "Z-score distributions with statistical summaries",
+      title = "(D)",
       x = "Database (ordered by median abundance)",
       y = "Z-Score"
     )
@@ -1275,7 +1274,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      plot.subtitle = element_blank(),
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       legend.position = "bottom",
@@ -1286,8 +1285,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     guides(color = guide_legend(ncol = 3, override.aes = list(size = 2, alpha = 0.9))) +
     labs(
-      title = "(E) CROSS-DATABASE ABUNDANCE COMPARISON",
-      subtitle = "Protein abundances ordered by PeptideAtlas reference",
+      title = "(E)",
       x = "Proteins (ordered by PeptideAtlas z-score)",
       y = "Z-Score"
     )
@@ -1315,12 +1313,12 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   panel_G <- create_correlation_heatmap_for_panel(correlation_matrix_panel, normalized_data) +
     theme(
       plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 10, color = "#34495e"),
+      plot.subtitle = element_blank(),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(F) CROSS-DATABASE CORRELATIONS",
-      subtitle = "Pairwise correlation matrix (z-scores)"
+      title = "(F)",
+      subtitle = NULL
     )
   
   # === COMBINE PANELS WITH ENHANCED LAYOUT ===
@@ -1337,9 +1335,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   comprehensive_panel <- comprehensive_panel +
     plot_annotation(
       theme = theme(
-        plot.title = element_text(size = 18, face = "bold", hjust = 0.5, color = "#2c3e50"),
-        plot.subtitle = element_text(size = 12, hjust = 0.5, color = "#34495e", lineheight = 1.2),
-        plot.caption = element_text(size = 10, hjust = 0.5, color = "#7f8c8d"),
+        plot.title = element_blank(),
+        plot.subtitle = element_blank(),
+        plot.caption = element_blank(),
         plot.margin = margin(20, 20, 15, 20)
       )
     )
