@@ -501,63 +501,54 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
 #'
 create_celltype_comprehensive_panel <- function(all_results, overall_summary, plot_dir) {
   
-  # A: Cell Type Gene Coverage
-  panel_A <- overall_summary %>%
-    mutate(
-      celltype_display = format_celltype_names(celltype),
-      celltype_display = reorder(celltype_display, total_genes)
-    ) %>%
-    ggplot(aes(x = celltype_display, y = total_genes, fill = celltype)) +
-    geom_col(alpha = 0.8) +
-    geom_text(aes(label = scales::comma(total_genes)), hjust = -0.1, size = 3) +
+  # A: Cell Type Gene Coverage by Source (Stacked Bar)
+  stacked_data <- all_results %>%
+    group_by(celltype, source) %>%
+    summarise(gene_count = n_distinct(gene), .groups = "drop") %>%
+    mutate(celltype_display = format_celltype_names(celltype))
+
+  # Order cell types by total gene count
+  celltype_order <- stacked_data %>%
+    group_by(celltype_display) %>%
+    summarise(total_genes = sum(gene_count)) %>%
+    arrange(total_genes) %>%
+    pull(celltype_display)
+
+  panel_A <- stacked_data %>%
+    mutate(celltype_display = factor(celltype_display, levels = celltype_order)) %>%
+    ggplot(aes(x = celltype_display, y = gene_count, fill = source)) +
+    geom_col(alpha = 0.85) +
+    geom_text(
+      data = . %>% group_by(celltype_display) %>% summarise(total = sum(gene_count)),
+      aes(x = celltype_display, y = total, label = scales::comma(total)),
+      hjust = -0.1, size = 3, inherit.aes = FALSE
+    ) +
     coord_flip() +
-    scale_fill_viridis_d(option = "turbo", name = "Cell Type") +
+    scale_fill_viridis_d(option = "turbo", name = "Data Source") +
     theme_blood_proteomics() +
     theme(
-      legend.position = "none",
+      legend.position = "right",
       plot.title = element_text(size = 12, face = "bold")
     ) +
     labs(
-      title = "(A) Gene Coverage by Cell Type",
-      subtitle = "Total unique genes detected per cell type",
+      title = "(A) Gene Coverage by Cell Type and Source",
+      subtitle = "Stacked bars: total unique genes per cell type, colored by contributing data source",
       x = "Cell Type",
       y = "Number of Genes"
     )
-  
-  # B: Source Distribution
-  source_summary <- all_results %>%
-    group_by(source) %>%
-    summarise(
-      cell_types = n_distinct(celltype),
-      total_genes = n_distinct(gene),
-      .groups = "drop"
-    )
-  
-  panel_B <- ggplot(source_summary, aes(x = reorder(source, cell_types), y = cell_types)) +
-    geom_col(fill = "#2B8CBE", alpha = 0.8) +
-    geom_text(aes(label = cell_types), hjust = -0.1, size = 3.5) +
-    coord_flip() +
-    theme_blood_proteomics() +
-    theme(plot.title = element_text(size = 12, face = "bold")) +
-    labs(
-      title = "(B) Cell Type Diversity by Source",
-      subtitle = "Number of cell types per data source",
-      x = "Data Source",
-      y = "Number of Cell Types"
-    )
-  
+
   # C: Cell Type Abundance Profiles (Top cell types)
   top_celltypes <- overall_summary %>%
     slice_max(total_genes, n = 8) %>%
     pull(celltype)
-  
+
   abundance_profiles <- all_results %>%
     filter(celltype %in% top_celltypes) %>%
     mutate(
       log_intensity = log10(intensity + 1),
       celltype_display = format_celltype_names(celltype)
     )
-  
+
   panel_C <- ggplot(abundance_profiles, aes(x = celltype_display, y = log_intensity, fill = celltype_display)) +
     geom_violin(alpha = 0.7, scale = "width") +
     geom_boxplot(width = 0.2, alpha = 0.8, outlier.alpha = 0.3) +
@@ -569,12 +560,12 @@ create_celltype_comprehensive_panel <- function(all_results, overall_summary, pl
       plot.title = element_text(size = 12, face = "bold")
     ) +
     labs(
-      title = "(C) Protein Abundance Profiles",
+      title = "(B) Protein Abundance Profiles",
       subtitle = "Distribution of protein intensities by cell type (top 8)",
       x = "Cell Type",
       y = "Log10(Intensity + 1)"
     )
-  
+
   # D: Cross-Source Comparison
   cross_source <- all_results %>%
     group_by(celltype, source) %>%
@@ -584,7 +575,7 @@ create_celltype_comprehensive_panel <- function(all_results, overall_summary, pl
       .groups = "drop"
     ) %>%
     filter(celltype %in% top_celltypes)
-  
+
   panel_D <- ggplot(cross_source, aes(x = format_celltype_names(celltype), y = median_intensity, fill = source)) +
     geom_col(position = "dodge", alpha = 0.8) +
     theme_blood_proteomics() +
@@ -593,17 +584,17 @@ create_celltype_comprehensive_panel <- function(all_results, overall_summary, pl
       plot.title = element_text(size = 12, face = "bold")
     ) +
     labs(
-      title = "(D) Cross-Source Cell Type Comparison",
+      title = "(C) Cross-Source Cell Type Comparison",
       subtitle = "Median protein intensities across data sources",
       x = "Cell Type",
       y = "Median Log10(Intensity + 1)",
       fill = "Data Source"
     )
-  
-  # Combine panels
-  comprehensive_panel <- (panel_A | panel_B) / panel_C / panel_D +
-                         plot_layout(heights = c(1, 1.2, 1.2))
-  
+
+  # Combine panels: Only new panel_A in top row, then panel_C and panel_D
+  comprehensive_panel <- panel_A / panel_C / panel_D +
+    plot_layout(heights = c(1.2, 1.2, 1.2))
+
   comprehensive_panel <- comprehensive_panel +
     plot_annotation(
       title = "Comprehensive Cell Type Analysis",
@@ -611,10 +602,10 @@ create_celltype_comprehensive_panel <- function(all_results, overall_summary, pl
                        length(unique(all_results$source)), " data sources"),
       theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
     )
-  
+
   save_plot_standard(comprehensive_panel, "00_COMPREHENSIVE_celltype_analysis_panel", plot_dir,
                     width = 16, height = 16)
-  
+
   return(comprehensive_panel)
 }
 

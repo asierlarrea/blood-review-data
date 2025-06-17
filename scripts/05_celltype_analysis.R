@@ -23,6 +23,9 @@ required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales"
                       "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel", "tibble")
 load_packages(required_packages)
 
+# Ensure patchwork is explicitly loaded
+suppressPackageStartupMessages(library(patchwork))
+
 # Parse command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 force_mapping <- "--force-mapping" %in% args
@@ -387,20 +390,19 @@ for(i in 1:n_sources) {
 }
 
 # Convert to long format for plotting
-plot_data <- data.frame(
-  source1 = rep(sources, each = n_sources),
-  source2 = rep(sources, times = n_sources),
-  correlation = as.vector(cor_matrix),
-  n_genes = as.vector(n_genes_matrix)
+plot_data <- expand.grid(
+  source1 = rownames(cor_matrix),
+  source2 = colnames(cor_matrix)
 ) %>%
   mutate(
+    correlation = as.vector(cor_matrix),
+    n_genes = as.vector(n_genes_matrix),
     source1 = format_source_names(source1),
     source2 = format_source_names(source2),
-    # Format label based on whether it's a diagonal cell
     label = case_when(
-      source1 == source2 ~ sprintf("n=%d", n_genes),
-      !is.na(correlation) ~ sprintf("%.2f\nn=%d", correlation, n_genes),
-      TRUE ~ "No shared\ngenes"
+      source1 == source2 ~ "",  # Empty label on diagonal
+      !is.na(correlation) ~ sprintf("%.2f", correlation),
+      TRUE ~ "NA"
     )
   )
 
@@ -415,7 +417,7 @@ p_cd8_cor <- ggplot(plot_data, aes(x = source1, y = source2, fill = correlation)
                       midpoint = 0, limits = c(-1, 1), na.value = "gray90") +
   labs(
     title = "(D) CD8 T Cell Expression Correlation Across Sources",
-    subtitle = "Correlation coefficients and number of shared genes (n) between sources",
+    subtitle = "Correlation coefficients between sources",
     x = "Data Source",
     y = "Data Source",
     fill = "Correlation"
@@ -433,127 +435,6 @@ p_cd8_cor <- ggplot(plot_data, aes(x = source1, y = source2, fill = correlation)
 ggsave(file.path(plot_dir, "04_cd8_correlation.png"), p_cd8_cor, 
        width = 8, height = 7, dpi = 300, bg = "white")
 
-# Define color palette for cell types
-n_celltypes <- length(unique(all_results$celltype))
-celltype_colors <- RColorBrewer::brewer.pal(min(n_celltypes, 12), "Set3")
-if (n_celltypes > 12) {
-  celltype_colors <- colorRampPalette(celltype_colors)(n_celltypes)
-}
-
-# Plot 1: Cell type gene counts summary
-p1 <- overall_summary %>%
-  mutate(
-    celltype_display = format_celltype_names(celltype),
-    celltype_display = reorder(celltype_display, total_genes)
-  ) %>%
-  ggplot(aes(x = celltype_display, y = total_genes, fill = celltype)) +
-  geom_col(alpha = 0.8) +
-  geom_text(aes(label = comma(total_genes)), hjust = -0.1, size = 3) +
-  scale_fill_manual(values = celltype_colors) +
-  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.1))) +
-  coord_flip() +
-  labs(
-    title = "(A) Gene Coverage by Cell Type",
-    subtitle = "Total unique genes detected per cell type across all data sources",
-    x = "Cell Type",
-    y = "Number of Unique Genes",
-    caption = "Source: PAXDB (cell types only), GPMDB (cell types only), ProteomeXchange (PXD004352, PXD025174, PXD040957)"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "none",
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    axis.text.y = element_text(size = 10),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank()
-  )
-
-ggsave(file.path(plot_dir, "03_celltype_gene_counts.png"), p1, 
-       width = 12, height = 8, dpi = 300, bg = "white")
-
-# Plot 2: Data source coverage
-# First format source names, then aggregate by formatted names
-source_summary <- all_results %>%
-  mutate(source_display = format_source_names(source)) %>%
-  group_by(source_display) %>%
-  summarise(
-    total_genes = length(unique(gene)),
-    cell_types = n_distinct(celltype),
-    .groups = "drop"
-  ) %>%
-  arrange(desc(total_genes))
-
-p2 <- source_summary %>%
-  mutate(source_display = reorder(source_display, total_genes)) %>%
-  ggplot(aes(x = source_display, y = total_genes)) +
-  geom_col(fill = "steelblue", alpha = 0.7) +
-  geom_text(aes(label = paste0(comma(total_genes), "\ngenes\n(", cell_types, " types)")), 
-            hjust = -0.1, size = 3, lineheight = 0.8) +
-  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.15))) +
-  coord_flip() +
-  labs(
-    title = "Data Source Coverage",
-    subtitle = "Total genes and cell types per data source",
-    x = "Data Source",
-    y = "Number of Unique Genes"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank()
-  )
-
-# Plot 3: Cell type by source heatmap
-# First format source names, then aggregate data that might have multiple sources mapping to same display name
-celltype_source_formatted <- celltype_summary %>%
-  select(celltype, source, gene_count) %>%
-  mutate(source_display = format_source_names(source)) %>%
-  group_by(celltype, source_display) %>%
-  summarise(gene_count = sum(gene_count), .groups = "drop")
-
-# Create matrix for heatmap
-celltype_source_matrix <- celltype_source_formatted %>%
-  pivot_wider(names_from = source_display, values_from = gene_count, values_fill = 0)
-
-# Convert to long format for ggplot
-heatmap_data <- celltype_source_matrix %>%
-  pivot_longer(cols = -celltype, names_to = "source_display", values_to = "gene_count") %>%
-  mutate(
-    has_data = gene_count > 0,
-    gene_count_log = ifelse(gene_count > 0, log10(gene_count), 0),
-    celltype_display = format_celltype_names(celltype)
-  )
-
-p3 <- heatmap_data %>%
-  ggplot(aes(x = source_display, y = celltype_display, fill = gene_count_log)) +
-  geom_tile(color = "white", linewidth = 0.5) +
-  geom_text(aes(label = ifelse(gene_count > 0, comma(gene_count), "")), 
-            size = 2.5, color = "black") +
-  scale_fill_gradient(low = "#f7f7f7", high = "#2171b5", 
-                     name = "Log10\nGenes", 
-                     labels = function(x) ifelse(x == 0, "0", paste0("10^", round(x, 1)))) +
-  labs(
-    title = "(B) Cell Type × Data Source Matrix",
-    subtitle = "Gene counts per cell type and data source",
-    x = "Data Source",
-    y = "Cell Type"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
-    axis.text.y = element_text(size = 9),
-    panel.grid = element_blank()
-  )
-
-# Save heatmap separately
-ggsave(file.path(plot_dir, "02_celltype_source_matrix.png"), p3, 
-       width = 12, height = 10, dpi = 300, bg = "white")
-
 # Prepare data for intensity distributions
 # Function to calculate z-score normalization by source
 calculate_zscore_normalization <- function(data) {
@@ -566,26 +447,15 @@ calculate_zscore_normalization <- function(data) {
     ungroup()
 }
 
-# Function to calculate quantile normalization by source
-calculate_quantile_normalization <- function(data) {
-  # First apply z-score normalization to get log_intensity
-  data_with_log <- data %>%
-    group_by(source) %>%
-    mutate(log_intensity = log10(intensity)) %>%
-    ungroup()
-  
-  # Apply quantile normalization across sources
-  data_quantile <- apply_quantile_normalization_simple(data_with_log, "log_intensity", "source")
-  
-  return(data_quantile)
-}
-
-# Get top cell types
-top_celltypes <- overall_summary %>% 
-  slice_head(n = 8) %>% 
+# Get top cell types for visualization
+top_celltypes <- all_results %>%
+  group_by(celltype) %>%
+  summarise(total_genes = n_distinct(gene)) %>%
+  arrange(desc(total_genes)) %>%
+  slice_head(n = 8) %>%
   pull(celltype)
 
-# Prepare intensity data with both z-score and quantile normalization
+# Prepare intensity data with z-score normalization
 intensity_sample <- all_results %>%
   filter(celltype %in% top_celltypes, !is.na(intensity), intensity > 0) %>%
   calculate_zscore_normalization() %>%
@@ -593,11 +463,54 @@ intensity_sample <- all_results %>%
   sample_n(size = min(1000, n()), replace = FALSE) %>%  # Sample for performance
   ungroup()
 
-# Apply quantile normalization to the sampled data
-intensity_sample_quantile <- calculate_quantile_normalization(intensity_sample)
+# Plot A: Gene coverage by cell type and data source
+p_top_left <- all_results %>%
+  group_by(celltype, source) %>%
+  summarise(genes_per_source = n_distinct(gene), .groups = "drop") %>%
+  mutate(
+    celltype_display = format_celltype_names(celltype),
+    source_display = format_source_names(source),
+    source_display = case_when(
+      str_detect(source_display, "^PXD") ~ paste0("", source_display),
+      TRUE ~ source_display
+    )
+  ) %>%
+  group_by(celltype_display) %>%
+  mutate(total_genes = sum(genes_per_source)) %>%
+  ungroup() %>%
+  arrange(desc(total_genes), source_display) %>%
+  mutate(
+    celltype_display = factor(celltype_display, levels = unique(celltype_display))
+  ) %>%
+  ggplot(aes(x = celltype_display, y = genes_per_source, fill = source_display)) +
+  geom_col(position = "stack", alpha = 0.8) +
+  geom_text(aes(label = comma(genes_per_source)), 
+            position = position_stack(vjust = 0.5),
+            size = 6) +
+  scale_fill_brewer(type = "qual", palette = "Set2", name = "Data Source") +
+  scale_y_continuous(labels = comma_format(), expand = expansion(mult = c(0, 0.1))) +
+  coord_flip() +
+  labs(
+    title = "(A) Gene Coverage by Cell Type and Data Source",
+    x = "Cell Type",
+    y = "Number of Unique Genes"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    plot.title = element_text(size = 28, face = "bold"),
+    axis.text.y = element_text(size = 18),
+    axis.text.x = element_text(size = 18),
+    axis.title = element_text(size = 22),
+    legend.text = element_text(size = 18),
+    legend.title = element_text(size = 20),
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.margin = margin(5.5, 15.5, 5.5, 5.5)
+  )
 
-# Plot 4z: Z-score normalized intensity distributions using boxplots
-p4z <- intensity_sample %>%
+# Plot B: Intensity distributions
+p_bottom_left <- intensity_sample %>%
   mutate(
     celltype_display = format_celltype_names(celltype),
     source_display = format_source_names(source)
@@ -607,277 +520,245 @@ p4z <- intensity_sample %>%
   geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
   scale_fill_brewer(type = "qual", palette = "Set2") +
   labs(
-    title = "(C) Intensity Distributions Across Cell Types and Sources",
-    subtitle = "Z-score normalized intensities by source for each cell type",
+    title = "(B) Intensity Distributions",
     x = "Data Source",
-    y = "Z-Score (standardized log10 intensity)",
-    fill = "Data Source",
-    caption = "Z-scores calculated within each data source: (log10(intensity) - mean) / sd"
+    y = "Z-Score"
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    legend.position = "right",
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-    axis.text.y = element_text(size = 10),
-    panel.grid.minor = element_blank()
-  ) +
-  # Add faceting by cell type to group distributions
-  facet_wrap(~ celltype_display, scales = "free_x", ncol = 4) +
-  theme(
-    strip.text = element_text(size = 10, face = "bold"),
-    panel.spacing = unit(0.5, "lines"),
-    strip.background = element_rect(fill = "gray95", color = NA),
-    panel.border = element_rect(fill = NA, color = "gray80")
-  ) +
-  # Add stats annotation
-  stat_summary(
-    fun.data = function(x) {
-      return(c(y = max(x) + 0.2, label = length(x)))
-    },
-    geom = "text",
-    aes(label = ..label..),
-    size = 2.5,
-    position = position_dodge(width = 0.75)
-  )
-
-# Save intensity distribution plot separately
-ggsave(file.path(plot_dir, "05_intensity_distributions_zscore.png"), p4z, 
-       width = 12, height = 8, dpi = 300, bg = "white")
-
-# Plot 4q: Quantile normalized intensity distributions using violin plots
-p4q <- intensity_sample_quantile %>%
-  mutate(celltype_display = format_celltype_names(celltype)) %>%
-  ggplot(aes(x = celltype_display, y = quantile_normalized, fill = celltype)) +
-  geom_violin(trim = TRUE, alpha = 0.7) +
-  geom_boxplot(width = 0.2, alpha = 0.7, outlier.shape = NA) +
-  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
-  scale_fill_manual(values = celltype_colors[1:length(top_celltypes)]) +
-  labs(
-    title = "(B) Quantile Normalized Protein Intensity Distributions",
-    subtitle = "Quantile normalized intensities for top 8 cell types",
-    x = "Cell Type",
-    y = "Quantile Normalized Value",
-    caption = "Quantile normalization forces identical distributions across data sources"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
+    plot.title = element_text(size = 28, face = "bold"),
     legend.position = "none",
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
-    axis.text.y = element_text(size = 10),
-    panel.grid.minor = element_blank()
-  )
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 16),
+    axis.text.y = element_text(size = 16),
+    axis.title = element_text(size = 20),
+    strip.text = element_text(size = 18, face = "bold"),
+    panel.grid.minor = element_blank(),
+    plot.margin = margin(5.5, 15.5, 5.5, 5.5)
+  ) +
+  facet_wrap(~ celltype_display, scales = "free_x", ncol = 4)
 
-# Plot 4az: Z-score normalized intensity distributions by source using violin plots
-p4az <- intensity_sample %>%
-  mutate(
-    celltype_display = format_celltype_names(celltype),
-    source_display = format_source_names(source)
+# Create correlation analysis for all cell types with multiple sources
+# First identify cell types with multiple sources
+multi_source_celltypes <- all_results %>%
+  group_by(celltype) %>%
+  summarise(n_sources = n_distinct(source)) %>%
+  filter(n_sources > 1) %>%
+  pull(celltype)
+
+# Calculate correlations for each cell type with multiple sources
+correlation_data_all <- all_results %>%
+  filter(celltype %in% multi_source_celltypes) %>%
+  group_by(celltype, gene, source) %>%
+  summarise(
+    intensity = median(intensity, na.rm = TRUE),
+    .groups = "drop"
   ) %>%
-  ggplot(aes(x = source_display, y = z_score, fill = source_display)) +
-  geom_violin(trim = TRUE, alpha = 0.7) +
-  geom_boxplot(width = 0.2, alpha = 0.7, outlier.shape = NA) +
-  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
-  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
-  scale_fill_brewer(type = "qual", palette = "Set2") +
-  labs(
-    title = "(C) Z-Score Normalized Protein Intensity Distributions by Source",
-    subtitle = "Z-score normalized intensities for top 8 cell types - all sources on same scale",
-    x = "Data Source",
-    y = "Z-Score (standardized log10 intensity)",
-    fill = "Data Source",
-    caption = "Z-scores calculated within each data source for direct comparison"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    legend.position = "none",
-    strip.text = element_text(size = 10, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-    axis.text.y = element_text(size = 8),
-    panel.grid.minor = element_blank()
-  )
-
-# Plot 4aq: Quantile normalized intensity distributions by source using violin plots
-p4aq <- intensity_sample_quantile %>%
+  # Calculate z-scores within each source
+  group_by(source) %>%
   mutate(
-    celltype_display = format_celltype_names(celltype),
-    source_display = format_source_names(source)
+    z_score = scale(log10(intensity))[,1]
   ) %>%
-  ggplot(aes(x = source_display, y = quantile_normalized, fill = source_display)) +
-  geom_violin(trim = TRUE, alpha = 0.7) +
-  geom_boxplot(width = 0.2, alpha = 0.7, outlier.shape = NA) +
-  geom_jitter(size = 0.1, alpha = 0.1, width = 0.2) +
-  facet_wrap(~celltype_display, scales = "free_y", ncol = 2) +
-  scale_fill_brewer(type = "qual", palette = "Set2") +
-  labs(
-    title = "(D) Quantile Normalized Protein Intensity Distributions by Source",
-    subtitle = "Quantile normalized intensities for top 8 cell types",
-    x = "Data Source",
-    y = "Quantile Normalized Value",
-    fill = "Data Source",
-    caption = "Quantile normalization forces identical distributions across data sources"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    legend.position = "none",
-    strip.text = element_text(size = 10, face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-    axis.text.y = element_text(size = 8),
-    panel.grid.minor = element_blank()
-  )
+  ungroup()
 
-# Plot 4b: Cross-source correlation analysis
-# Function to calculate correlations between sources for each cell type
-calculate_source_correlations <- function(data) {
-  # Prepare data for correlation analysis using z-score normalized values
-  correlation_data <- data %>%
-    filter(celltype %in% top_celltypes, !is.na(intensity), intensity > 0) %>%
-    calculate_zscore_normalization() %>%  # Apply z-score normalization
-    mutate(source_display = format_source_names(source)) %>%
-    select(gene, celltype, source_display, z_score) %>%  # Use z_score instead of intensity
-    # Only keep genes present in multiple sources within each cell type
-    group_by(gene, celltype) %>%
-    filter(n() > 1) %>%
-    ungroup() %>%
-    # Convert to wide format for correlation
-    pivot_wider(names_from = source_display, values_from = z_score, values_fill = NA) %>%
-    filter(complete.cases(.))  # Only complete cases for correlation
+# Function to calculate correlations for a specific cell type
+calculate_correlations <- function(data, ct) {
+  ct_data <- data %>%
+    filter(celltype == ct) %>%
+    select(gene, source, z_score) %>%
+    group_by(gene) %>%
+    filter(n() > 1) %>%  # Only keep genes present in multiple sources
+    ungroup()
   
-  return(correlation_data)
-}
-
-# Calculate correlations
-correlation_data <- calculate_source_correlations(all_results)
-
-# Create correlation plots for each cell type
-if (nrow(correlation_data) > 0) {
-  # Get source pairs for correlation
-  source_cols <- setdiff(names(correlation_data), c("gene", "celltype"))
+  sources <- unique(ct_data$source)
+  n_sources <- length(sources)
   
-  # Create correlation matrix plots
-  correlation_plots <- list()
+  if(n_sources < 2) return(NULL)
   
-  for (ct in top_celltypes) {
-    ct_data <- correlation_data %>% filter(celltype == ct)
-    
-    if (nrow(ct_data) > 10 && length(source_cols) > 1) {  # Need sufficient data
-      # Calculate correlation matrix
-      cor_matrix <- ct_data %>%
-        select(all_of(source_cols)) %>%
-        cor(use = "complete.obs", method = "spearman")
+  cor_matrix <- matrix(NA, n_sources, n_sources)
+  rownames(cor_matrix) <- colnames(cor_matrix) <- sources
+  
+  for(i in 1:n_sources) {
+    for(j in 1:n_sources) {
+      source1 <- sources[i]
+      source2 <- sources[j]
       
-      # Convert to long format for ggplot
-      cor_long <- cor_matrix %>%
-        as.data.frame() %>%
-        rownames_to_column("source1") %>%
-        pivot_longer(cols = -source1, names_to = "source2", values_to = "correlation") %>%
-        filter(source1 != source2)  # Remove diagonal
-      
-      # Create plot for this cell type
-      correlation_plots[[ct]] <- cor_long %>%
-        ggplot(aes(x = source1, y = source2, fill = correlation)) +
-        geom_tile(color = "white") +
-        geom_text(aes(label = sprintf("%.2f", correlation)), size = 3) +
-        scale_fill_gradient2(low = "red", mid = "white", high = "blue", 
-                           midpoint = 0, limits = c(-1, 1)) +
-        labs(
-          title = format_celltype_names(ct),
-          x = "", y = "",
-          fill = "Spearman\nCorrelation"
-        ) +
-        theme_minimal() +
-        theme(
-          axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-          axis.text.y = element_text(size = 8),
-          plot.title = element_text(size = 10, face = "bold")
-        )
-    }
-  }
-  
-  # Combine correlation plots
-  if (length(correlation_plots) > 0) {
-    p4b <- wrap_plots(correlation_plots, ncol = 2)
-    p4b <- p4b + plot_annotation(
-      title = "Cross-Source Expression Correlations",
-      subtitle = "Spearman correlations of gene expression between data sources for each cell type",
-      caption = paste0("Based on ", nrow(correlation_data), " genes present in multiple sources")
-    )
-  } else {
-    # Fallback: create scatter plots for source pairs
-    source_pairs <- combn(source_cols, 2, simplify = FALSE)
-    
-    if (length(source_pairs) > 0) {
-      scatter_plots <- list()
-      
-      for (i in seq_along(source_pairs)) {
-        if (i > 6) break  # Limit number of plots
+      if(i == j) {
+        cor_matrix[i,j] <- 1
+      } else {
+        shared_data <- ct_data %>%
+          filter(source %in% c(source1, source2)) %>%
+          group_by(gene) %>%
+          filter(n() == 2) %>%
+          ungroup() %>%
+          select(gene, source, z_score) %>%
+          pivot_wider(names_from = source, values_from = z_score)
         
-        pair <- source_pairs[[i]]
-        source1 <- pair[1]
-        source2 <- pair[2]
-        
-        plot_data <- correlation_data %>%
-          filter(!is.na(.data[[source1]]), !is.na(.data[[source2]])) %>%
-          sample_n(min(500, nrow(.)))  # Sample for performance
-        
-        if (nrow(plot_data) > 10) {
-          cor_val <- cor(plot_data[[source1]], plot_data[[source2]], 
+        if(nrow(shared_data) > 0) {
+          cor_val <- cor(shared_data[[source1]], shared_data[[source2]], 
                         method = "spearman", use = "complete.obs")
-          
-          scatter_plots[[i]] <- plot_data %>%
-            ggplot(aes(x = .data[[source1]], y = .data[[source2]])) +
-            geom_point(alpha = 0.5, size = 1) +
-            geom_smooth(method = "lm", se = TRUE, color = "red") +
-            labs(
-              title = paste(source1, "vs", source2),
-              subtitle = sprintf("ρ = %.3f", cor_val),
-              x = paste("Z-Score", source1),
-              y = paste("Z-Score", source2)
-            ) +
-            theme_minimal() +
-            theme(
-              plot.title = element_text(size = 10, face = "bold"),
-              plot.subtitle = element_text(size = 9)
-            )
+          cor_matrix[i,j] <- cor_val
         }
       }
-      
-      if (length(scatter_plots) > 0) {
-        p4b <- wrap_plots(scatter_plots, ncol = 2)
-        p4b <- p4b + plot_annotation(
-          title = "Cross-Source Expression Correlations (Z-Score Normalized)",
-          subtitle = "Z-score normalized intensity correlations between data sources",
-          caption = paste0("Spearman correlations based on ", nrow(correlation_data), " overlapping genes (z-score normalized)")
-        )
-      }
     }
   }
+  
+  list(
+    celltype = ct,
+    correlations = cor_matrix
+  )
 }
 
-# Save the correlation plot if it exists
-if (exists("p4b")) {
-  ggsave(file.path(plot_dir, "01_source_correlations.png"), p4b, 
-         width = 12, height = 10, dpi = 300, bg = "white")
+# Calculate correlations for all relevant cell types
+correlation_results <- lapply(multi_source_celltypes, function(ct) {
+  calculate_correlations(correlation_data_all, ct)
+})
+
+# Function to create visualization based on number of sources
+plot_correlation_viz <- function(cor_result) {
+  if(is.null(cor_result)) return(NULL)
+  
+  ct <- cor_result$celltype
+  sources <- rownames(cor_result$correlations)
+  
+  # Get all possible pairs of sources
+  source_pairs <- combn(sources, 2, simplify = FALSE)
+  
+  # Create a list to store all plots for this cell type
+  plots_list <- lapply(source_pairs, function(pair) {
+    source1 <- pair[1]
+    source2 <- pair[2]
+    
+    # Get the data for this pair of sources
+    plot_data <- correlation_data_all %>%
+      filter(celltype == ct, source %in% c(source1, source2)) %>%
+      select(gene, source, z_score) %>%
+      pivot_wider(names_from = source, values_from = z_score) %>%
+      drop_na()
+    
+    # Calculate correlation
+    cor_val <- cor(plot_data[[source1]], plot_data[[source2]], 
+                  method = "spearman", use = "complete.obs")
+    
+    # Create scatterplot
+    ggplot(plot_data, aes(x = .data[[source1]], y = .data[[source2]])) +
+      geom_point(alpha = 0.5, size = 1.2) +
+      geom_smooth(method = "lm", se = TRUE, color = "#4575b4", alpha = 0.2) +
+      labs(
+        title = format_celltype_names(ct),
+        subtitle = sprintf("ρ = %.2f", cor_val),
+        x = format_source_names(source1),
+        y = format_source_names(source2)
+      ) +
+      theme_minimal() +
+      theme(
+        plot.title = element_text(size = 16, face = "bold"),
+        plot.subtitle = element_text(size = 14),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14)
+      )
+  })
+  
+  return(plots_list)
 }
 
-# Plot 5: Technology comparison has been removed
+# Create correlation plots for all cell types
+correlation_plots <- lapply(correlation_results, plot_correlation_viz)
 
-# Plot 6: Comprehensive summary dashboard
-p6_top <- (p1 | p3)  # Switched p4z to p3
-p6_bottom <- (p4z | p_cd8_cor)  # Switched p3 to p4z
-p6_comprehensive <- p6_top / p6_bottom + theme(plot.title = element_text(size = 16, face = "bold"))
+# Flatten the list of lists into a single list of plots
+all_plots <- unlist(correlation_plots, recursive = FALSE)
 
-ggsave(file.path(plot_dir, "00_comprehensive_summary.png"), p6_comprehensive, 
-       width = 20, height = 14, dpi = 300, bg = "white")
+# Filter out NULL plots
+valid_plots <- all_plots[!sapply(all_plots, is.null)]
 
-message(sprintf("  Plots saved to: %s", plot_dir))
+if (length(valid_plots) > 0) {
+  # Calculate how many empty plots we need to add to make a complete 2x4 grid
+  n_plots <- length(valid_plots)
+  n_empty_needed <- 8 - n_plots  # We want 8 spots total (2 rows x 4 columns)
+  
+  # Create empty plots if needed
+  if (n_empty_needed > 0) {
+    empty_plot <- ggplot() + theme_void()
+    empty_plots <- replicate(n_empty_needed, empty_plot, simplify = FALSE)
+    all_plots_with_empty <- c(valid_plots, empty_plots)
+  } else {
+    all_plots_with_empty <- valid_plots[1:8]  # Take only first 8 if we have more
+  }
+  
+  # Create title plot
+  title_plot <- ggplot() +
+    annotate("text", x = 0.5, y = 0.5,
+             label = "(C) Correlation across cell types and sources",
+             size = 8, fontface = "bold") +
+    theme_void() +
+    theme(
+      plot.margin = margin(0, 0, 0, 0)
+    )
+  
+  # Combine plots with title
+  p_bottom_right <- wrap_plots(
+    title_plot,
+    wrap_plots(all_plots_with_empty, ncol = 4, nrow = 2),
+    ncol = 1,
+    heights = c(0.1, 1)
+  )
+} else {
+  # Create a message plot if no valid correlations were found
+  p_bottom_right <- ggplot() +
+    annotate("text", x = 0.5, y = 0.5, 
+             label = "No cell types with\nmultiple data sources found",
+             size = 6) +
+    theme_void() +
+    labs(title = "(C) Correlation across cell types and sources") +
+    theme(
+      plot.title = element_text(size = 16, face = "bold"),
+      plot.margin = margin(20, 20, 20, 20)
+    )
+}
+
+# Save individual plots in TIFF format
+ggsave(file.path(plot_dir, "03_celltype_gene_counts.tiff"), p_top_left, 
+       width = 12, height = 8, dpi = 300, compression = "lzw")
+ggsave(file.path(plot_dir, "05_intensity_distributions_zscore.tiff"), p_bottom_left, 
+       width = 12, height = 8, dpi = 300, compression = "lzw")
+ggsave(file.path(plot_dir, "04_cd8_correlation.tiff"), p_bottom_right, 
+       width = 8, height = 7, dpi = 300, compression = "lzw")
+
+# Create the comprehensive plot with the layout and adjust the relative heights
+library(patchwork)
+
+# Create a layout specification for three plots
+layout <- "
+AAA
+BCC
+"
+
+# Combine plots with the layout
+p6_comprehensive <- p_top_left + p_bottom_left + p_bottom_right +
+  plot_layout(
+    design = layout,
+    widths = c(4, 1),  # Make Panel B wider compared to Panel C
+    heights = c(1, 1.2)  # Keep bottom row slightly taller
+  ) +
+  plot_annotation(
+    theme = theme(
+      plot.title = element_text(size = 24, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 18, hjust = 0.5),
+      plot.caption = element_text(size = 14, hjust = 1)
+    )
+  )
+
+# Save the comprehensive plot in TIFF format
+ggsave(
+  file.path(plot_dir, "00_comprehensive_summary.tiff"),
+  p6_comprehensive,
+  width = 24,
+  height = 16,
+  dpi = 300,
+  compression = "lzw",
+  limitsize = FALSE
+)
+
+message(sprintf("  TIFF plots saved to: %s", plot_dir))
 
 # Save results
 message("\n6. Saving results...")
@@ -897,5 +778,5 @@ message(sprintf("\nTotal unique genes across all cell types: %d",
                length(unique(all_results$gene))))
 
 message(sprintf("Results saved to: %s", output_dir))
-message(sprintf("Plots saved to: %s", plot_dir))
+message(sprintf("TIFF plots saved to: %s", plot_dir))
 message("=== Analysis Complete ===") 
