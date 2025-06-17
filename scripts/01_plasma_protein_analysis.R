@@ -1224,23 +1224,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_C <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel)
   
-  # Panel D: MS Databases Venn Diagram (Enhanced)
-  panel_D <- create_ms_venn_diagram_for_panel(normalized_data) +
-    theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 10, color = "#34495e"),
-      plot.caption = element_text(size = 9, color = "#7f8c8d"),
-      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
-      plot.margin = margin(10, 10, 10, 10)
-    ) +
-    labs(
-      title = "(D) MS DATABASES COMPARISON",
-      subtitle = "GPMDB vs PeptideAtlas protein overlap"
-    )
-  
-  # === SECTION 3: QUANTIFICATION ANALYSIS ===
-  
-  # Panel E (previously H): Abundance Violin Plot (Enhanced)
+  # Panel E: Abundance Distribution (Enhanced)
   panel_E <- ggplot(normalized_data, aes(x = reorder(source, z_score, median), y = z_score, fill = technology)) +
     geom_violin(alpha = 0.8, scale = "width", trim = TRUE, width = 0.8) +
     geom_boxplot(width = 0.12, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
@@ -1259,13 +1243,13 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(E) ABUNDANCE DISTRIBUTION BY DATABASE",
+      title = "(D) ABUNDANCE DISTRIBUTION BY DATABASE",
       subtitle = "Z-score distributions with statistical summaries",
       x = "Database (ordered by median abundance)",
       y = "Z-Score"
     )
   
-  # Panel F (previously F): Cross-Database Dot Plot (Enhanced)
+  # Panel F: Cross-Database Dot Plot (Enhanced)
   peptideatlas_data <- normalized_data %>%
     filter(source == "PeptideAtlas") %>%
     arrange(z_score) %>%
@@ -1302,13 +1286,13 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     guides(color = guide_legend(ncol = 3, override.aes = list(size = 2, alpha = 0.9))) +
     labs(
-      title = "(F) CROSS-DATABASE ABUNDANCE COMPARISON",
+      title = "(E) CROSS-DATABASE ABUNDANCE COMPARISON",
       subtitle = "Protein abundances ordered by PeptideAtlas reference",
       x = "Proteins (ordered by PeptideAtlas z-score)",
       y = "Z-Score"
     )
   
-  # Panel G (previously G): Correlation Heatmap (Enhanced)
+  # Panel G: Correlation Heatmap (Enhanced)
   correlation_data_panel <- normalized_data %>%
     select(gene, source, z_score, technology) %>%
     group_by(gene) %>%
@@ -1335,18 +1319,18 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(G) CROSS-DATABASE CORRELATIONS",
+      title = "(F) CROSS-DATABASE CORRELATIONS",
       subtitle = "Pairwise correlation matrix (z-scores)"
     )
   
   # === COMBINE PANELS WITH ENHANCED LAYOUT ===
   
   # Row 1: Coverage (A-B)
-  # Row 2: Overlap (C-D) 
-  # Row 3: Quantification (E-F-G)
+  # Row 2: Overlap and Distribution (C-E) 
+  # Row 3: Quantification (F-G)
   comprehensive_panel <- (panel_A | panel_B) / 
-                         (panel_C | panel_D) /
-                         (panel_E | panel_F | panel_G) +
+                         (panel_C | panel_E) /
+                         (panel_F | panel_G) +
                          plot_layout(heights = c(1.1, 1.2, 1.0))
   
   # Add overall title and enhanced annotations

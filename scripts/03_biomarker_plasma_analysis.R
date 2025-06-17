@@ -162,7 +162,7 @@ biomarkers <- read_csv(biomarker_file, show_col_types = FALSE)
 biomarker_genes <- unique(biomarkers$gene_name)
 
 # Define biomarkers to highlight
-highlight_biomarkers <- c("APOE", "APOB", "CRP", "SAA1", "TNF", "IL1B", "IFNG", "IL10", "ALB", "INS", "NPPB")
+highlight_biomarkers <- c("APOE", "APOB", "CRP", "SAA1", "TNF", "IL1B", "IFNG", "IL10", "ALB", "INS", "NPPB", "TNNT2", "TNNI3", "KLK3", "CFI", "HBA1", "AFP", "FTH1", "TSHB", "IL6R")
 
 # Function to calculate z-score normalization within each database
 calculate_zscore_normalization_biomarker <- function(data, intensity_col) {
