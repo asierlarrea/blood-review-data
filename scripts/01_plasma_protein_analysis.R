@@ -192,14 +192,6 @@ create_analysis_plots <- function(normalized_data, summary_stats) {
   
   # Plot 3: UpSet analysis for protein overlap
   p3_upset <- create_upset_analysis(normalized_data, plot_dir)
-  
-  # Plot 4: Combined overview
-  p_combined <- p1 / p2
-  save_plot_standard(
-    p_combined, "03_plasma_proteins_overview", plot_dir,
-    width = PLOT_CONFIG$dimensions$large_width,
-    height = PLOT_CONFIG$dimensions$combined_height
-  )
 
   # Plot 5: Plasma databases dot plot
   create_plasma_databases_dot_plot_analysis(normalized_data, plot_dir)
@@ -225,8 +217,7 @@ create_normalization_comparison_plots <- function(data, plot_dir) {
   
   save_plot_standard(p_v_log, "07_dist_violin_log10", plot_dir)
   save_plot_standard(p_v_z, "08_dist_violin_zscore", plot_dir)
-  save_plot_standard(p_v_q_within, "09_dist_violin_quantile_within", plot_dir)
-  save_plot_standard(p_v_q_across, "10_dist_violin_quantile_across", plot_dir)
+
   
   # Density plots
   p_d_log <- create_density_plot(data, "log_abundance", "source", "Quantification Density (Log10)")
@@ -457,27 +448,26 @@ create_correlation_heatmap_for_panel <- function(correlation_matrix, data) {
     geom_tile(color = "white", size = 0.4) +
     geom_text(aes(label = sprintf("%.2f", correlation)), 
               color = ifelse(abs(corr_data$correlation) > 0.6, "white", "black"),
-              size = 2.5, fontface = "bold") +
+              size = 8) +
     scale_fill_gradient2(low = "#d73027", mid = "white", high = "#1a73e8",
                         midpoint = 0, limit = c(-1, 1), space = "Lab",
-                        name = "Correlation") +
+                        guide = "none") +
     theme_blood_proteomics() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 9, face = "bold"),
-      axis.text.y = element_text(size = 9, face = "bold"),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 16, face = "bold"),
+      axis.text.y = element_text(size = 16, face = "bold"),
       axis.title = element_blank(),
       panel.grid = element_blank(),
       panel.border = element_blank(),
-      plot.title = element_text(size = 13, face = "bold"),
-      plot.subtitle = element_text(size = 10),
-      legend.title = element_text(size = 9, face = "bold"),
-      legend.text = element_text(size = 8),
-      legend.position = "bottom",
-      legend.key.width = unit(1.2, "cm")
+      plot.title = element_text(size = 16, face = "bold"),
+      plot.subtitle = element_text(size = 12),
+      legend.position = "none"
     ) +
     labs(
       title = "(G) CROSS-DATABASE CORRELATIONS",
-      subtitle = "Pairwise correlation matrix (z-scores)"
+      subtitle = "Pairwise correlation matrix (z-scores)",
+      x = NULL,
+      y = NULL
     ) +
     coord_fixed()
   
@@ -766,7 +756,7 @@ create_upset_analysis <- function(data, plot_dir) {
     distinct() %>%
     filter(!is.na(gene), gene != "")
   
-  # Create gene lists for overlap analysis (similar to script 04)
+  # Create gene lists for overlap analysis
   gene_lists <- split(deduplicated_data$gene, deduplicated_data$source)
   
   # Additional safety check to remove any remaining NA or empty gene names
@@ -782,7 +772,14 @@ create_upset_analysis <- function(data, plot_dir) {
   tech_colors <- get_plot_colors("technology")
   set_colors <- tech_colors[tech_mapping[names(gene_lists)]]
   
-  # Create UpSet plot using fromList approach (like script 04)
+  # Calculate intersection sizes
+  upset_data <- UpSetR::fromList(gene_lists)
+  intersection_sizes <- colSums(upset_data)
+  
+  # Filter to keep only intersections with 48 or more proteins
+  keep_intersections <- names(intersection_sizes[intersection_sizes >= 48])
+  
+  # Create UpSet plot using fromList approach
   upset_plot <- UpSetR::upset(
     UpSetR::fromList(gene_lists),
     nsets = length(gene_lists),
@@ -790,17 +787,20 @@ create_upset_analysis <- function(data, plot_dir) {
     keep.order = TRUE,
     order.by = "freq",
     decreasing = TRUE,
-    text.scale = 1.2,
+    text.scale = 1,
     point.size = 3,
     line.size = 1.2,
     mainbar.y.label = "Number of Proteins",
     sets.x.label = "Total Proteins per Database",
-    sets.bar.color = set_colors
+    sets.bar.color = "#4575b4",  # Use the same blue as panel version
+    main.bar.color = "#4575b4",  # Use the same blue as panel version
+    matrix.color = "#4575b4",    # Use the same blue as panel version
+    nintersects = NA  # Show all intersections that meet our threshold
   )
   
-  # Save as PNG only
+  # Save as PNG with larger dimensions to accommodate all intersections
   png(file.path(plot_dir, "04_upset_protein_overlap.png"), 
-      width = 12, height = 8, units = "in", res = 300, bg = "white")
+      width = 15, height = 8, units = "in", res = 300, bg = "white")  # Increased width to accommodate all bars
   print(upset_plot)
   dev.off()
   
@@ -832,7 +832,6 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     distinct() %>%
     mutate(present = 1) %>%
     pivot_wider(names_from = database, values_from = present, values_fill = 0) %>%
-    # Convert to list column format for ggupset
     rowwise() %>%
     mutate(
       databases = list(names(gene_lists)[c_across(-gene) == 1])
@@ -848,26 +847,29 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
   
   # Create UpSet plot using ggupset with single blue color
   panel_plot <- upset_data_wide %>%
-    # Only include combinations that meet the threshold
     filter(map_chr(databases, paste, collapse = ",") %in% 
            map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
     ggplot(aes(x = databases)) +
-    geom_bar(fill = "#4575b4", alpha = 0.85) +  # Single blue color for all bars
-    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 3.2, fontface = "bold") +
+    geom_bar(fill = "#4575b4", alpha = 0.85) +
+    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 8) +
     scale_x_upset(order_by = "freq") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
-      axis.text.x = element_text(size = 9),
-      axis.text.y = element_text(size = 9),
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 16),
+      axis.text.y = element_text(size = 16),  # Size for the intersection counts
+      axis.text.x = element_text(size = 16, face = "bold"),  # Size for other axis text
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
-      panel.grid.major.y = element_line(color = "grey90", size = 0.3)
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3),
+      strip.text = element_text(size = 18, face = "bold"),  # Increased size for database names
+      strip.background = element_blank()
     ) +
     labs(
-      title = "(C)",
+      title = "(C) Intersection between different databases",
       x = "Database Combinations",
       y = "Number of Proteins"
     )
@@ -891,7 +893,7 @@ create_plasma_databases_dot_plot_for_panel <- function(data) {
     geom_point(alpha = 0.6, size = 0.5) +
     scale_color_manual(values = db_colors, name = "Database") +
     labs(
-      title = "(F)",
+      title = "(F) Protein abundance correlation with PeptideAtlas",
       subtitle = "Z-score normalized values ordered by PeptideAtlas",
       x = "Proteins (ordered)",
       y = "Z-Score"
@@ -1155,24 +1157,23 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_A <- ggplot(source_data, aes(x = reorder(source, count), y = count, fill = technology)) +
     geom_col(alpha = 0.85, width = 0.7) +
-    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 3.2, fontface = "bold") +
+    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 8.0) +
     coord_flip() +
-    scale_fill_manual(values = get_plot_colors("technology"), name = "Technology") +
+    scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
-      legend.position = "bottom",
-      legend.box = "horizontal",
-      legend.title = element_text(size = 9, face = "bold"),
-      legend.text = element_text(size = 8),
-      axis.text.y = element_text(size = 9),
+      legend.position = "none",
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 16),
+      axis.text.y = element_text(size = 16, face = "bold"),
       panel.grid.major.x = element_line(color = "grey90", size = 0.3),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(A)",
+      title = "(A) Number of proteins by database",
       x = "Database",
       y = "Number of Proteins"
     )
@@ -1190,21 +1191,22 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   panel_B <- ggplot(tech_summary, aes(x = technology, y = total_proteins, fill = technology)) +
     geom_col(alpha = 0.85, width = 0.6) +
     geom_text(aes(label = paste0(scales::comma(total_proteins), "\n(", databases, " DBs)")), 
-              vjust = -0.3, size = 3.2, fontface = "bold", lineheight = 0.9) +
-    scale_fill_manual(values = get_plot_colors("technology")) +
+              vjust = -0.3, size = 8.0, lineheight = 0.9) +
+    scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.25)), labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
       legend.position = "none",
-      axis.text.x = element_text(size = 10, face = "bold"),
-      axis.text.y = element_text(size = 9),
+      axis.title = element_text(size = 18),
+      axis.text = element_text(size = 18),
+      axis.text.x = element_text(size = 18, face = "bold"),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(B)",
+      title = "(B) Number of proteins by Technology",
       x = "Technology Type",
       y = "Total Proteins"
     )
@@ -1229,32 +1231,40 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   set_colors_panel <- tech_colors_panel[tech_mapping_panel[names(gene_lists_panel)]]
   
   panel_C <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
+    theme(
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_blank(),
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 16)
+    ) +
     labs(
-      title = "(C)",
-      subtitle = NULL
+      title = "(C) Intersection between different databases",
+      x = "Database Combinations",
+      y = "Number of Proteins"
     )
   
   # Panel E: Abundance Distribution (Enhanced)
   panel_E <- ggplot(normalized_data, aes(x = reorder(source, z_score, median), y = z_score, fill = technology)) +
-    geom_violin(alpha = 0.8, scale = "width", trim = TRUE, width = 0.8) +
-    geom_boxplot(width = 0.12, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
+    geom_violin(alpha = 0.8, scale = "width", trim = TRUE, width = 0.6) +
+    geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
                  show.legend = FALSE, color = "black", fill = "white") +
-    stat_summary(fun = median, geom = "point", shape = 20, size = 1.5, color = "red", alpha = 0.8) +
-    scale_fill_manual(values = get_plot_colors("technology"), name = "Technology") +
+    stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8) +
+    scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 18, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
-      legend.position = "bottom",
-      legend.title = element_text(size = 9, face = "bold"),
-      legend.text = element_text(size = 8),
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 16),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 16, face = "bold"),
+      legend.position = "none",
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(D)",
-      x = "Database (ordered by median abundance)",
+      title = "(D) Distributions of abundances by databases",
+      subtitle = "z-score normalized",
+      x = NULL,
       y = "Z-Score"
     )
   
@@ -1278,25 +1288,29 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   db_colors["PeptideAtlas"] <- "#1a1a1a"  # Darker reference color
   
   panel_F <- ggplot(dot_plot_data, aes(x = order, y = z_score, color = source)) +
-    geom_point(alpha = 0.7, size = 0.6) +
+    geom_point(alpha = 0.7, size = 1.0) +
     scale_color_manual(values = db_colors, name = "Database") +
     scale_x_continuous(labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_blank(),
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 16),  # Added styling for subtitle
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 16),
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
-      legend.position = "bottom",
-      legend.title = element_text(size = 9, face = "bold"),
-      legend.text = element_text(size = 8),
+      legend.position = "right",
+      legend.background = element_rect(fill = "white", color = "grey80"),
+      legend.title = element_text(size = 18, face = "bold"),
+      legend.text = element_text(size = 16),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
-    guides(color = guide_legend(ncol = 3, override.aes = list(size = 2, alpha = 0.9))) +
+    guides(color = guide_legend(ncol = 1, override.aes = list(size = 4, alpha = 0.9))) +
     labs(
-      title = "(E)",
-      x = "Proteins (ordered by PeptideAtlas z-score)",
+      title = "(E) Protein abundance correlation with PeptideAtlas",
+      subtitle = "Proteins ordered by PeptideAtlas z-score",
+      x = NULL,  # Removed x-axis title
       y = "Z-Score"
     )
   
@@ -1322,12 +1336,15 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_G <- create_correlation_heatmap_for_panel(correlation_matrix_panel, normalized_data) +
     theme(
-      plot.title = element_text(size = 13, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 18, face = "bold"),
+      legend.position = "none",
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(F)",
+      title = "(F) Cross-database abundance correlation",
       subtitle = NULL
     )
   
@@ -1339,7 +1356,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   comprehensive_panel <- (panel_A | panel_B) / 
                          (panel_C | panel_E) /
                          (panel_F | panel_G) +
-                         plot_layout(heights = c(1.1, 1.2, 1.0))
+                         plot_layout(heights = c(1.1, 1.0, 1.3),
+                                   widths = c(1.5, 0.5)) &
+                         theme(legend.position = "right")
   
   # Add overall title and enhanced annotations
   comprehensive_panel <- comprehensive_panel +
@@ -1354,7 +1373,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   # Save with enhanced specifications
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 26, height = 18)
+                    width = 30, height = 22)  # Increased height to accommodate larger correlation matrix
   
   message("✅ Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)

@@ -253,35 +253,55 @@ apply_zscore_normalization <- function(data, abundance_col = "abundance", group_
 #' @param output_dir Output directory
 #' @param width Plot width in inches
 #' @param height Plot height in inches
-#' @param formats Vector of output formats
+#' @param dpi Resolution in dots per inch
+#' @param device Output device (e.g., "tiff", "png", "pdf")
 #' 
 save_plot_standard <- function(plot, filename, output_dir, 
-                              width = NULL, height = NULL, formats = NULL) {
+                              width = NULL, height = NULL, 
+                              dpi = 300, device = "tiff") {
   
   if (is.null(width)) width <- PLOT_CONFIG$dimensions$default_width
   if (is.null(height)) height <- PLOT_CONFIG$dimensions$default_height
-  if (is.null(formats)) formats <- PLOT_CONFIG$formats
   
   # Create output directory if it doesn't exist
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
   
-  # Save in each format
-  for (format in formats) {
-    output_file <- file.path(output_dir, paste0(filename, ".", format))
-    
+  # Set file extension based on device
+  ext <- switch(device,
+                "tiff" = "tiff",
+                "png" = "png",
+                "pdf" = "pdf",
+                "tiff")  # default to tiff
+  
+  output_file <- file.path(output_dir, paste0(filename, ".", ext))
+  
+  # Save with specific device settings
+  if (device == "tiff") {
     ggsave(
       filename = output_file,
       plot = plot,
       width = width,
       height = height,
-      dpi = PLOT_CONFIG$dimensions$dpi,
+      dpi = dpi,
+      device = "tiff",
+      compression = "lzw",  # Use LZW compression for smaller file size
       bg = "white"
     )
-    
-    message(sprintf("Saved plot: %s", output_file))
+  } else {
+    ggsave(
+      filename = output_file,
+      plot = plot,
+      width = width,
+      height = height,
+      dpi = dpi,
+      device = device,
+      bg = "white"
+    )
   }
+  
+  message(sprintf("Saved plot: %s", output_file))
 }
 
 #' Create ranked abundance plot (waterfall style)
