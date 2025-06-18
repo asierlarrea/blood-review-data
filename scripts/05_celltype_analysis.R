@@ -497,7 +497,10 @@ p_top_left <- all_results %>%
   ) +
   theme_minimal() +
   theme(
-    legend.position = "right",
+    legend.position = c(0.85, 0.5),  # Position legend inside plot
+    legend.background = element_rect(fill = "#FFFFFF99", color = NA),  # Semi-transparent white background
+    legend.box.margin = margin(0, 0, 0, 0),  # Remove margin around legend box
+    legend.margin = margin(5, 5, 5, 5),  # Add small margin inside legend
     plot.title = element_text(size = 28, face = "bold"),
     axis.text.y = element_text(size = 18),
     axis.text.x = element_text(size = 18),
