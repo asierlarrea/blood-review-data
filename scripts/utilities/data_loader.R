@@ -276,4 +276,48 @@ load_processed_data <- function(cache_file = NULL) {
   message(sprintf("Loaded processed data from %s", cache_file))
   
   return(data_list)
+}
+
+# Function to process GPMDB data with consistent gene mapping
+process_gpmdb_data <- function(data, force_mapping = FALSE) {
+  # Load required utilities if not already loaded
+  if (!exists("convert_to_gene_symbol")) {
+    source("scripts/data_processing/simple_id_mapping.R")
+  }
+  if (!exists("deduplicate_genes")) {
+    source("scripts/utilities/gene_deduplication.R")
+  }
+  
+  message("Processing GPMDB data...")
+  message("  Input rows: ", nrow(data))
+  
+  # Step 1: Try to map transcript accessions to genes first
+  message("  Mapping transcript accessions to genes...")
+  data$gene_from_accession <- convert_to_gene_symbol(data$accession, force_mapping = force_mapping)
+  
+  # Step 2: Extract gene names from description as fallback
+  message("  Extracting gene names from descriptions...")
+  data$gene_from_desc <- stringr::str_extract(data$description, "[A-Z0-9]+(?=,| |$)")
+  
+  # Step 3: Combine gene mappings - use accession mapping if available, fallback to description
+  data$gene <- ifelse(!is.na(data$gene_from_accession), 
+                     data$gene_from_accession,
+                     data$gene_from_desc)
+  
+  # Step 4: Clean up and filter invalid entries
+  data_clean <- data %>%
+    filter(!is.na(gene), gene != "", !is.na(total), total > 0) %>%
+    select(gene, total, accession, description)
+  
+  message("  Valid genes after mapping: ", nrow(data_clean))
+  
+  # Step 5: Deduplicate genes using median
+  data_dedup <- deduplicate_genes(data_clean, "gene", "total", 
+                                additional_cols = c("accession", "description"),
+                                aggregation_method = "median")
+  
+  message("  Final unique genes after deduplication: ", nrow(data_dedup))
+  
+  # Return processed data
+  return(data_dedup)
 } 

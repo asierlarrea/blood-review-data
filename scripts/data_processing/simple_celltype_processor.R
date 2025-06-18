@@ -11,6 +11,47 @@ suppressPackageStartupMessages({
   library(tidyr)
 })
 
+# Function to check if protein IDs map to the same gene
+check_same_gene_mapping <- function(protein_ids) {
+  # Split protein IDs by semicolon
+  ids <- str_split(protein_ids, ";")[[1]]
+  ids <- str_trim(ids)
+  
+  # Skip if no semicolons (single ID)
+  if (length(ids) == 1) {
+    return(TRUE)
+  }
+  
+  # Map each ID to gene symbol
+  gene_symbols <- convert_to_gene_symbol(ids)
+  
+  # Get first valid gene symbol as reference
+  valid_genes <- gene_symbols[!is.na(gene_symbols)]
+  if (length(valid_genes) == 0) {
+    return(FALSE)  # No valid mappings at all
+  }
+  
+  # Use first valid gene as reference
+  reference_gene <- valid_genes[1]
+  
+  # Check if any other valid mappings exist and differ from reference
+  other_valid_genes <- valid_genes[-1]
+  if (length(other_valid_genes) == 0) {
+    return(TRUE)  # Only one valid mapping
+  }
+  
+  # Allow some flexibility in gene names (e.g., same base name with different suffixes)
+  gene_base_match <- function(g1, g2) {
+    # Remove common suffixes and compare
+    g1 <- str_replace(g1, "-[0-9]+$|\\.[0-9]+$", "")
+    g2 <- str_replace(g2, "-[0-9]+$|\\.[0-9]+$", "")
+    return(g1 == g2)
+  }
+  
+  # Check if all valid genes match the reference (with flexibility)
+  all(sapply(other_valid_genes, function(g) gene_base_match(g, reference_gene)))
+}
+
 # Function to process simple cell type files
 process_simple_celltype_file <- function(file_path, 
                                         celltype_column_mapping = NULL,
@@ -28,11 +69,6 @@ process_simple_celltype_file <- function(file_path,
   data <- read_csv(file_path, show_col_types = FALSE)
   message(sprintf("  Loaded %d rows", nrow(data)))
   
-  # Function to check if protein ID is unique (no semicolons)
-  is_unique_protein <- function(protein_ids) {
-    return(!str_detect(protein_ids, ";"))
-  }
-  
   # Find protein ID column
   protein_id_cols <- c("Majority_Protein_IDs", "Majority protein IDs", "Protein_IDs", "Protein.IDs")
   protein_id_col <- protein_id_cols[protein_id_cols %in% colnames(data)][1]
@@ -40,11 +76,11 @@ process_simple_celltype_file <- function(file_path,
   if (is.na(protein_id_col)) {
     warning("Could not find protein ID column, skipping unique protein filtering")
   } else {
-    # Filter out proteins with multiple IDs
-    message("  Filtering unique proteins...")
+    # Filter proteins based on gene mapping
+    message("  Filtering proteins based on gene mapping...")
     data <- data %>%
-      filter(is_unique_protein(.data[[protein_id_col]]))
-    message(sprintf("  Proteins after filtering non-unique IDs: %d", nrow(data)))
+      filter(check_same_gene_mapping(.data[[protein_id_col]]))
+    message(sprintf("  Proteins after filtering: %d", nrow(data)))
   }
   
   # Find gene names column
@@ -92,32 +128,32 @@ process_simple_celltype_file <- function(file_path,
         celltype_column_mapping <- list()
         celltype_column_mapping[[celltype_name]] <- lfq_intensity_cols
       }
-    } else {
-      # Create automatic mapping for other column types
-      celltype_column_mapping <- list()
-      for (col in detected_cols) {
-        # Extract cell type name
-        if (str_detect(col, "^Copy_Number_")) {
-          celltype <- str_extract(col, "(?<=Copy_Number_).*")
-        } else if (str_detect(col, "^Intensity_")) {
-          celltype <- str_extract(col, "(?<=Intensity_).*")
-        } else {
-          celltype <- str_extract(col, ".*(?=_)")
-        }
-        
-        # Standardize cell type name
-        celltype_std <- case_when(
-          str_detect(celltype, "CD4|T4") ~ "CD4_T_cells",
-          str_detect(celltype, "CD8|T8") ~ "CD8_T_cells", 
-          str_detect(celltype, "B|b_cell") ~ "B_cells",
-          str_detect(celltype, "NK|nk") ~ "NK_cells",
-          str_detect(celltype, "monocyte|Monocyte") ~ "Monocytes",
-          str_detect(celltype, "macrophage|Macrophage") ~ "Macrophages",
-          TRUE ~ celltype
-        )
-        
-        celltype_column_mapping[[celltype_std]] <- col
+    }
+    
+    # Create automatic mapping for other column types
+    celltype_column_mapping <- list()
+    for (col in detected_cols) {
+      # Extract cell type name
+      if (str_detect(col, "^Copy_Number_")) {
+        celltype <- str_extract(col, "(?<=Copy_Number_).*")
+      } else if (str_detect(col, "^Intensity_")) {
+        celltype <- str_extract(col, "(?<=Intensity_).*")
+      } else {
+        celltype <- str_extract(col, ".*(?=_)")
       }
+      
+      # Standardize cell type name
+      celltype_std <- case_when(
+        str_detect(celltype, "CD4|T4") ~ "CD4_T_cells",
+        str_detect(celltype, "CD8|T8") ~ "CD8_T_cells", 
+        str_detect(celltype, "B|b_cell") ~ "B_cells",
+        str_detect(celltype, "NK|nk") ~ "NK_cells",
+        str_detect(celltype, "monocyte|Monocyte") ~ "Monocytes",
+        str_detect(celltype, "macrophage|Macrophage") ~ "Macrophages",
+        TRUE ~ celltype
+      )
+      
+      celltype_column_mapping[[celltype_std]] <- col
     }
     
     message("  Auto-detected cell type columns:")
@@ -189,12 +225,15 @@ process_simple_celltype_file <- function(file_path,
         filter(!is.na(gene) & gene != "" & !is.na(intensity) & intensity > 0)
     }
     
-    # Handle multiple gene names (separated by semicolons)
+    # For proteins with multiple accessions, use the first successfully mapped gene name
     celltype_data <- celltype_data %>%
       mutate(gene = str_split(gene, ";")) %>%
       unnest(gene) %>%
       mutate(gene = str_trim(gene)) %>%
-      filter(gene != "")
+      filter(gene != "") %>%
+      group_by(intensity) %>%
+      slice(1) %>%  # Keep only the first gene name for each intensity value
+      ungroup()
     
     # Deduplicate genes using median intensity
     celltype_dedup <- deduplicate_genes(celltype_data, "gene", "intensity", 

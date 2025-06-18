@@ -13,6 +13,7 @@
 # Load utilities and set up output directories
 source("scripts/utilities/load_packages.R")
 source("scripts/config/analysis_config.R")
+source("scripts/utilities/data_loader.R")
 source("scripts/utilities/plot_themes.R")
 ensure_output_dirs()
 
@@ -59,12 +60,14 @@ message("Reading and processing serum data from each source...")
 # 1. GPMDB Serum
 message("Processing GPMDB serum data...")
 gpmdb_serum_raw <- read_csv("data/raw/gpmdb/gpmdb_serum.csv", show_col_types = FALSE)
-gpmdb_serum_raw$gene <- stringr::str_extract(gpmdb_serum_raw$description, "[A-Z0-9]+(?=,| |$)")
 
-# Deduplicate genes using median quantification values
-gpmdb_serum <- deduplicate_genes(gpmdb_serum_raw, "gene", "total", 
-                               additional_cols = c("accession"), 
-                               aggregation_method = "median")
+# Process using standardized function
+gpmdb_serum <- process_gpmdb_data(gpmdb_serum_raw, force_mapping = force_mapping)
+
+# Add metadata
+gpmdb_serum$source <- "GPMDB"
+gpmdb_serum$technology <- "MS"
+gpmdb_serum$abundance_type <- "Spectral Count"
 
 # 2. PAXDB Serum
 message("Processing PAXDB serum data...")
@@ -161,9 +164,6 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
     fill = "Technology"
   )
 
-ggsave(file.path(plot_dir, "01_serum_protein_counts_by_source.png"), 
-       p1, width = 10, height = 6, dpi = 300, bg = "white")
-
 # 2. Grouped bar plot by technology and total
 summary_data <- data.frame(
   Category = c("GPMDB", "PAXDB", "HPA Immunoassay", "MS Technologies", "All Sources"),
@@ -220,11 +220,6 @@ p3 <- UpSetR::upset(
   mainbar.y.label = "Number of Genes",
   sets.x.label = "Total Genes per Database"
 )
-
-png(file.path(plot_dir, "02_serum_protein_overlap_upset.png"), 
-    width = 12, height = 8, units = "in", res = 300, bg = "white")
-print(p3)
-dev.off()
 
 # 4. Create quantification value distributions
 message("Creating quantification distribution plots...")
@@ -284,9 +279,6 @@ p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
     y = "Number of Proteins"
   )
 
-ggsave(file.path(plot_dir, "03_serum_protein_quantification_distributions.png"), 
-       p4, width = 10, height = 12, dpi = 300, bg = "white")
-
 # 4z. Z-score normalized histogram plots
 p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
   geom_histogram(alpha = 0.7, bins = 50) +
@@ -311,9 +303,6 @@ p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
     caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
   )
 
-ggsave(file.path(plot_dir, "04_serum_protein_quantification_distributions_zscore.png"), 
-       p4z, width = 10, height = 12, dpi = 300, bg = "white")
-
 # 5. Density plots for direct comparison (log10)
 p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   geom_density(alpha = 0.6) +
@@ -333,8 +322,8 @@ p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
     fill = "Database"
   )
 
-ggsave(file.path(plot_dir, "06_serum_protein_quantification_density.png"), 
-       p5, width = 10, height = 6, dpi = 300, bg = "white")
+# ggsave(file.path(plot_dir, "06_serum_protein_quantification_density.png"), 
+#        p5, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 6. Create overlap statistics table
 message("Creating overlap statistics...")

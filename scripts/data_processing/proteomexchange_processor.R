@@ -89,11 +89,6 @@ process_proteomexchange_intensity_file <- function(file_path,
     message(sprintf("    %s: %d columns", ct, col_count))
   }
   
-  # Function to check if protein ID is unique (no semicolons)
-  is_unique_protein <- function(protein_ids) {
-    return(!str_detect(protein_ids, ";"))
-  }
-  
   # Read the full dataset
   message("  Reading full dataset...")
   
@@ -106,8 +101,7 @@ process_proteomexchange_intensity_file <- function(file_path,
     stop(sprintf("Failed to read file: %s", e$message))
   })
   
-  # Filter out proteins with multiple IDs
-  message("  Filtering unique proteins...")
+  # Find protein ID column
   protein_id_col <- "Majority protein IDs"
   if (!protein_id_col %in% colnames(data)) {
     # Try alternative column names
@@ -120,10 +114,12 @@ process_proteomexchange_intensity_file <- function(file_path,
     }
   }
   
+  # Filter proteins based on gene mapping
+  message("  Filtering proteins based on gene mapping...")
   data_clean <- data %>%
-    filter(is_unique_protein(.data[[protein_id_col]]))
+    filter(check_same_gene_mapping(.data[[protein_id_col]]))
   
-  message(sprintf("  Proteins after filtering non-unique IDs: %d", nrow(data_clean)))
+  message(sprintf("  Proteins after filtering: %d", nrow(data_clean)))
   
   # Process each cell type
   results <- list()
@@ -169,12 +165,15 @@ process_proteomexchange_intensity_file <- function(file_path,
       rename(gene = all_of(gene_col), intensity = !!paste0(celltype, "_intensity")) %>%
       filter(!is.na(gene) & gene != "" & !is.na(intensity) & intensity > 0)
     
-    # Handle multiple gene names (separated by semicolons)
+    # For proteins with multiple accessions, use the first successfully mapped gene name
     celltype_data <- celltype_data %>%
       mutate(gene = str_split(gene, ";")) %>%
       unnest(gene) %>%
       mutate(gene = str_trim(gene)) %>%
-      filter(gene != "")
+      filter(gene != "") %>%
+      group_by(intensity) %>%
+      slice(1) %>%  # Keep only the first gene name for each intensity value
+      ungroup()
     
     # Load deduplication utility if not already loaded
     if (!exists("deduplicate_genes")) {
