@@ -175,7 +175,7 @@ create_analysis_plots <- function(normalized_data, summary_stats) {
     subtitle = "Number of unique genes detected in each database"
   )
   
-  save_plot_standard(p1, "01_plasma_proteins_by_source", plot_dir)
+  # save_plot_standard(p1, "01_plasma_proteins_by_source", plot_dir)
   
   # Plot 2: Technology comparison
   tech_summary <- summary_stats %>%
@@ -188,7 +188,7 @@ create_analysis_plots <- function(normalized_data, summary_stats) {
     title = "Plasma Proteins by Technology Classification"
   )
   
-  save_plot_standard(p2, "02_plasma_proteins_by_technology", plot_dir)
+  # save_plot_standard(p2, "02_plasma_proteins_by_technology", plot_dir)
   
   # Plot 3: UpSet analysis for protein overlap
   p3_upset <- create_upset_analysis(normalized_data, plot_dir)
@@ -215,8 +215,8 @@ create_normalization_comparison_plots <- function(data, plot_dir) {
   p_v_q_within <- create_enhanced_violin_plot(data, "source", "quantile_normalized_within", "technology", "Abundance Distribution (Quantile Within)", "Within-database quantile normalized")
   p_v_q_across <- create_enhanced_violin_plot(data, "source", "quantile_normalized_across", "technology", "Abundance Distribution (Quantile Across)", "Cross-database quantile normalized")
   
-  save_plot_standard(p_v_log, "07_dist_violin_log10", plot_dir)
-  save_plot_standard(p_v_z, "08_dist_violin_zscore", plot_dir)
+  # save_plot_standard(p_v_log, "07_dist_violin_log10", plot_dir)
+  # save_plot_standard(p_v_z, "08_dist_violin_zscore", plot_dir)
 
   
   # Density plots
@@ -226,7 +226,7 @@ create_normalization_comparison_plots <- function(data, plot_dir) {
   p_d_q_across <- create_density_plot(data, "quantile_normalized_across", "source", "Quantification Density (Quantile Across)")
   
   combined_density <- (p_d_log + p_d_z) / (p_d_q_within + p_d_q_across) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
-  save_plot_standard(combined_density, "11_dist_density_comparison", plot_dir, width = 14, height = 12)
+  # save_plot_standard(combined_density, "11_dist_density_comparison", plot_dir, width = 14, height = 12)
 
 
 }
@@ -260,9 +260,9 @@ create_plasma_databases_dot_plot_analysis <- function(data, plot_dir) {
   p_dot <- create_plasma_databases_dot_plot(plot_data)
   
   # Save the plot
-  save_plot_standard(p_dot, "05_plasma_databases_comparison", plot_dir,
-                    width = PLOT_CONFIG$dimensions$large_width,
-                    height = PLOT_CONFIG$dimensions$default_height)
+  # save_plot_standard(p_dot, "05_plasma_databases_comparison", plot_dir,
+  #                   width = PLOT_CONFIG$dimensions$large_width,
+  #                   height = PLOT_CONFIG$dimensions$default_height)
   
   message("✅ Plasma databases dot plot created successfully!")
   
@@ -341,14 +341,14 @@ create_cross_database_correlation_analysis <- function(data, plot_dir) {
   p_tech_corr <- create_technology_correlation_summary(correlation_data)
   
   # Save all plots
-  save_plot_standard(p_heatmap, "06_correlation_heatmap", plot_dir,
-                    width = 10, height = 8)
+  # save_plot_standard(p_heatmap, "06_correlation_heatmap", plot_dir,
+  #                   width = 10, height = 8)
   
-  save_plot_standard(p_scatter, "06_pairwise_correlations", plot_dir,
-                    width = 14, height = 10)
+  # save_plot_standard(p_scatter, "06_pairwise_correlations", plot_dir,
+  #                   width = 14, height = 10)
   
-  save_plot_standard(p_tech_corr, "06_technology_correlations", plot_dir,
-                    width = 12, height = 8)
+  # save_plot_standard(p_tech_corr, "06_technology_correlations", plot_dir,
+  #                   width = 12, height = 8)
   
   message("✅ Cross-database correlation analysis completed!")
   
@@ -799,10 +799,10 @@ create_upset_analysis <- function(data, plot_dir) {
   )
   
   # Save as PNG with larger dimensions to accommodate all intersections
-  png(file.path(plot_dir, "04_upset_protein_overlap.png"), 
-      width = 15, height = 8, units = "in", res = 300, bg = "white")  # Increased width to accommodate all bars
-  print(upset_plot)
-  dev.off()
+  # png(file.path(plot_dir, "04_upset_protein_overlap.png"), 
+  #     width = 15, height = 8, units = "in", res = 300, bg = "white")  # Increased width to accommodate all bars
+  # print(upset_plot)
+  # dev.off()
   
   message("✅ UpSet analysis plot created successfully!")
   

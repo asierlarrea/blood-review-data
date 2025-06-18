@@ -322,8 +322,8 @@ p5 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
     fill = "Database"
   )
 
-ggsave(file.path(plot_dir, "06_serum_protein_quantification_density.png"), 
-       p5, width = 10, height = 6, dpi = 300, bg = "white")
+# ggsave(file.path(plot_dir, "06_serum_protein_quantification_density.png"), 
+#        p5, width = 10, height = 6, dpi = 300, bg = "white")
 
 # 6. Create overlap statistics table
 message("Creating overlap statistics...")

@@ -560,7 +560,7 @@ final_combined_plot <- ggpubr::ggarrange(
 
 # Save the final combined plot
 ggsave(
-  file.path(output_dir, "00_final_combined_analysis.tiff"),
+  file.path(output_dir, "00_comprehensive_biomarkers_analysis_panel.tiff"),
   final_combined_plot,
   width = 28,
   height = 22,

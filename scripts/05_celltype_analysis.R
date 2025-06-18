@@ -583,11 +583,11 @@ if(length(valid_plots) > 0) {
   # Create combined plot with valid plots only
   combined_plot <- wrap_plots(valid_plots, ncol = 2)
   
-  # Also save as TIFF for manuscript
-  ggsave(file.path(plot_dir, "correlation_plots.tiff"), 
-         combined_plot, 
-         width = 12, height = 8, 
-         device = "tiff", dpi = 300)
+  # # # Also save as TIFF for manuscript
+  # ggsave(file.path(plot_dir, "correlation_plots.tiff"), 
+  #        combined_plot, 
+  #        width = 12, height = 8, 
+  #        device = "tiff", dpi = 300)
 } else {
   message("No valid correlation plots were generated.")
 }
@@ -595,9 +595,9 @@ if(length(valid_plots) > 0) {
 # Create CD8 T cell correlation plot
 p_cd8_cor <- plot_cd8_correlations(correlation_data_all)
 
-# Save individual plots
-ggsave(file.path(plot_dir, "01_gene_coverage.tiff"), p_top_left, 
-       width = 12, height = 8, dpi = 300, compression = "lzw")
+# # Save individual plots
+# ggsave(file.path(plot_dir, "01_gene_coverage.tiff"), p_top_left, 
+#        width = 12, height = 8, dpi = 300, compression = "lzw")
 
 # Define layout
 layout <- "
@@ -614,7 +614,7 @@ p6_comprehensive <- p_top_left + p_bottom_left + p_cd8_cor +
   theme(legend.position = 'bottom')
 
 # Also save as TIFF for manuscript
-ggsave(file.path(plot_dir, "comprehensive_plot.tiff"), 
+ggsave(file.path(plot_dir, "00_comprehensive_celltypes_analysis_panel.tiff"), 
        p6_comprehensive, 
        width = 16, height = 12, 
        device = "tiff", dpi = 300)
