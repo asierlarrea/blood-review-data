@@ -1395,4 +1395,16 @@ tryCatch({
   quit(status = 1)
 })
 
-message("\n🎉 Plasma protein analysis completed successfully!") 
+message("\n🎉 Plasma protein analysis completed successfully!")
+
+# 5. GPMDB
+message("Processing GPMDB plasma data...")
+gpmdb_plasma_raw <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
+
+# Process using standardized function
+gpmdb_plasma <- process_gpmdb_data(gpmdb_plasma_raw, force_mapping = force_mapping)
+
+# Add metadata
+gpmdb_plasma$source <- "GPMDB"
+gpmdb_plasma$technology <- "MS"
+gpmdb_plasma$abundance_type <- "Spectral Count" 

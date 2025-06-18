@@ -25,13 +25,31 @@ check_same_gene_mapping <- function(protein_ids) {
   # Map each ID to gene symbol
   gene_symbols <- convert_to_gene_symbol(ids)
   
-  # Check if all mappings are successful and map to the same gene
-  if (any(is.na(gene_symbols))) {
-    return(FALSE)  # Some IDs couldn't be mapped
+  # Get first valid gene symbol as reference
+  valid_genes <- gene_symbols[!is.na(gene_symbols)]
+  if (length(valid_genes) == 0) {
+    return(FALSE)  # No valid mappings at all
   }
   
-  # Check if all map to the same gene
-  return(length(unique(gene_symbols)) == 1)
+  # Use first valid gene as reference
+  reference_gene <- valid_genes[1]
+  
+  # Check if any other valid mappings exist and differ from reference
+  other_valid_genes <- valid_genes[-1]
+  if (length(other_valid_genes) == 0) {
+    return(TRUE)  # Only one valid mapping
+  }
+  
+  # Allow some flexibility in gene names (e.g., same base name with different suffixes)
+  gene_base_match <- function(g1, g2) {
+    # Remove common suffixes and compare
+    g1 <- str_replace(g1, "-[0-9]+$|\\.[0-9]+$", "")
+    g2 <- str_replace(g2, "-[0-9]+$|\\.[0-9]+$", "")
+    return(g1 == g2)
+  }
+  
+  # Check if all valid genes match the reference (with flexibility)
+  all(sapply(other_valid_genes, function(g) gene_base_match(g, reference_gene)))
 }
 
 # Function to process simple cell type files
