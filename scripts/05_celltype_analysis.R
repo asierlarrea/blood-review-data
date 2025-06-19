@@ -21,7 +21,7 @@ ensure_output_dirs()
 
 # Load required packages
 required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", 
-                      "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel", "tibble", "cowplot")
+                      "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel", "tibble", "cowplot", "viridis", "ggpubr")
 load_packages(required_packages)
 
 # Ensure patchwork is explicitly loaded
@@ -125,7 +125,14 @@ if (!dir.exists(plot_dir)) {
 
 # Function to format cell type names for display
 format_celltype_names <- function(celltype) {
-  str_replace_all(celltype, "_", " ")
+  case_when(
+    celltype == "CD4_T_cells" ~ "CD4 T cells",
+    celltype == "CD8_T_cells" ~ "CD8 T cells",
+    celltype == "B_cells" ~ "B cells",
+    celltype == "NK_cells" ~ "NK cells",
+    celltype == "Dendritic_cells" ~ "Dendritic cells",
+    TRUE ~ str_replace_all(celltype, "_", " ")
+  )
 }
 
 # Function to format source names for display
@@ -364,38 +371,36 @@ ordered_celltypes <- unique(plot_data_summary$celltype_display)
 plot_data_summary$celltype_display <- factor(plot_data_summary$celltype_display, levels = ordered_celltypes)
 plot_data_summary$source_display <- factor(format_source_names(plot_data_summary$source), levels = source_display_levels)
 
-# Panel A: Stacked horizontal bar plot of gene counts
-p_panel_a <- ggplot(plot_data_summary, aes(y = celltype_display, x = genes_per_source, fill = source_display)) +
-  geom_bar(stat = "identity", position = "stack") +
-  geom_text(
-    aes(label = if_else(genes_per_source > 150, format(genes_per_source, big.mark = ","), "")),
-    position = position_stack(vjust = 0.5),
-    color = "black",
-    size = 4.5
+# Panel A: Horizontal stacked bar plot
+p_panel_a <- ggplot(plot_data_summary, aes(y = reorder(celltype_display, total_genes), x = genes_per_source, fill = source_display)) +
+  geom_col(
+    position = position_stack(reverse = TRUE),
+    width = 0.8,
+    color = "white",
+    size = 0.2
   ) +
   scale_x_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.05))) +
   scale_fill_brewer(palette = "Paired", drop = FALSE) +
   labs(
     title = "(A) Genes per Cell Type",
     x = "Number of Genes",
-    y = "Cell Type",
+    y = "",
     fill = "Data Source"
   ) +
   theme_minimal(base_size = 16) +
   theme(
     panel.grid.major.y = element_blank(),
     panel.grid.minor.x = element_blank(),
-    axis.text.y = element_text(size = 14),
+    axis.text.y = element_text(size = 12),
     axis.text.x = element_text(size = 12),
     axis.title = element_text(size = 14),
     plot.title = element_text(face = "bold", size = rel(1.2)),
     legend.title = element_text(size = rel(1.1)),
-    legend.text = element_text(size = rel(1.0)),
-    plot.background = element_rect(fill = "transparent", color = NA),
-    panel.background = element_rect(fill = "transparent", color = NA)
+    legend.text = element_text(size = rel(1.0))
   )
 
-# Panel B: Boxplot of z-scores
+# Panel B: Z-score distribution boxplot
+# First create the z_score_data
 z_score_data <- all_results %>%
   filter(intensity > 0) %>% # Ensure log10 does not generate -Inf
   group_by(source) %>%
@@ -421,129 +426,173 @@ p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = 
   labs(
     title = "(B) Z-score Distribution",
     x = "Z-score of log10(Intensity)",
-    y = "",
-    fill = "Data Source"
+    y = ""
   ) +
-  theme_minimal(base_size = 16) +
+  theme_minimal(base_size = 14) +
   theme(
-    panel.grid.major.y = element_blank(),
     axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.text.x = element_text(size = 12),
-    axis.title = element_text(size = 14),
-    plot.title = element_text(face = "bold", size = rel(1.2)),
-    legend.title = element_text(size = rel(1.1)),
-    legend.text = element_text(size = rel(1.0)),
-    plot.background = element_rect(fill = "transparent", color = NA),
-    panel.background = element_rect(fill = "transparent", color = NA)
+    axis.title.x = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold"),
+    legend.position = "none",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    plot.margin = margin(10, 20, 10, 10)
   )
 
-# Panel C: Scatterplot correlations
-# Identify cell types with multiple sources
+# Data for correlation plots
+# Identify cell types with multiple data sources
 multi_source_celltypes <- all_results %>%
   group_by(celltype) %>%
-  summarise(n_sources = n_distinct(source)) %>%
+  summarise(n_sources = n_distinct(source), .groups = 'drop') %>%
   filter(n_sources > 1) %>%
   pull(celltype)
 
-# Data for correlation plots
-correlation_data_all <- all_results %>%
-  filter(celltype %in% multi_source_celltypes) %>%
-  group_by(celltype, gene, source) %>%
-  summarise(
-    intensity = median(intensity, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  # z-score per source
-  group_by(source) %>%
-  mutate(
-    z_score = scale(log10(intensity))[,1]
-  ) %>%
-  ungroup()
-
-plot_all_source_correlations <- function(data, celltypes_to_plot) {
-  all_plots <- list()
+# Create correlation pairs more robustly
+correlation_pairs <- data.frame()
+for(ct in multi_source_celltypes) {
+  sources <- all_results %>%
+    filter(celltype == ct) %>%
+    pull(source) %>%
+    unique()
   
-  for (ct in celltypes_to_plot) {
-    ct_data <- data %>%
-      filter(celltype == ct) %>%
-      select(gene, source, z_score) %>%
-      group_by(gene) %>%
-      filter(n_distinct(source) > 1) %>%
-      ungroup()
-    
-    sources <- unique(ct_data$source)
-    if (length(sources) < 2) next
-    
-    source_pairs <- combn(sources, 2, simplify = FALSE)
-    
-    ct_plots <- lapply(source_pairs, function(pair) {
-      source1 <- pair[1]
-      source2 <- pair[2]
-      
-      pair_data <- ct_data %>%
-        filter(source %in% c(source1, source2)) %>%
-        pivot_wider(names_from = source, values_from = z_score) %>%
-        drop_na()
-      
-      if (nrow(pair_data) < 10) return(NULL) # Skip if not enough data points
-      
-      cor_val <- cor(pair_data[[source1]], pair_data[[source2]],
-                     method = "spearman", use = "complete.obs")
-      
-      p <- ggplot(pair_data, aes(x = .data[[source1]], y = .data[[source2]])) +
-        geom_point(alpha = 0.2, size = 1, color = "blue") +
-        geom_smooth(method = "lm", se = TRUE, color = "red", linewidth = 0.7) +
-        labs(
-          subtitle = sprintf("%s (n=%s, ρ=%.2f)", format_celltype_names(ct), format(nrow(pair_data), big.mark=","), cor_val),
-          x = format_source_names(source1),
-          y = format_source_names(source2)
-        ) +
-        theme_bw(base_size = 14) +
-        theme(
-          plot.subtitle = element_text(size = 14, hjust = 0.5, face = "bold"),
-          axis.text = element_text(size = 11),
-          axis.title = element_text(size = 12)
-        )
-      return(p)
-    })
-    
-    all_plots <- c(all_plots, Filter(Negate(is.null), ct_plots))
+  if(length(sources) >= 2) {
+    pairs <- t(combn(sources, 2))
+    temp_df <- data.frame(
+      celltype = ct,
+      source1 = pairs[,1],
+      source2 = pairs[,2],
+      stringsAsFactors = FALSE
+    )
+    correlation_pairs <- rbind(correlation_pairs, temp_df)
   }
-  
-  if (length(all_plots) == 0) {
-    return(ggplot() + theme_void() + labs(subtitle = "No valid cross-source correlations to display."))
-  }
-  
-  # Return the grid of plots without a title
-  return(wrap_plots(all_plots, ncol=3))
 }
 
-p_panel_c_grid <- plot_all_source_correlations(correlation_data_all, multi_source_celltypes)
-
-# Create a title for Panel C using cowplot
-panel_c_title <- cowplot::ggdraw() + 
-  cowplot::draw_label(
-    "(C) Cross-source Gene Abundance Correlations",
-    fontface = 'bold',
-    x = 0.5,
-    hjust = 0.5,
-    size = 18
+# Join the data back to the source pairs to create the correlation dataset
+correlation_data <- correlation_pairs %>%
+  left_join(
+    all_results %>% select(gene, celltype, source, intensity),
+    by = c("celltype", "source1" = "source")
+  ) %>%
+  rename(value.x = intensity) %>%
+  left_join(
+    all_results %>% select(gene, celltype, source, intensity),
+    by = c("celltype", "source2" = "source", "gene")
+  ) %>%
+  rename(value.y = intensity) %>%
+  filter(!is.na(value.x) & !is.na(value.y)) %>%
+  mutate(
+    value.x = log10(value.x),
+    value.y = log10(value.y),
+    dataset_pair = paste(celltype, source1, source2, sep = " vs ")
   )
 
-# Combine the title and the plot grid
-p_panel_c <- cowplot::plot_grid(
-  panel_c_title,
-  p_panel_c_grid,
-  ncol = 1,
-  rel_heights = c(0.05, 0.95) # Allocate space for the title
+# Define dataset labels for Panel C facets
+dataset_labels_c <- setNames(
+  paste(
+    format_celltype_names(correlation_pairs$celltype),
+    " (",
+    format_source_names(correlation_pairs$source1),
+    " vs. ",
+    format_source_names(correlation_pairs$source2),
+    ")",
+    sep = ""
+  ),
+  paste(correlation_pairs$celltype, correlation_pairs$source1, correlation_pairs$source2, sep = " vs ")
 )
+
+# Panel C: Heat scatter plots for correlations with independent scales
+if (length(unique(correlation_data$dataset_pair)) > 0) {
+  # Create individual plots for each correlation pair to ensure independent color scales
+  correlation_plots <- list()
+  
+  for(pair in unique(correlation_data$dataset_pair)) {
+    pair_data <- correlation_data %>% filter(dataset_pair == pair)
+    
+    # Extract source names and cell type properly from the correlation_data
+    source1 <- unique(pair_data$source1)[1]
+    source2 <- unique(pair_data$source2)[1]
+    celltype <- unique(pair_data$celltype)[1]
+    
+    # Apply format_source_names to get clean dataset labels
+    dataset1_formatted <- format_source_names(source1)
+    dataset2_formatted <- format_source_names(source2)
+    
+    # Use densCols() to get density at each point (similar to the example)
+    x <- densCols(pair_data$value.x, pair_data$value.y, 
+                  colramp = colorRampPalette(c("black", "white")))
+    pair_data$dens <- col2rgb(x)[1,] + 1L
+    
+    # Map densities to colors using the same palette style as example
+    cols <- colorRampPalette(c("#000099", "#00FEFF", "#45FE4F", 
+                              "#FCFF00", "#FF9400", "#FF3100"))(256)
+    pair_data$col <- cols[pair_data$dens]
+    
+    # Reorder so densest points are plotted on top
+    pair_data <- pair_data[order(pair_data$dens),]
+    
+    p <- ggplot(pair_data, aes(x = value.x, y = value.y)) +
+      geom_point(color = pair_data$col, size = 0.8, alpha = 0.8) +
+      geom_smooth(method = "lm", se = FALSE, color = "white", linewidth = 2, formula = y ~ x) +
+      stat_cor(
+        aes(label = after_stat(r.label)),
+        label.x.npc = 0.05, label.y.npc = 0.95,
+        hjust = 0, size = 5, color = "white", fontface = "bold"
+      ) +
+      labs(
+        title = format_celltype_names(celltype),
+        x = dataset1_formatted,
+        y = dataset2_formatted
+      ) +
+      theme_void() +
+      theme(
+        plot.title = element_text(size = 11, face = "bold", hjust = 0.5, margin = margin(b = 10)),
+        axis.title.x = element_text(size = 10, face = "bold", hjust = 0.5, margin = margin(t = 5)),
+        axis.title.y = element_text(size = 10, face = "bold", hjust = 0.5, angle = 90, margin = margin(r = 5)),
+        legend.position = "none",
+        panel.background = element_rect(fill = "white", color = "white"),
+        plot.background = element_rect(fill = "white", color = "white"),
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank(),
+        plot.margin = margin(10, 10, 10, 10)
+      )
+    
+    correlation_plots[[pair]] <- p
+  }
+  
+  # Combine all correlation plots using cowplot
+  p_panel_c <- cowplot::plot_grid(plotlist = correlation_plots, ncol = 3, align = 'hv')
+  
+  # Add main title for Panel C
+  panel_c_title <- cowplot::ggdraw() + 
+    cowplot::draw_label(
+      "(C) Cell Type Correlations",
+      fontface = 'bold',
+      x = 0.5,
+      hjust = 0.5,
+      size = 18
+    )
+  
+  # Combine title with plots
+  p_panel_c <- cowplot::plot_grid(
+    panel_c_title,
+    p_panel_c,
+    ncol = 1,
+    rel_heights = c(0.05, 0.95)
+  )
+  
+} else {
+  p_panel_c <- NULL
+}
 
 # Combine panels into final plot
 if (!is.null(p_panel_c)) {
-  # Manually extract the legend from Panel A to ensure it's shared
+  # Manually extract a horizontal legend from Panel A
   shared_legend <- cowplot::get_legend(
-    p_panel_a + theme(legend.box.margin = margin(6, 6, 6, 6))
+    p_panel_a + 
+      guides(fill = guide_legend(nrow = 1)) +
+      theme(legend.position = "bottom")
   )
 
   # Remove legends from the individual plots
@@ -551,21 +600,24 @@ if (!is.null(p_panel_c)) {
   p_panel_b <- p_panel_b + theme(legend.position = "none")
 
   # Combine the top row plot panels
-  top_row <- p_panel_a | p_panel_b
+  top_row <- cowplot::plot_grid(p_panel_a, p_panel_b, ncol = 2, align = 'h')
 
-  # Combine the main plot areas
-  main_plots <- top_row / p_panel_c + plot_layout(heights = c(1, 1.5))
+  # Assemble the final plot using cowplot for precise control
+  final_plot <- cowplot::plot_grid(
+    top_row,
+    p_panel_c,
+    shared_legend,
+    ncol = 1,
+    rel_heights = c(1, 1.5, 0.1) # Adjust heights for top row, panel C, and legend
+  )
 
-  # Add the shared legend to the bottom of the combined plot
-  final_plot <- wrap_plots(main_plots, shared_legend, ncol = 1, heights = c(0.92, 0.08))
-
-  # Save final plot
+  # Save final plot with white background
   ggsave(file.path(plot_dir, "00_comprehensive_celltypes_panel.tiff"), 
          final_plot, 
          width = 14, height = 16, 
          device = "tiff", dpi = 300,
-         compression = "lzw", bg = "transparent")
-  
+         compression = "lzw", bg = "white")
+
   message("TIFF plot saved to: ", plot_dir)
 } else {
   message("Skipping final plot generation as no correlation plots were created.")
