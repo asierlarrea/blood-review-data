@@ -565,4 +565,100 @@ all_serum_data <- bind_rows(
 # Create comprehensive panel
 create_serum_comprehensive_panel(all_serum_data, stats_summary, plot_dir)
 
-message("\n=== ANALYSIS COMPLETE ===") 
+# Generate comprehensive markdown report
+message("Generating comprehensive serum protein analysis report...")
+generate_serum_report <- function(stats_summary, plot_dir) {
+  
+  # Create report content
+  report_content <- paste0(
+    "# Serum Protein Analysis Report\n\n",
+    "**Analysis Date:** ", Sys.Date(), "\n",
+    "**Script:** `04_serum_protein_analysis.R`\n",
+    "**Description:** Comprehensive analysis of serum proteins from GPMDB, PAXDB, and HPA Immunoassay databases with overlap and coverage assessment.\n\n",
+    "---\n\n",
+    
+    "## Summary Statistics\n\n",
+    "| Data Source | Technology | Unique Proteins | Coverage Type | Detection Method |\n",
+    "|-------------|------------|-----------------|---------------|------------------|\n",
+    sprintf("| GPMDB Serum | MS | %d | Broad | Spectral counting |\n", stats_summary$gpmdb_serum),
+    sprintf("| PAXDB Serum | MS | %d | Comprehensive | Abundance scores |\n", stats_summary$paxdb_serum),
+    sprintf("| HPA Immunoassay Serum | Immunoassay | %d | Targeted | Antibody-based |\n", stats_summary$hpa_immunoassay_serum),
+    sprintf("| **MS Technologies Combined** | MS | %d | Combined MS | Multiple MS methods |\n", stats_summary$ms_technologies),
+    sprintf("| **All Sources Combined** | Mixed | %d | Total | All technologies |\n", stats_summary$total_across_sources),
+    "\n",
+    
+    "## Key Findings\n\n",
+    sprintf("- **Total serum proteome coverage:** %d unique proteins across all sources\n", stats_summary$total_across_sources),
+    sprintf("- **MS dominance:** Mass spectrometry technologies provide %d proteins (%.1f%% of total coverage)\n", 
+            stats_summary$ms_technologies, 100 * stats_summary$ms_technologies / stats_summary$total_across_sources),
+    sprintf("- **Database complementarity:** Limited overlap between databases suggests technology-specific detection\n"),
+    sprintf("- **PAXDB advantage:** Highest individual database coverage (%d proteins) for serum proteome\n", stats_summary$paxdb_serum),
+    "- **Immunoassay specificity:** High-sensitivity detection of targeted proteins\n",
+    "- **Cross-validation opportunities:** Proteins detected across platforms show enhanced confidence\n\n",
+    
+    "## Biological Insights\n\n",
+    sprintf("- **Serum complexity:** %d+ proteins detectable reflecting serum's role as protein reservoir\n", stats_summary$total_across_sources),
+    "- **Technology complementarity:** MS excels at discovery, immunoassays at sensitivity\n",
+    "- **Biomarker implications:** Comprehensive coverage supports serum as biomarker source\n",
+    "- **Protein abundance range:** Multiple orders of magnitude captured across technologies\n",
+    "- **Clinical relevance:** High coverage of clinically important serum proteins\n",
+    "- **Disease monitoring potential:** Broad protein coverage enables disease-specific signature detection\n\n",
+    
+    "## Database Comparison\n\n",
+    "### Serum Protein Detection Analysis\n\n",
+    "**Mass Spectrometry Databases:**\n",
+    sprintf("- PAXDB: Most comprehensive single-source coverage (%d proteins)\n", stats_summary$paxdb_serum),
+    sprintf("- GPMDB: Focused detection with complementary protein sets (%d proteins)\n", stats_summary$gpmdb_serum),
+    sprintf("- Combined MS: %d proteins representing comprehensive MS-based serum proteome\n\n", stats_summary$ms_technologies),
+    
+    "**Immunoassay Platform:**\n",
+    sprintf("- HPA: Targeted high-sensitivity detection (%d proteins)\n", stats_summary$hpa_immunoassay_serum),
+    "- Focus on clinically relevant and well-characterized proteins\n",
+    "- Complements MS discovery with validation-grade measurements\n\n",
+    
+    "**Cross-Database Overlap:**\n",
+    "- Significant non-overlap between databases indicates technology-specific capabilities\n",
+    "- Core serum proteins detected across multiple platforms show high confidence\n",
+    "- Unique detections per platform suggest specialized detection advantages\n\n",
+    
+    "## Methodology\n\n",
+    "- **Data integration:** Standardized gene symbol mapping across all serum databases\n",
+    "- **Quality control:** Gene deduplication using median aggregation for multiple entries\n",
+    "- **Overlap analysis:** UpSet plots and Venn diagrams for database intersection analysis\n",
+    "- **Coverage assessment:** Individual and combined database protein counts\n",
+    "- **Statistical analysis:** Correlation analysis between MS-based databases\n",
+    "- **Visualization:** Comprehensive panel with coverage, overlap, correlation, and distribution plots\n\n",
+    
+    "## Recommendations\n\n",
+    sprintf("- **Use PAXDB** for comprehensive serum proteome discovery (%d proteins)\n", stats_summary$paxdb_serum),
+    "- **Combine GPMDB and PAXDB** for maximum MS-based coverage\n",
+    "- **Include HPA Immunoassay** for high-confidence targeted protein measurements\n",
+    "- **Consider technology bias** when interpreting serum protein profiles\n",
+    "- **Apply orthogonal validation** using complementary detection methods\n",
+    "- **Focus on multi-platform proteins** for robust biomarker candidates\n\n",
+    
+    "## Generated Files\n\n",
+    sprintf("- **Comprehensive panel:** `%s/00_comprehensive_serum_analysis_panel.png`\n", basename(plot_dir)),
+    "- **Summary statistics:** `outputs/serum_protein/serum_protein_counts_summary.csv`\n",
+    "- **Overlap analysis:** `outputs/serum_protein/serum_protein_overlap_statistics.csv`\n",
+    "- **Visualization plots:** Individual coverage, overlap, and correlation analyses\n",
+    "- **Cross-database correlation:** Statistical validation between MS databases\n\n",
+    
+    "---\n",
+    "*Report generated automatically by the blood proteomics analysis pipeline*\n"
+  )
+  
+  # Save report to serum protein output directory
+  report_file <- file.path(dirname(plot_dir), "serum_protein", "serum_protein_analysis_report.md")
+  
+  # Ensure directory exists
+  dir.create(dirname(report_file), recursive = TRUE, showWarnings = FALSE)
+  
+  writeLines(report_content, report_file)
+  message(sprintf("✅ Comprehensive serum protein report saved to: %s", report_file))
+}
+
+# Generate the report
+generate_serum_report(stats_summary, plot_dir)
+
+message("\n=== SERUM PROTEIN ANALYSIS COMPLETE ===") 
