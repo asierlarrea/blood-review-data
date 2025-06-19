@@ -456,11 +456,11 @@ p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = 
     x = "Z-score of log10(Intensity)",
     y = ""
   ) +
-  theme_minimal(base_size = 14) +
+  theme_minimal(base_size = 16) +
   theme(
     axis.text.y = element_blank(),
     axis.title.x = element_text(size = 14),
-    plot.title = element_text(size = 16, face = "bold"),
+    plot.title = element_text(face = "bold", size = rel(1.2)),
     legend.position = "none",
     panel.grid.major.y = element_blank(),
     panel.grid.minor.x = element_blank(),
