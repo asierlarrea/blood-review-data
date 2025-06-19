@@ -253,12 +253,13 @@ apply_zscore_normalization <- function(data, abundance_col = "abundance", group_
 #' @param output_dir Output directory
 #' @param width Plot width in inches
 #' @param height Plot height in inches
-#' @param dpi Resolution in dots per inch
+#' @param dpi Resolution in dots per inch (default: 600 for high-quality output)
 #' @param device Output device (e.g., "tiff", "png", "pdf")
+#' @note For publication-quality figures, use DPI 600 or higher
 #' 
 save_plot_standard <- function(plot, filename, output_dir, 
                               width = NULL, height = NULL, 
-                              dpi = 300, device = "tiff") {
+                              dpi = 600, device = "tiff") {
   
   if (is.null(width)) width <- PLOT_CONFIG$dimensions$default_width
   if (is.null(height)) height <- PLOT_CONFIG$dimensions$default_height

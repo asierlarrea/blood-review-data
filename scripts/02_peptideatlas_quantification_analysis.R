@@ -316,8 +316,9 @@ p_detailed_log <- peptideatlas_transformed %>%
     axis.title = element_text(size = 11, face = "bold")
   )
 
-# Save plots with high resolution PNG format
-ggsave(file.path(plot_dir, "00_comprehensive_peptideatlas_analysis_panel.png"), comprehensive_plot, width = 18, height = 12, dpi = 300)
+# Save plots with high resolution - both PNG and TIFF versions
+ggsave(file.path(plot_dir, "00_comprehensive_peptideatlas_analysis_panel.png"), comprehensive_plot, width = 18, height = 12, dpi = 600)
+ggsave(file.path(plot_dir, "00_comprehensive_peptideatlas_analysis_panel.tiff"), comprehensive_plot, width = 18, height = 12, dpi = 600, device = "tiff", compression = "lzw", bg = "white")
 
 # Print summary statistics
 cat("\n=== PeptideAtlas Quantification Analysis Summary ===\n")

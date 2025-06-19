@@ -89,7 +89,6 @@ figures/
 outputs/
 results/
 plots/
-*.png
 *.jpg
 *.jpeg
 *.gif

@@ -1371,9 +1371,14 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       )
     )
   
-  # Save with enhanced specifications
+  # Save with enhanced specifications - both TIFF and PNG versions
+  # Save TIFF version
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 22)  # Increased height to accommodate larger correlation matrix
+                    width = 30, height = 22, dpi = 600, device = "tiff")
+  
+  # Save PNG version  
+  save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
+                    width = 30, height = 22, dpi = 600, device = "png")
   
   message("✅ Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)

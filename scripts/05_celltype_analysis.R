@@ -639,14 +639,21 @@ if (!is.null(p_panel_c)) {
     rel_heights = c(1, 1.5) # Top row, panel C
   )
 
-  # Save final plot with white background
+  # Save final plot with white background - both TIFF and PNG versions
+  # Save TIFF version
   ggsave(file.path(plot_dir, "00_comprehensive_celltypes_panel.tiff"), 
          final_plot, 
          width = 14, height = 16, 
-         device = "tiff", dpi = 300,
+         device = "tiff", dpi = 600,  # Reduced from 1200 to 600 to avoid memory issues
          compression = "lzw", bg = "white")
+  
+  # Save PNG version
+  ggsave(file.path(plot_dir, "00_comprehensive_celltypes_panel.png"), 
+         final_plot, 
+         width = 14, height = 16, 
+         device = "png", dpi = 600, bg = "white")
 
-  message("TIFF plot saved to: ", plot_dir)
+  message("TIFF and PNG plots saved to: ", plot_dir)
 } else {
   message("Skipping final plot generation as no correlation plots were created.")
 }

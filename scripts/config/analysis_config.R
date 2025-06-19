@@ -152,11 +152,11 @@ PLOT_CONFIG <- list(
     large_height = 8,
     combined_width = 16,
     combined_height = 20,
-    dpi = 300
+    dpi = 600
   ),
   
   # Plot output formats (can be overridden by command line)
-  formats = c("svg")  # Default to SVG only
+  formats = c("tiff", "png")  # Default to TIFF and PNG for high-resolution output
 )
 
 # Analysis-specific configurations

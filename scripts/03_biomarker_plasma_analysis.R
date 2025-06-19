@@ -504,7 +504,7 @@ upset_plot <- upset(
 
 # Save UpSet plot to a temporary file with increased dimensions
 temp_upset_file <- tempfile(fileext = ".png")
-png(temp_upset_file, width = 18, height = 16, units = "in", res = 300, bg = "white")
+png(temp_upset_file, width = 18, height = 16, units = "in", res = 600, bg = "white")  # Reduced to 600 DPI to avoid memory issues
 
 # Set up the plotting area with adjusted margins
 grid::grid.newpage()
@@ -558,16 +558,28 @@ final_combined_plot <- ggpubr::ggarrange(
   widths = c(0.4, 0.6)
 )
 
-# Save the final combined plot
+# Save the final combined plot - both TIFF and PNG versions
+# Save TIFF version
 ggsave(
   file.path(output_dir, "00_comprehensive_biomarkers_analysis_panel.tiff"),
   final_combined_plot,
   width = 28,
   height = 22,
-  dpi = 300,
+  dpi = 600,  # Reduced from 1200 to 600 to avoid memory allocation errors
   bg = "white",
   device = "tiff",
   compression = "lzw"  # Added LZW compression for better file size
+)
+
+# Save PNG version
+ggsave(
+  file.path(output_dir, "00_comprehensive_biomarkers_analysis_panel.png"),
+  final_combined_plot,
+  width = 28,
+  height = 22,
+  dpi = 600,
+  bg = "white",
+  device = "png"
 )
 
 # Clean up temporary file

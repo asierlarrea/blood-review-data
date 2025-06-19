@@ -546,9 +546,11 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
       theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
     )
   
-  # Save in SVG format with standardized name
-  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.svg"), 
-         comprehensive_panel, width = 16, height = 12, device = "svg")
+  # Save in both TIFF and PNG formats with high resolution
+  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.tiff"), 
+         comprehensive_panel, width = 16, height = 12, dpi = 600, device = "tiff", compression = "lzw", bg = "white")
+  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.png"), 
+         comprehensive_panel, width = 16, height = 12, dpi = 600, device = "png", bg = "white")
   
   return(comprehensive_panel)
 }
