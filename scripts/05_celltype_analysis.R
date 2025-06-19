@@ -379,8 +379,25 @@ p_panel_a <- ggplot(plot_data_summary, aes(y = reorder(celltype_display, total_g
     color = "white",
     size = 0.2
   ) +
+  geom_text(
+    aes(label = ifelse(genes_per_source > 500, scales::comma(genes_per_source), "")),
+    position = position_stack(vjust = 0.5, reverse = TRUE),
+    size = 4.5,
+    color = "black"
+  ) +
   scale_x_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.05))) +
-  scale_fill_brewer(palette = "Paired", drop = FALSE) +
+  scale_fill_manual(
+    values = c(
+      "PAXDB" = "#4E79A7",      # Professional blue
+      "GPMDB" = "#F28E2B",      # Warm orange  
+      "PXD004352" = "#fb141875",  # Rich red
+      "PXD025174" = "#76B7B2",  # Teal
+      "PXD040957" = "#59A14F",  # Green
+      "HPA" = "#EDC948",        # Golden yellow
+      "Other" = "#B07AA1"       # Purple for any other sources
+    ),
+    drop = FALSE
+  ) +
   labs(
     title = "(A) Genes per Cell Type",
     x = "Number of Genes",
@@ -422,7 +439,18 @@ z_score_data <- all_results %>%
 p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = source_display)) +
   geom_boxplot(outlier.shape = NA, position = position_dodge(width = 0.9), width=0.8) +
   coord_cartesian(xlim = quantile(z_score_data$z_score, c(0.001, 0.999), na.rm = TRUE)) + # trim outliers for viz
-  scale_fill_brewer(palette = "Paired", drop = FALSE) +
+  scale_fill_manual(
+    values = c(
+      "PAXDB" = "#4E79A7",      # Professional blue
+      "GPMDB" = "#F28E2B",      # Warm orange  
+      "PXD004352" = "#fb141875",  # Rich red
+      "PXD025174" = "#76B7B2",  # Teal
+      "PXD040957" = "#59A14F",  # Green
+      "HPA" = "#EDC948",        # Golden yellow
+      "Other" = "#B07AA1"       # Purple for any other sources
+    ),
+    drop = FALSE
+  ) +
   labs(
     title = "(B) Z-score Distribution",
     x = "Z-score of log10(Intensity)",
@@ -536,7 +564,7 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
       stat_cor(
         aes(label = after_stat(r.label)),
         label.x.npc = 0.05, label.y.npc = 0.95,
-        hjust = 0, size = 5, color = "white", fontface = "bold"
+        hjust = 0, size = 6, color = "white", fontface = "bold"
       ) +
       labs(
         title = format_celltype_names(celltype),
@@ -545,9 +573,9 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
       ) +
       theme_void() +
       theme(
-        plot.title = element_text(size = 11, face = "bold", hjust = 0.5, margin = margin(b = 10)),
-        axis.title.x = element_text(size = 10, face = "bold", hjust = 0.5, margin = margin(t = 5)),
-        axis.title.y = element_text(size = 10, face = "bold", hjust = 0.5, angle = 90, margin = margin(r = 5)),
+        plot.title = element_text(size = 14, hjust = 0.5, margin = margin(b = 10)),
+        axis.title.x = element_text(size = 12,  hjust = 0.5, margin = margin(t = 5)),
+        axis.title.y = element_text(size = 12, hjust = 0.5, angle = 90, margin = margin(r = 5)),
         legend.position = "none",
         panel.background = element_rect(fill = "white", color = "white"),
         plot.background = element_rect(fill = "white", color = "white"),
