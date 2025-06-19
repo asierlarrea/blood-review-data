@@ -481,70 +481,51 @@ gene_lists <- list(
   PAXDB = paxdb_biomarkers
 )
 
-# Create UpSet plot
+# Create UpSet plot with explicit settings to ensure numbers show
 upset_plot <- upset(
   fromList(gene_lists),
   nsets = 6,
   sets = names(gene_lists),
-  order.by = "freq",
-  nintersects = 30,
-  point.size = 5,
-  line.size = 1.8,
+  order.by = "freq", 
+  nintersects = 20,  # Reduce further to avoid crowding
+  point.size = 6,  # Increased from 4 to 6 for larger dots
+  line.size = 2,
   mainbar.y.label = "Number of Biomarkers",
-  sets.x.label = "",
-  text.scale = c(4.0, 4, 5.0, 5.0, 4.0, 8.0),  # Significantly increased last number for bar numbers
-  mb.ratio = c(0.5, 0.5),
-  keep.order = TRUE,
+  sets.x.label = "Total per Database",
+  text.scale = c(2.5, 1.4, 2.5, 1.4, 4.0, 2.0),  # Increased axis titles (2.5) and database names (4.0)
+  mb.ratio = c(0.7, 0.3),  # More space for main bars
+  keep.order = TRUE,  # Keep order for consistency
   main.bar.color = "#4575b4",
   sets.bar.color = "#4575b4",
   matrix.color = "#4575b4",
   number.angles = 0,
-  show.numbers = TRUE
+  show.numbers = TRUE  # Use TRUE instead of "yes"
 )
 
-# Save UpSet plot to a temporary file with increased dimensions
+# Save UpSet plot to a temporary file with standard approach (no custom viewport)
 temp_upset_file <- tempfile(fileext = ".png")
-png(temp_upset_file, width = 18, height = 16, units = "in", res = 600, bg = "white")  # Reduced to 600 DPI to avoid memory issues
+png(temp_upset_file, width = 18, height = 14, units = "in", res = 600, bg = "white")
 
-# Set up the plotting area with adjusted margins
-grid::grid.newpage()
-
-# Create main viewport for the plot with space for title and margins
-main_vp <- grid::viewport(
-  x = 0.5, y = 0.32,  # Moved down even more to ensure space for numbers
-  width = 0.95, height = 0.90,  # Increased height more
-  just = c("center", "center")
-)
-
-# Push the viewport and print the plot
-grid::pushViewport(main_vp)
+# Print the plot directly
 print(upset_plot)
-grid::popViewport()
-
-# Add title in its own viewport with adjusted position
-title_vp <- grid::viewport(
-  x = 0.5, y = 0.95,
-  width = 1, height = 0.1,
-  just = c("center", "top")
-)
-grid::pushViewport(title_vp)
-grid::grid.text(
-  "(B) Biomarker Intersections",
-  gp = grid::gpar(fontsize = 36, fontface = "bold"),
-  x = 0.7,
-  y = 1.1,
-  just = c("center", "top")
-)
-grid::popViewport()
 
 dev.off()
 
-# Read the UpSet plot as a grob
+# Read the UpSet plot as a grob and add title later in ggplot
 upset_grob <- grid::rasterGrob(png::readPNG(temp_upset_file), interpolate = TRUE)
+
+# Create a ggplot wrapper for the UpSet plot with title
+upset_with_title <- ggplot() +
+  annotation_custom(upset_grob, xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf) +
+  theme_void() +
+  labs(title = "(B) Biomarker Intersections") +
+  theme(
+    plot.title = element_text(size = 24, face = "bold", hjust = 0.5, margin = margin(b = 10))
+  )
 
 # Create right panel with UpSet and boxplots
 right_panel <- ggpubr::ggarrange(
-  ggpubr::as_ggplot(upset_grob),
+  upset_with_title,
   combined_boxplots_with_legend,
   ncol = 1,
   heights = c(1, 1.2)

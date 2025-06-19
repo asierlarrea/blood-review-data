@@ -558,6 +558,9 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
     # Reorder so densest points are plotted on top
     pair_data <- pair_data[order(pair_data$dens),]
     
+    # Calculate correlation coefficient for the subtitle
+    correlation_coef <- cor(pair_data$value.x, pair_data$value.y, use = "complete.obs")
+    
     p <- ggplot(pair_data, aes(x = value.x, y = value.y)) +
       geom_point(color = pair_data$col, size = 0.8, alpha = 0.8) +
       geom_smooth(method = "lm", se = FALSE, color = "white", linewidth = 2, formula = y ~ x) +
@@ -568,12 +571,14 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
       ) +
       labs(
         title = format_celltype_names(celltype),
+        subtitle = sprintf("r = %.3f", correlation_coef),  # Add correlation value as subtitle
         x = dataset1_formatted,
         y = dataset2_formatted
       ) +
       theme_void() +
       theme(
-        plot.title = element_text(size = 14, hjust = 0.5, margin = margin(b = 10)),
+        plot.title = element_text(size = 14, hjust = 0.5, margin = margin(b = 5)),
+        plot.subtitle = element_text(size = 12, hjust = 0.5, margin = margin(b = 10), color = "black", face = "bold"),  # Style the correlation subtitle
         axis.title.x = element_text(size = 12,  hjust = 0.5, margin = margin(t = 5)),
         axis.title.y = element_text(size = 12, hjust = 0.5, angle = 90, margin = margin(r = 5)),
         legend.position = "none",
