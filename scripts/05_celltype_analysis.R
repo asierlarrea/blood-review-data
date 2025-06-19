@@ -616,27 +616,27 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
 
 # Combine panels into final plot
 if (!is.null(p_panel_c)) {
-  # Manually extract a horizontal legend from Panel A
-  shared_legend <- cowplot::get_legend(
-    p_panel_a + 
-      guides(fill = guide_legend(nrow = 1)) +
-      theme(legend.position = "bottom")
-  )
+  # Keep Panel A with its legend visible
+  p_panel_a_with_legend <- p_panel_a + 
+    theme(
+      legend.position = "right",
+      legend.title = element_text(size = 12, face = "bold"),
+      legend.text = element_text(size = 10)
+    ) +
+    guides(fill = guide_legend(title = "Data Sources"))
 
-  # Remove legends from the individual plots
-  p_panel_a <- p_panel_a + theme(legend.position = "none")
+  # Remove legend from Panel B
   p_panel_b <- p_panel_b + theme(legend.position = "none")
 
   # Combine the top row plot panels
-  top_row <- cowplot::plot_grid(p_panel_a, p_panel_b, ncol = 2, align = 'h')
+  top_row <- cowplot::plot_grid(p_panel_a_with_legend, p_panel_b, ncol = 2, align = 'h', rel_widths = c(1.2, 0.8))
 
   # Assemble the final plot using cowplot for precise control
   final_plot <- cowplot::plot_grid(
     top_row,
     p_panel_c,
-    shared_legend,
     ncol = 1,
-    rel_heights = c(1, 1.5, 0.1) # Adjust heights for top row, panel C, and legend
+    rel_heights = c(1, 1.5) # Top row, panel C
   )
 
   # Save final plot with white background
