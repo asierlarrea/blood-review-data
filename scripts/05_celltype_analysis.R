@@ -21,7 +21,7 @@ ensure_output_dirs()
 
 # Load required packages
 required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", 
-                      "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel", "tibble")
+                      "ggthemes", "patchwork", "UpSetR", "ggupset", "RColorBrewer", "ggrepel", "tibble", "cowplot")
 load_packages(required_packages)
 
 # Ensure patchwork is explicitly loaded
@@ -55,6 +55,61 @@ source("scripts/utilities/quantile_normalization_functions.R")
 # Load specialized processors
 source("scripts/data_processing/proteomexchange_processor.R")
 source("scripts/data_processing/simple_celltype_processor.R")
+
+# Process GPMDB data
+process_gpmdb_data <- function(data, force_mapping = FALSE) {
+  message("Processing GPMDB data...")
+  message(sprintf("  Input rows: %d", nrow(data)))
+
+  # Handle different GPMDB formats by checking for specific columns
+  if ("PSM" %in% colnames(data) && "protein" %in% colnames(data)) {
+    # Format for gpmdb_erythrocyte.csv
+    message("  Detected GPMDB format with PSM/protein columns.")
+    processed_data <- data %>%
+      mutate(
+        intensity = as.numeric(stringr::str_extract(PSM, "^\\d+")),
+        gene_from_protein = stringr::str_extract(protein, "^[^\\s]+")
+      )
+  } else if ("total" %in% colnames(data) && "description" %in% colnames(data)) {
+    # Format for gpmdb_platelet.csv
+    message("  Detected GPMDB format with total/description columns.")
+    processed_data <- data %>%
+      mutate(
+        intensity = as.numeric(total),
+        gene_from_protein = stringr::str_extract(description, "^[^,]+")
+      )
+  } else {
+    warning("Unrecognized GPMDB file format for this processor.")
+    return(NULL)
+  }
+
+  # Map accessions to gene symbols, using gene_from_protein as a fallback
+  if ("accession" %in% colnames(processed_data)) {
+    accessions <- unique(processed_data$accession)
+    message(sprintf("  Converting %d accession IDs to gene symbols...", length(accessions)))
+    gene_mapping <- convert_to_gene_symbol(accessions)
+
+    # Manually map gene symbols using the named vector
+    processed_data <- processed_data %>%
+      mutate(
+        gene_symbol = gene_mapping[accession],
+        gene = coalesce(gene_symbol, gene_from_protein)
+      )
+  } else {
+    processed_data$gene <- processed_data$gene_from_protein
+  }
+
+  # Filter for valid entries
+  valid_genes <- processed_data %>%
+    filter(!is.na(gene) & gene != "" & !is.na(intensity) & intensity > 0)
+  message(sprintf("  Valid entries after filtering: %d", nrow(valid_genes)))
+
+  # Deduplicate genes, taking the median intensity
+  dedup_result <- deduplicate_genes(valid_genes, gene_col = "gene", quant_col = "intensity")
+  message(sprintf("  Final unique genes after deduplication: %d", nrow(dedup_result)))
+
+  return(dedup_result)
+}
 
 # Set output directory
 output_dir <- get_output_path("", subdir = "celltype_analysis")
@@ -284,82 +339,106 @@ all_results <- all_results %>%
 message("  Original cell types (", n_distinct(all_results$celltype), "): ", 
         paste(sort(unique(all_results$celltype)), collapse = ", "))
 
-# Plot A: Gene coverage by cell type and data source
-p_top_left <- all_results %>%
+# --- Start of new plotting section ---
+
+# Prepare data for Panel A and B to ensure consistent ordering
+plot_data_summary <- all_results %>%
   group_by(celltype, source) %>%
   summarise(genes_per_source = n_distinct(gene), .groups = "drop") %>%
   mutate(
-    celltype_display = format_celltype_names(celltype),
-    source_display = format_source_names(source),
-    source_display = case_when(
-      str_detect(source_display, "^PXD") ~ paste0("", source_display),
-      TRUE ~ source_display
-    )
+    celltype_display = format_celltype_names(celltype)
   ) %>%
   group_by(celltype_display) %>%
-  mutate(
-    total_genes = sum(genes_per_source),
-    # Only show labels for non-Erythrocytes
-    show_label = !str_detect(celltype_display, "Erythrocytes")
-  ) %>%
+  mutate(total_genes = sum(genes_per_source)) %>%
   ungroup() %>%
-  arrange(desc(total_genes), source_display) %>%
-  mutate(
-    celltype_display = factor(celltype_display, levels = unique(celltype_display))
-  ) %>%
-  ggplot(aes(x = celltype_display, y = genes_per_source, fill = source_display)) +
-  geom_col(position = position_stack(reverse = FALSE)) +
+  arrange(total_genes) # Sort from low to high
+
+# Get all unique sources and create a consistent factor for the legend
+all_source_names <- unique(all_results$source)
+source_display_levels <- unique(format_source_names(all_source_names))
+
+# Create ordered factor for cell types
+ordered_celltypes <- unique(plot_data_summary$celltype_display)
+
+# Re-apply factor to summary data
+plot_data_summary$celltype_display <- factor(plot_data_summary$celltype_display, levels = ordered_celltypes)
+plot_data_summary$source_display <- factor(format_source_names(plot_data_summary$source), levels = source_display_levels)
+
+# Panel A: Stacked horizontal bar plot of gene counts
+p_panel_a <- ggplot(plot_data_summary, aes(y = celltype_display, x = genes_per_source, fill = source_display)) +
+  geom_bar(stat = "identity", position = "stack") +
   geom_text(
-    aes(label = if_else(show_label, format(genes_per_source, big.mark = ","), "")),
-    position = position_stack(vjust = 0.5, reverse = FALSE),
+    aes(label = if_else(genes_per_source > 150, format(genes_per_source, big.mark = ","), "")),
+    position = position_stack(vjust = 0.5),
     color = "black",
-    size = 6
+    size = 4.5
   ) +
-  scale_y_continuous(
-    labels = scales::comma,
-    expand = expansion(mult = c(0, 0.1))
-  ) +
-  scale_fill_brewer(palette = "Set3") +
+  scale_x_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.05))) +
+  scale_fill_brewer(palette = "Paired", drop = FALSE) +
   labs(
-    x = "Cell Type",
-    y = "Number of Genes",
+    title = "(A) Genes per Cell Type",
+    x = "Number of Genes",
+    y = "Cell Type",
     fill = "Data Source"
   ) +
-  theme_minimal() +
+  theme_minimal(base_size = 16) +
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom",
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor = element_blank()
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    axis.text.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    plot.title = element_text(face = "bold", size = rel(1.2)),
+    legend.title = element_text(size = rel(1.1)),
+    legend.text = element_text(size = rel(1.0)),
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA)
   )
 
-# Plot B: Distribution of z-scores by cell type and data source
-p_bottom_left <- all_results %>%
+# Panel B: Boxplot of z-scores
+z_score_data <- all_results %>%
+  filter(intensity > 0) %>% # Ensure log10 does not generate -Inf
   group_by(source) %>%
   mutate(
-    z_score = scale(log10(intensity))[,1]
+    log_intensity = log10(intensity),
+    # Z-score is calculated only if there is variation in the data
+    z_score = if (n() > 1 && sd(log_intensity, na.rm = TRUE) > 0) {
+      scale(log_intensity)[,1]
+    } else {
+      NA_real_
+    }
   ) %>%
   ungroup() %>%
   mutate(
-    celltype_display = format_celltype_names(celltype),
-    source_display = format_source_names(source)
-  ) %>%
-  ggplot(aes(x = celltype_display, y = z_score, fill = source_display)) +
-  geom_violin(scale = "width", adjust = 1.5, position = position_dodge(width = 0.7)) +
-  scale_fill_brewer(palette = "Set3") +
-  labs(
-    x = "Cell Type",
-    y = "Z-score of log10(Intensity)",
-    fill = "Data Source"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "bottom",
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor = element_blank()
+    celltype_display = factor(format_celltype_names(celltype), levels = ordered_celltypes),
+    source_display = factor(format_source_names(source), levels = source_display_levels)
   )
 
+p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = source_display)) +
+  geom_boxplot(outlier.shape = NA, position = position_dodge(width = 0.9), width=0.8) +
+  coord_cartesian(xlim = quantile(z_score_data$z_score, c(0.001, 0.999), na.rm = TRUE)) + # trim outliers for viz
+  scale_fill_brewer(palette = "Paired", drop = FALSE) +
+  labs(
+    title = "(B) Z-score Distribution",
+    x = "Z-score of log10(Intensity)",
+    y = "",
+    fill = "Data Source"
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    panel.grid.major.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    plot.title = element_text(face = "bold", size = rel(1.2)),
+    legend.title = element_text(size = rel(1.1)),
+    legend.text = element_text(size = rel(1.0)),
+    plot.background = element_rect(fill = "transparent", color = NA),
+    panel.background = element_rect(fill = "transparent", color = NA)
+  )
+
+# Panel C: Scatterplot correlations
 # Identify cell types with multiple sources
 multi_source_celltypes <- all_results %>%
   group_by(celltype) %>%
@@ -367,7 +446,7 @@ multi_source_celltypes <- all_results %>%
   filter(n_sources > 1) %>%
   pull(celltype)
 
-# Calculate correlations for each cell type with multiple sources
+# Data for correlation plots
 correlation_data_all <- all_results %>%
   filter(celltype %in% multi_source_celltypes) %>%
   group_by(celltype, gene, source) %>%
@@ -375,297 +454,123 @@ correlation_data_all <- all_results %>%
     intensity = median(intensity, na.rm = TRUE),
     .groups = "drop"
   ) %>%
-  # Calculate z-scores within each source
+  # z-score per source
   group_by(source) %>%
   mutate(
     z_score = scale(log10(intensity))[,1]
   ) %>%
   ungroup()
 
-# Function to calculate correlations for a specific cell type
-calculate_correlations <- function(data, ct) {
-  ct_data <- data %>%
-    filter(celltype == ct) %>%
-    select(gene, source, intensity) %>%
-    # Remove any rows where intensity is NA, 0, or negative
-    filter(!is.na(intensity), intensity > 0) %>%
-    # Calculate z-scores within each source
-    group_by(source) %>%
-    mutate(
-      z_score = scale(log10(intensity))[,1]
-    ) %>%
-    ungroup() %>%
-    # Keep only genes present in multiple sources
-    group_by(gene) %>%
-    filter(n() > 1) %>%
-    ungroup()
+plot_all_source_correlations <- function(data, celltypes_to_plot) {
+  all_plots <- list()
   
-  sources <- unique(ct_data$source)
-  n_sources <- length(sources)
-  
-  if(n_sources < 2) return(NULL)
-  
-  cor_matrix <- matrix(NA, n_sources, n_sources)
-  n_genes_matrix <- matrix(NA, n_sources, n_sources)
-  rownames(cor_matrix) <- colnames(cor_matrix) <- sources
-  rownames(n_genes_matrix) <- colnames(n_genes_matrix) <- sources
-  
-  for(i in 1:n_sources) {
-    for(j in 1:n_sources) {
-      source1 <- sources[i]
-      source2 <- sources[j]
+  for (ct in celltypes_to_plot) {
+    ct_data <- data %>%
+      filter(celltype == ct) %>%
+      select(gene, source, z_score) %>%
+      group_by(gene) %>%
+      filter(n_distinct(source) > 1) %>%
+      ungroup()
+    
+    sources <- unique(ct_data$source)
+    if (length(sources) < 2) next
+    
+    source_pairs <- combn(sources, 2, simplify = FALSE)
+    
+    ct_plots <- lapply(source_pairs, function(pair) {
+      source1 <- pair[1]
+      source2 <- pair[2]
       
-      if(i == j) {
-        cor_matrix[i,j] <- 1
-        next
-      }
+      pair_data <- ct_data %>%
+        filter(source %in% c(source1, source2)) %>%
+        pivot_wider(names_from = source, values_from = z_score) %>%
+        drop_na()
       
-      # Get data for both sources
-      data1 <- ct_data %>% filter(source == source1) %>% select(gene, z_score)
-      data2 <- ct_data %>% filter(source == source2) %>% select(gene, z_score)
+      if (nrow(pair_data) < 10) return(NULL) # Skip if not enough data points
       
-      # Find shared genes with non-NA values
-      shared_genes <- intersect(data1$gene, data2$gene)
-      data1_shared <- data1 %>% filter(gene %in% shared_genes) %>% filter(!is.na(z_score))
-      data2_shared <- data2 %>% filter(gene %in% shared_genes) %>% filter(!is.na(z_score))
-      final_shared_genes <- intersect(data1_shared$gene, data2_shared$gene)
+      cor_val <- cor(pair_data[[source1]], pair_data[[source2]],
+                     method = "spearman", use = "complete.obs")
       
-      # Store number of shared genes
-      n_genes_matrix[i,j] <- length(final_shared_genes)
-      
-      # Print diagnostic information
-      message(sprintf("\nDiagnostic for %s correlation between %s and %s:", ct, source1, source2))
-      message(sprintf("  Total genes in %s: %d", source1, nrow(data1)))
-      message(sprintf("  Total genes in %s: %d", source2, nrow(data2)))
-      message(sprintf("  Shared genes: %d", length(shared_genes)))
-      message(sprintf("  Valid genes in %s: %d", source1, nrow(data1_shared)))
-      message(sprintf("  Valid genes in %s: %d", source2, nrow(data2_shared)))
-      message(sprintf("  Final shared genes with valid values: %d", length(final_shared_genes)))
-      
-      if(length(final_shared_genes) < 10) {
-        message(sprintf("Warning: Insufficient data for correlation between %s and %s in %s", source1, source2, ct))
-        message(sprintf("Only %d genes have valid values in both datasets (minimum 10 required)", length(final_shared_genes)))
-        cor_matrix[i,j] <- NA
-        next
-      }
-      
-      # Calculate correlation
-      data1_final <- data1_shared %>% filter(gene %in% final_shared_genes)
-      data2_final <- data2_shared %>% filter(gene %in% final_shared_genes)
-      cor_matrix[i,j] <- cor(data1_final$z_score, data2_final$z_score, method = "spearman")
-    }
+      p <- ggplot(pair_data, aes(x = .data[[source1]], y = .data[[source2]])) +
+        geom_point(alpha = 0.2, size = 1, color = "blue") +
+        geom_smooth(method = "lm", se = TRUE, color = "red", linewidth = 0.7) +
+        labs(
+          subtitle = sprintf("%s (n=%s, ρ=%.2f)", format_celltype_names(ct), format(nrow(pair_data), big.mark=","), cor_val),
+          x = format_source_names(source1),
+          y = format_source_names(source2)
+        ) +
+        theme_bw(base_size = 14) +
+        theme(
+          plot.subtitle = element_text(size = 14, hjust = 0.5, face = "bold"),
+          axis.text = element_text(size = 11),
+          axis.title = element_text(size = 12)
+        )
+      return(p)
+    })
+    
+    all_plots <- c(all_plots, Filter(Negate(is.null), ct_plots))
   }
   
-  return(list(correlations = cor_matrix, n_genes = n_genes_matrix))
-}
-
-# Calculate correlations for all relevant cell types
-correlation_results <- lapply(multi_source_celltypes, function(ct) {
-  calculate_correlations(correlation_data_all, ct)
-})
-
-# Plot correlation visualization for a cell type
-plot_correlation_viz <- function(cor_result) {
-  if(is.null(cor_result)) return(NULL)
-  
-  # Extract correlation matrix and number of genes
-  cor_matrix <- cor_result$correlations
-  n_genes <- cor_result$n_genes
-  
-  # Check if we have any valid correlations
-  if(all(is.na(cor_matrix))) {
-    message("No valid correlations found for this cell type")
-    return(NULL)
+  if (length(all_plots) == 0) {
+    return(ggplot() + theme_void() + labs(subtitle = "No valid cross-source correlations to display."))
   }
   
-  # Convert matrices to long format for plotting
-  cor_data <- cor_matrix %>%
-    as.data.frame() %>%
-    rownames_to_column("source1") %>%
-    pivot_longer(-source1, names_to = "source2", values_to = "correlation")
-  
-  n_genes_data <- n_genes %>%
-    as.data.frame() %>%
-    rownames_to_column("source1") %>%
-    pivot_longer(-source1, names_to = "source2", values_to = "n_genes")
-  
-  # Combine correlation and n_genes data
-  plot_data <- cor_data %>%
-    left_join(n_genes_data, by = c("source1", "source2")) %>%
-    mutate(
-      source1 = format_source_names(source1),
-      source2 = format_source_names(source2),
-      label = if_else(!is.na(correlation),
-                     sprintf("r = %.2f\n(n = %d)", correlation, n_genes),
-                     sprintf("No correlation\n(n = %d)", n_genes))
-    )
-  
-  # Create correlation plot
-  p <- ggplot(plot_data, aes(x = source1, y = source2, fill = correlation)) +
-    geom_tile() +
-    geom_text(aes(label = label), size = 3) +
-    scale_fill_gradient2(
-      low = "blue", high = "red", mid = "white",
-      midpoint = 0, limit = c(-1,1), na.value = "grey90"
-    ) +
-    theme_minimal() +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      axis.title = element_blank(),
-      panel.grid = element_blank(),
-      legend.position = "none"
-    )
-  
-  return(p)
+  # Return the grid of plots without a title
+  return(wrap_plots(all_plots, ncol=3))
 }
 
-# Function to create CD8 T cell correlation plot
-plot_cd8_correlations <- function(data) {
-  # Filter for CD8 T cells only
-  cd8_data <- data %>%
-    filter(celltype == "CD8_T_cells") %>%
-    select(gene, source, z_score) %>%
-    group_by(gene) %>%
-    filter(n() > 1) %>%
-    ungroup()
-  
-  # Get unique sources
-  sources <- unique(cd8_data$source)
-  
-  # Create all possible pairs of sources
-  source_pairs <- combn(sources, 2, simplify = FALSE)
-  
-  # Create plots for each pair
-  plots <- lapply(source_pairs, function(pair) {
-    source1 <- pair[1]
-    source2 <- pair[2]
-    
-    # Get data for this pair
-    pair_data <- cd8_data %>%
-      filter(source %in% c(source1, source2)) %>%
-      pivot_wider(names_from = source, values_from = z_score) %>%
-      drop_na()
-    
-    # Calculate correlation
-    cor_val <- cor(pair_data[[source1]], pair_data[[source2]], 
-                   method = "spearman", use = "complete.obs")
-    
-    # Create scatter plot
-    ggplot(pair_data, aes(x = .data[[source1]], y = .data[[source2]])) +
-      geom_point(alpha = 0.5, size = 1) +
-      geom_smooth(method = "lm", se = TRUE, color = "#4575b4", alpha = 0.2) +
-      labs(
-        title = sprintf("CD8 T cells (n = %d)", nrow(pair_data)),
-        subtitle = sprintf("ρ = %.2f", cor_val),
-        x = format_source_names(source1),
-        y = format_source_names(source2)
-      ) +
-      theme_minimal() +
-      theme(
-        plot.title = element_text(size = 12, face = "bold"),
-        plot.subtitle = element_text(size = 10),
-        axis.text = element_text(size = 8),
-        axis.title = element_text(size = 10)
-      )
-  })
-  
-  # Combine plots
-  wrap_plots(plots, ncol = 2)
-}
+p_panel_c_grid <- plot_all_source_correlations(correlation_data_all, multi_source_celltypes)
 
-# Create correlation plots
-correlation_plots <- lapply(correlation_results, plot_correlation_viz)
+# Create a title for Panel C using cowplot
+panel_c_title <- cowplot::ggdraw() + 
+  cowplot::draw_label(
+    "(C) Cross-source Gene Abundance Correlations",
+    fontface = 'bold',
+    x = 0.5,
+    hjust = 0.5,
+    size = 18
+  )
 
-# Remove NULL plots and combine valid plots
-valid_plots <- correlation_plots[!sapply(correlation_plots, is.null)]
+# Combine the title and the plot grid
+p_panel_c <- cowplot::plot_grid(
+  panel_c_title,
+  p_panel_c_grid,
+  ncol = 1,
+  rel_heights = c(0.05, 0.95) # Allocate space for the title
+)
 
-if(length(valid_plots) > 0) {
-  # Create combined plot with valid plots only
-  combined_plot <- wrap_plots(valid_plots, ncol = 2)
+# Combine panels into final plot
+if (!is.null(p_panel_c)) {
+  # Manually extract the legend from Panel A to ensure it's shared
+  shared_legend <- cowplot::get_legend(
+    p_panel_a + theme(legend.box.margin = margin(6, 6, 6, 6))
+  )
+
+  # Remove legends from the individual plots
+  p_panel_a <- p_panel_a + theme(legend.position = "none")
+  p_panel_b <- p_panel_b + theme(legend.position = "none")
+
+  # Combine the top row plot panels
+  top_row <- p_panel_a | p_panel_b
+
+  # Combine the main plot areas
+  main_plots <- top_row / p_panel_c + plot_layout(heights = c(1, 1.5))
+
+  # Add the shared legend to the bottom of the combined plot
+  final_plot <- wrap_plots(main_plots, shared_legend, ncol = 1, heights = c(0.92, 0.08))
+
+  # Save final plot
+  ggsave(file.path(plot_dir, "00_comprehensive_celltypes_panel.tiff"), 
+         final_plot, 
+         width = 14, height = 16, 
+         device = "tiff", dpi = 300,
+         compression = "lzw", bg = "transparent")
   
-  # # # Also save as TIFF for manuscript
-  # ggsave(file.path(plot_dir, "correlation_plots.tiff"), 
-  #        combined_plot, 
-  #        width = 12, height = 8, 
-  #        device = "tiff", dpi = 300)
+  message("TIFF plot saved to: ", plot_dir)
 } else {
-  message("No valid correlation plots were generated.")
+  message("Skipping final plot generation as no correlation plots were created.")
 }
 
-# Create CD8 T cell correlation plot
-p_cd8_cor <- plot_cd8_correlations(correlation_data_all)
-
-# # Save individual plots
-# ggsave(file.path(plot_dir, "01_gene_coverage.tiff"), p_top_left, 
-#        width = 12, height = 8, dpi = 300, compression = "lzw")
-
-# Define layout
-layout <- "
-AABB
-CCDD
-"
-
-# Combine plots with the layout
-p6_comprehensive <- p_top_left + p_bottom_left + p_cd8_cor +
-  plot_layout(
-    design = layout,
-    guides = 'collect'
-  ) &
-  theme(legend.position = 'bottom')
-
-# Also save as TIFF for manuscript
-ggsave(file.path(plot_dir, "00_comprehensive_celltypes_analysis_panel.tiff"), 
-       p6_comprehensive, 
-       width = 16, height = 12, 
-       device = "tiff", dpi = 300)
-
-message("TIFF plots saved to: ", plot_dir)
 message("=== Analysis Complete ===")
 
-# Process GPMDB data
-process_gpmdb_data <- function(data, force_mapping = FALSE) {
-  message("Processing GPMDB data...")
-  message(sprintf("  Input rows: %d", nrow(data)))
-  
-  # Map transcript accessions to gene symbols
-  message("  Mapping transcript accessions to genes...")
-  data <- data %>%
-    mutate(
-      # Extract gene names from protein column if available
-      gene_from_protein = str_extract(protein, "^[^\\s]+"),
-      # Clean up the PSM values and convert to numeric
-      psm = as.numeric(str_replace_all(PSM, "[^0-9.]", "")),
-      # Use PSM count as intensity
-      intensity = psm
-    )
-  
-  # Map accessions to gene symbols
-  if(force_mapping || !all(str_detect(data$gene_from_protein, "^[A-Z0-9]+$"))) {
-    accessions <- unique(data$accession)
-    message(sprintf("Converting %d IDs to gene symbols...", length(accessions)))
-    gene_mapping <- convert_to_gene_symbol(accessions)
-    
-    data <- data %>%
-      left_join(gene_mapping, by = c("accession" = "protein_id")) %>%
-      mutate(
-        gene = coalesce(gene_symbol, gene_from_protein)
-      )
-  } else {
-    data <- data %>%
-      mutate(gene = gene_from_protein)
-  }
-  
-  message("  Extracting gene names from descriptions...")
-  valid_genes <- data %>%
-    filter(!is.na(gene)) %>%
-    filter(gene != "") %>%
-    filter(!is.na(intensity))
-  
-  message(sprintf("  Valid genes after mapping: %d", nrow(valid_genes)))
-  
-  # Deduplicate genes by taking median intensity
-  dedup_result <- deduplicate_genes(valid_genes, intensity_col = "intensity")
-  message(sprintf("  Final unique genes after deduplication: %d", nrow(dedup_result)))
-  
-  return(dedup_result)
-} 
+# The process_gpmdb_data function has been moved to the top of the script for clarity. 
