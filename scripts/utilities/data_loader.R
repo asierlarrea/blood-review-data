@@ -10,6 +10,7 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(readr)
   library(stringr)
+  library(purrr)
 })
 
 # Source dependencies
@@ -328,10 +329,9 @@ process_gpmdb_data <- function(data, force_mapping = FALSE) {
 #' 
 #' @param sample_type The sample type, e.g., "plasma" or "serum". This corresponds to the subdirectory in `quantms/`.
 #' @param force_mapping Force re-mapping of protein IDs to gene symbols
-#' @param aggregation_method The method for aggregating abundances: "median", "mean", or a numeric quantile (e.g., 0.75).
 #' @return A processed data frame for QuantMS data
 #' 
-load_quantms_data <- function(sample_type, force_mapping = FALSE, aggregation_method = "median") {
+load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   
   quantms_dir <- file.path(PROJECT_CONFIG$directories$data_raw, "quantms", sample_type)
   
@@ -340,7 +340,7 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE, aggregation_me
     return(NULL)
   }
   
-  message(sprintf("Processing QuantMS %s data with '%s' aggregation...", sample_type, as.character(aggregation_method)))
+  message(sprintf("Processing QuantMS %s data...", sample_type))
   
   # Get all CSV files
   quantms_files <- list.files(quantms_dir, pattern = "\\.csv$", full.names = TRUE)
@@ -353,10 +353,10 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE, aggregation_me
   # Read and combine all files
   all_data <- map_dfr(quantms_files, ~{
     read_csv(.x, show_col_types = FALSE) %>%
-      select(protein_accession = ProteinName, Ibaq = Ibaq) # Use Ibaq now
+      select(protein_accession = ProteinName, Ibaq = Ibaq, SampleID)
   })
   
-  # Map protein accessions to gene symbols
+  # Map protein accessions to gene symbols on the entire dataset
   all_data$gene <- convert_to_gene_symbol(all_data$protein_accession, force_mapping = force_mapping)
   
   # Filter out proteins that couldn't be mapped
@@ -364,37 +364,22 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE, aggregation_me
     filter(!is.na(gene) & gene != "") %>%
     select(gene, Ibaq)
   
-  # Log mapping results
-  input_proteins <- length(unique(all_data$protein_accession))
-  mapped_genes <- length(unique(mapped_data$gene))
-  message(sprintf("  - QuantMS: Mapped %d input proteins to %d unique gene symbols.", input_proteins, mapped_genes))
+  # Now, aggregate by gene
+  processed_data <- mapped_data %>%
+    group_by(gene) %>%
+    summarise(
+      abundance = median(Ibaq, na.rm = TRUE),
+      protein_count = n(),
+      .groups = "drop"
+    )
+    
+  message(sprintf("  - Mapped to %d unique genes.", n_distinct(processed_data$gene)))
   
-  # Compute abundance based on the specified method
-  if (aggregation_method == "max") {
-    processed_data <- mapped_data %>%
-      group_by(gene) %>%
-      summarise(
-        abundance = max(Ibaq, na.rm = TRUE),
-        protein_count = n(),
-        .groups = "drop"
-      )
-    source_name <- "quantms_max"
-  } else { # Default to median
-    processed_data <- mapped_data %>%
-      group_by(gene) %>%
-      summarise(
-        abundance = median(Ibaq, na.rm = TRUE),
-        protein_count = n(),
-        .groups = "drop"
-      )
-    source_name <- "quantms"
-  }
-
   processed_data <- processed_data %>%
     filter(!is.na(abundance) & abundance > 0)
   
   # Add metadata
-  processed_data$source <- source_name
+  processed_data$source <- "quantms"
   processed_data$technology <- "MS"
   processed_data$abundance_type <- "iBAQ"
   

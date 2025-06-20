@@ -54,13 +54,11 @@ run_plasma_protein_analysis <- function() {
   
   data_list <- load_multiple_sources(source_names = sources_to_load, force_mapping = force_mapping)
   
-  # Load the two different versions of QuantMS data
-  quantms_median <- load_quantms_data(sample_type = "plasma", force_mapping = force_mapping, aggregation_method = "median")
-  quantms_max <- load_quantms_data(sample_type = "plasma", force_mapping = force_mapping, aggregation_method = "max")
+  # Load QuantMS data with prevalence filter
+  quantms_data <- load_quantms_data(sample_type = "plasma", force_mapping = force_mapping)
   
-  # Add them to the main data list
-  if (!is.null(quantms_median)) data_list$quantms <- quantms_median
-  if (!is.null(quantms_max)) data_list$quantms_max <- quantms_max
+  # Add it to the main data list
+  if (!is.null(quantms_data)) data_list$quantms <- quantms_data
   
   if (length(data_list) == 0) {
     stop("No data sources could be loaded. Please check your data files.")
