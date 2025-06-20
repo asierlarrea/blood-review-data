@@ -1,6 +1,6 @@
 # PeptideAtlas Quantification Methods Comparison Analysis
 
-**Analysis Date:** 2025-06-19
+**Analysis Date:** 2025-06-20
 **Script:** `02_peptideatlas_quantification_analysis.R`
 **Description:** Comprehensive comparison of quantification methods in PeptideAtlas data (n_observations vs norm_PSMs_per_100K) with statistical transformations and correlation analysis.
 

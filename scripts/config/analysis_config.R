@@ -130,7 +130,8 @@ PLOT_CONFIG <- list(
       "HPA PEA" = "#A23B72",
       "HPA Immunoassay" = "#F18F01", 
       "GPMDB" = "#50C878",
-      "PAXDB" = "#9B59B6"
+      "PAXDB" = "#9B59B6",
+      "quantms" = "#D55E00"
     )
   ),
   

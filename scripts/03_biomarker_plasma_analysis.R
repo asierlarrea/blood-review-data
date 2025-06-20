@@ -117,6 +117,7 @@ create_waterfall_plot <- function(data, database_name, intensity_col, gene_col =
 # Load utilities and set up output directories
 source("scripts/utilities/load_packages.R")
 source("scripts/config/analysis_config.R")
+source("scripts/utilities/data_loader.R")
 ensure_output_dirs()
 
 # Load required packages
@@ -197,20 +198,14 @@ hpa_pea_raw <- read_csv("data/raw/hpa/hpa_pea.csv", show_col_types = FALSE)
 hpa_pea <- deduplicate_genes(hpa_pea_raw, "Gene", "median_npx", aggregation_method = "median")
 hpa_pea_biomarkers <- unique(hpa_pea$Gene[hpa_pea$Gene %in% biomarker_genes])
 
-# 4. HPA Immunoassay
-message("Processing HPA Immunoassay...")
-hpa_imm_raw <- read_csv("data/raw/hpa/hpa_immunoassay_plasma.csv", show_col_types = FALSE)
-hpa_imm <- deduplicate_genes(hpa_imm_raw, "Gene", "Concentration", aggregation_method = "median")
-hpa_imm_biomarkers <- unique(hpa_imm$Gene[hpa_imm$Gene %in% biomarker_genes])
-
-# 5. GPMDB
+# 4. GPMDB
 message("Processing GPMDB...")
 gpmdb_raw <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
 gpmdb_raw$gene <- stringr::str_extract(gpmdb_raw$description, "[A-Z0-9]+(?=,| |$)")
 gpmdb <- deduplicate_genes(gpmdb_raw, "gene", "total", aggregation_method = "median")
 gpmdb_biomarkers <- unique(gpmdb$gene[gpmdb$gene %in% biomarker_genes])
 
-# 6. PAXDB
+# 5. PAXDB
 message("Processing PAXDB...")
 paxdb_raw <- read_csv("data/raw/paxdb/paxdb_plasma.csv", show_col_types = FALSE)
 paxdb_raw$ensp <- stringr::str_replace(paxdb_raw$string_external_id, "^9606\\.", "")
@@ -219,6 +214,11 @@ paxdb <- deduplicate_genes(paxdb_raw, "gene", "abundance",
                          additional_cols = c("ensp"), 
                          aggregation_method = "median")
 paxdb_biomarkers <- unique(paxdb$gene[paxdb$gene %in% biomarker_genes])
+
+# 6. QuantMS
+message("Processing QuantMS...")
+quantms <- load_quantms_data(sample_type = "plasma", force_mapping = force_mapping)
+quantms_biomarkers <- unique(quantms$gene[quantms$gene %in% biomarker_genes])
 
 # Create boxplots for each database
 create_boxplot <- function(data, database_name, intensity_col, gene_col = "gene") {
@@ -319,18 +319,20 @@ boxplots <- list(
   peptideatlas = create_boxplot(peptideatlas, "PeptideAtlas", "norm_PSMs_per_100K"),
   hpa_ms = create_boxplot(hpa_ms, "HPA MS", "Concentration", "Gene"),
   hpa_pea = create_boxplot(hpa_pea, "HPA PEA", "median_npx", "Gene"),
-  hpa_imm = create_boxplot(hpa_imm, "HPA Immunoassay", "Concentration", "Gene"),
   gpmdb = create_boxplot(gpmdb, "GPMDB", "total"),
-  paxdb = create_boxplot(paxdb, "PAXDB", "abundance")
+  paxdb = create_boxplot(paxdb, "PAXDB", "abundance"),
+  quantms = create_boxplot(quantms, "quantms", "abundance")
 )
 
 # Combine boxplots into one figure with shared legend
 combined_boxplots <- ggpubr::ggarrange(
   boxplots$peptideatlas + theme(legend.position = "none"),
+  boxplots$hpa_ms + theme(legend.position = "none"),
   boxplots$hpa_pea + theme(legend.position = "none"),
-  boxplots$hpa_imm + theme(legend.position = "none"),
   boxplots$gpmdb + theme(legend.position = "none"),
-  ncol = 2,
+  boxplots$paxdb + theme(legend.position = "none"),
+  boxplots$quantms + theme(legend.position = "none"),
+  ncol = 3,
   nrow = 2,
   labels = NULL,  # Removed "AUTO" to remove subpanel labels
   font.label = list(size = 16, face = "bold")
@@ -373,9 +375,9 @@ zscore_data <- list(
   PeptideAtlas = get_zscore_data(peptideatlas, "norm_PSMs_per_100K"),
   "HPA MS" = get_zscore_data(hpa_ms, "Concentration", "Gene"),
   "HPA PEA" = get_zscore_data(hpa_pea, "median_npx", "Gene"),
-  "HPA Immunoassay" = get_zscore_data(hpa_imm, "Concentration", "Gene"),
   GPMDB = get_zscore_data(gpmdb, "total"),
-  PAXDB = get_zscore_data(paxdb, "abundance")
+  PAXDB = get_zscore_data(paxdb, "abundance"),
+  quantms = get_zscore_data(quantms, "abundance")
 )
 
 # Create a matrix of z-scores for biomarkers
@@ -476,9 +478,9 @@ gene_lists <- list(
   PeptideAtlas = peptideatlas_biomarkers,
   "HPA MS" = hpa_ms_biomarkers,
   "HPA PEA" = hpa_pea_biomarkers,
-  "HPA Immunoassay" = hpa_imm_biomarkers,
   GPMDB = gpmdb_biomarkers,
-  PAXDB = paxdb_biomarkers
+  PAXDB = paxdb_biomarkers,
+  quantms = quantms_biomarkers
 )
 
 # Create UpSet plot with explicit settings to ensure numbers show
@@ -492,7 +494,7 @@ upset_plot <- upset(
   line.size = 2,
   mainbar.y.label = "Number of Biomarkers",
   sets.x.label = "Total per Database",
-  text.scale = c(2.5, 1.4, 2.5, 1.4, 4.0, 2.0),  # Increased axis titles (2.5) and database names (4.0)
+  text.scale = c(4.0, 4.0, 2.5, 1.4, 4.0, 2.0),  # Increased y-axis title and tick labels
   mb.ratio = c(0.7, 0.3),  # More space for main bars
   keep.order = TRUE,  # Keep order for consistency
   main.bar.color = "#4575b4",
@@ -575,9 +577,9 @@ generate_biomarker_report <- function(output_dir) {
     PeptideAtlas = list(total = length(unique(peptideatlas$gene)), biomarkers = length(peptideatlas_biomarkers)),
     "HPA MS" = list(total = length(unique(hpa_ms$Gene)), biomarkers = length(hpa_ms_biomarkers)),
     "HPA PEA" = list(total = length(unique(hpa_pea$Gene)), biomarkers = length(hpa_pea_biomarkers)),
-    "HPA Immunoassay" = list(total = length(unique(hpa_imm$Gene)), biomarkers = length(hpa_imm_biomarkers)),
     GPMDB = list(total = length(unique(gpmdb$gene)), biomarkers = length(gpmdb_biomarkers)),
-    PAXDB = list(total = length(unique(paxdb$gene)), biomarkers = length(paxdb_biomarkers))
+    PAXDB = list(total = length(unique(paxdb$gene)), biomarkers = length(paxdb_biomarkers)),
+    quantms = list(total = length(unique(quantms$gene)), biomarkers = length(quantms_biomarkers))
   )
   
   # Create report content
@@ -600,24 +602,25 @@ generate_biomarker_report <- function(output_dir) {
     sprintf("| HPA PEA | %d | %d | %.1f%% | PEA |\n", 
             database_stats$`HPA PEA`$total, database_stats$`HPA PEA`$biomarkers,
             100 * database_stats$`HPA PEA`$biomarkers / database_stats$`HPA PEA`$total),
-    sprintf("| HPA Immunoassay | %d | %d | %.1f%% | Immunoassay |\n", 
-            database_stats$`HPA Immunoassay`$total, database_stats$`HPA Immunoassay`$biomarkers,
-            100 * database_stats$`HPA Immunoassay`$biomarkers / database_stats$`HPA Immunoassay`$total),
     sprintf("| GPMDB | %d | %d | %.1f%% | MS |\n", 
             database_stats$GPMDB$total, database_stats$GPMDB$biomarkers,
             100 * database_stats$GPMDB$biomarkers / database_stats$GPMDB$total),
     sprintf("| PAXDB | %d | %d | %.1f%% | MS |\n", 
             database_stats$PAXDB$total, database_stats$PAXDB$biomarkers,
             100 * database_stats$PAXDB$biomarkers / database_stats$PAXDB$total),
+    sprintf("| quantms | %d | %d | %.1f%% | MS |\n",
+            database_stats$quantms$total, database_stats$quantms$biomarkers,
+            100 * database_stats$quantms$biomarkers / database_stats$quantms$total),
     "\n",
     
     "## Key Findings\n\n",
     "- **Biomarker representation** varies significantly across databases and technologies\n",
-    "- **Immunoassays show highest biomarker percentage** due to targeted nature\n",
+    "- **Targeted methods (PEA) show higher biomarker density** due to focused panels\n",
     "- **Mass spectrometry databases** provide broader coverage with substantial biomarker representation\n",
     "- **Key biomarkers** (F12, LEP, GHRL, GH1, IL1A, IL1B, etc.) consistently detected across multiple platforms\n",
     "- **Expression ranges** span 4-6 orders of magnitude across databases\n",
-    "- **Cross-platform validation** possible for numerous biomarkers\n\n",
+    "- **Cross-platform validation** possible for numerous biomarkers\n",
+    "- **quantms** provides additional biomarker coverage\n\n",
     
     "## Biological Insights\n\n",
     "- **Biomarker accessibility** varies by technology: targeted methods excel at specific biomarkers\n",
@@ -625,7 +628,8 @@ generate_biomarker_report <- function(output_dir) {
     "- **Discovery potential** highest in MS databases due to broader protein coverage\n",
     "- **Validation opportunities** through cross-platform biomarker detection\n",
     "- **Expression patterns** reveal database-specific biases and sensitivities\n",
-    "- **Abundance distributions** show technology-specific detection capabilities\n\n",
+    "- **Abundance distributions** show technology-specific detection capabilities\n",
+    "- **quantms** offers additional biomarker coverage\n\n",
     
     "## Database Comparison\n\n",
     "### Biomarker Detection Across Platforms\n\n",
@@ -634,12 +638,13 @@ generate_biomarker_report <- function(output_dir) {
     "- PAXDB offers highest absolute biomarker numbers due to comprehensive coverage\n",
     "- PeptideAtlas and HPA MS show complementary biomarker profiles\n\n",
     "**Targeted Platforms:**\n",
-    "- HPA Immunoassay: Highest biomarker density but limited absolute numbers\n",
-    "- HPA PEA: Balanced approach with focused biomarker panels\n\n",
+    "- HPA PEA: Balanced approach with focused biomarker panels\n",
+    "- quantms: Additional biomarker coverage\n\n",
     "**Cross-Platform Validation:**\n",
     "- Biomarkers detected in multiple databases show higher clinical confidence\n",
     "- Platform-specific biomarkers may represent unique detection capabilities\n",
-    "- Z-score normalization enables cross-database abundance comparisons\n\n",
+    "- Z-score normalization enables cross-database abundance comparisons\n",
+    "- quantms offers additional biomarker coverage\n\n",
     
     "## Methodology\n\n",
     "- **Biomarker reference list:** Curated list from literature and clinical databases\n",
@@ -651,11 +656,12 @@ generate_biomarker_report <- function(output_dir) {
     
     "## Recommendations\n\n",
     "- **Use MS databases** for biomarker discovery and broad profiling\n",
-    "- **Employ targeted methods** for validation and clinical applications\n",
+    "- **Employ targeted methods (PEA)** for validation and clinical applications\n",
     "- **Cross-validate biomarkers** across multiple platforms when possible\n",
     "- **Consider abundance ranges** when selecting platforms for specific biomarkers\n",
     "- **Integrate complementary technologies** for comprehensive biomarker analysis\n",
-    "- **Focus on multi-platform biomarkers** for robust clinical applications\n\n",
+    "- **Focus on multi-platform biomarkers** for robust clinical applications\n",
+    "- **quantms** offers additional biomarker coverage\n\n",
     
     "## Generated Files\n\n",
     sprintf("- **Comprehensive panel:** `%s/00_comprehensive_biomarkers_analysis_panel.png`\n", basename(output_dir)),

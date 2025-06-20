@@ -1,6 +1,6 @@
 # Serum Protein Analysis Report
 
-**Analysis Date:** 2025-06-19
+**Analysis Date:** 2025-06-20
 **Script:** `04_serum_protein_analysis.R`
 **Description:** Comprehensive analysis of serum proteins from GPMDB, PAXDB, and HPA Immunoassay databases with overlap and coverage assessment.
 
@@ -13,13 +13,14 @@
 | GPMDB Serum | MS | 3666 | Broad | Spectral counting |
 | PAXDB Serum | MS | 823 | Comprehensive | Abundance scores |
 | HPA Immunoassay Serum | Immunoassay | 336 | Targeted | Antibody-based |
-| **MS Technologies Combined** | MS | 3978 | Combined MS | Multiple MS methods |
-| **All Sources Combined** | Mixed | 4198 | Total | All technologies |
+| quantms Serum | MS | 532 | Comprehensive | iBAQ |
+| **MS Technologies Combined** | MS | 4048 | Combined MS | Multiple MS methods |
+| **All Sources Combined** | Mixed | 4266 | Total | All technologies |
 
 ## Key Findings
 
-- **Total serum proteome coverage:** 4198 unique proteins across all sources
-- **MS dominance:** Mass spectrometry technologies provide 3978 proteins (94.8% of total coverage)
+- **Total serum proteome coverage:** 4266 unique proteins across all sources
+- **MS dominance:** Mass spectrometry technologies provide 4048 proteins (94.9% of total coverage)
 - **Database complementarity:** Limited overlap between databases suggests technology-specific detection
 - **PAXDB advantage:** Highest individual database coverage (823 proteins) for serum proteome
 - **Immunoassay specificity:** High-sensitivity detection of targeted proteins
@@ -27,7 +28,7 @@
 
 ## Biological Insights
 
-- **Serum complexity:** 4198+ proteins detectable reflecting serum's role as protein reservoir
+- **Serum complexity:** 4266+ proteins detectable reflecting serum's role as protein reservoir
 - **Technology complementarity:** MS excels at discovery, immunoassays at sensitivity
 - **Biomarker implications:** Comprehensive coverage supports serum as biomarker source
 - **Protein abundance range:** Multiple orders of magnitude captured across technologies
@@ -41,7 +42,7 @@
 **Mass Spectrometry Databases:**
 - PAXDB: Most comprehensive single-source coverage (823 proteins)
 - GPMDB: Focused detection with complementary protein sets (3666 proteins)
-- Combined MS: 3978 proteins representing comprehensive MS-based serum proteome
+- Combined MS: 4048 proteins representing comprehensive MS-based serum proteome
 
 **Immunoassay Platform:**
 - HPA: Targeted high-sensitivity detection (336 proteins)

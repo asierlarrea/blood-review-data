@@ -90,26 +90,41 @@ hpa_serum <- deduplicate_genes(hpa_serum_raw, "gene", "expr",
                              additional_cols = c("ENSG_ID"), 
                              aggregation_method = "median")
 
+# 4. quantms Serum
+message("Processing quantms serum data...")
+quantms_serum_raw <- load_quantms_data(sample_type = "serum", force_mapping = force_mapping)
+
+# Ensure it's not null before processing
+if (!is.null(quantms_serum_raw)) {
+  quantms_serum <- quantms_serum_raw
+} else {
+  # Create an empty tibble to avoid errors downstream if data is missing
+  quantms_serum <- tibble(gene = character(), abundance = double(), source = character())
+}
+
 # Create summary statistics
 message("Creating summary statistics...")
 stats_summary <- list(
   gpmdb_serum = length(unique(gpmdb_serum$gene)),
   paxdb_serum = length(unique(paxdb_serum$gene)),
-  hpa_immunoassay_serum = length(unique(hpa_serum$gene))
+  hpa_immunoassay_serum = length(unique(hpa_serum$gene)),
+  quantms_serum = length(unique(quantms_serum$gene))
 )
 
 # Calculate total unique genes across sources
 all_genes <- unique(c(
   gpmdb_serum$gene,
   paxdb_serum$gene,
-  hpa_serum$gene
+  hpa_serum$gene,
+  quantms_serum$gene
 ))
 stats_summary$total_across_sources <- length(all_genes)
 
 # Calculate MS technologies total (GPMDB, PAXDB)
 ms_genes <- unique(c(
   gpmdb_serum$gene,
-  paxdb_serum$gene
+  paxdb_serum$gene,
+  quantms_serum$gene
 ))
 stats_summary$ms_technologies <- length(ms_genes)
 
@@ -134,11 +149,11 @@ if (!dir.exists(plot_dir)) {
 
 # 1. Bar plot by individual sources
 source_data <- data.frame(
-  Source = c("GPMDB", "PAXDB", "HPA Immunoassay"),
+  Source = c("GPMDB", "PAXDB", "HPA Immunoassay", "quantms"),
   Count = c(stats_summary$gpmdb_serum, stats_summary$paxdb_serum, 
-            stats_summary$hpa_immunoassay_serum),
-  Technology = c("MS", "MS", "Immunoassay"),
-  Database = c("GPMDB", "PAXDB", "HPA")
+            stats_summary$hpa_immunoassay_serum, stats_summary$quantms_serum),
+  Technology = c("MS", "MS", "Immunoassay", "MS"),
+  Database = c("GPMDB", "PAXDB", "HPA", "quantms")
 )
 
 p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Technology)) +
@@ -166,11 +181,12 @@ p1 <- ggplot(source_data, aes(x = reorder(Source, Count), y = Count, fill = Tech
 
 # 2. Grouped bar plot by technology and total
 summary_data <- data.frame(
-  Category = c("GPMDB", "PAXDB", "HPA Immunoassay", "MS Technologies", "All Sources"),
+  Category = c("GPMDB", "PAXDB", "HPA Immunoassay", "quantms", "MS Technologies", "All Sources"),
   Count = c(stats_summary$gpmdb_serum, stats_summary$paxdb_serum, 
-            stats_summary$hpa_immunoassay_serum, stats_summary$ms_technologies, 
+            stats_summary$hpa_immunoassay_serum, stats_summary$quantms_serum,
+            stats_summary$ms_technologies, 
             stats_summary$total_across_sources),
-  Type = c("Individual", "Individual", "Individual", "Combined", "Combined")
+  Type = c("Individual", "Individual", "Individual", "Individual", "Combined", "Combined")
 )
 
 p2 <- ggplot(summary_data, aes(x = reorder(Category, Count), y = Count, fill = Type)) +
@@ -203,14 +219,15 @@ message("Creating overlap analysis...")
 gene_lists <- list(
   GPMDB = gpmdb_serum$gene[!is.na(gpmdb_serum$gene) & gpmdb_serum$gene != ""],
   PAXDB = paxdb_serum$gene[!is.na(paxdb_serum$gene) & paxdb_serum$gene != ""],
-  HPA_Immunoassay = hpa_serum$gene[!is.na(hpa_serum$gene) & hpa_serum$gene != ""]
+  HPA_Immunoassay = hpa_serum$gene[!is.na(hpa_serum$gene) & hpa_serum$gene != ""],
+  quantms = quantms_serum$gene[!is.na(quantms_serum$gene) & quantms_serum$gene != ""]
 )
 
 # Create UpSet plot
 p3 <- UpSetR::upset(
   fromList(gene_lists),
-  nsets = 3,
-  sets = c("GPMDB", "PAXDB", "HPA_Immunoassay"),
+  nsets = 4,
+  sets = c("GPMDB", "PAXDB", "HPA_Immunoassay", "quantms"),
   keep.order = TRUE,
   order.by = "freq",
   decreasing = TRUE,
@@ -247,11 +264,16 @@ hpa_dist <- hpa_serum %>%
   filter(!is.na(expr) & expr > 0) %>%
   mutate(Database = "HPA Immunoassay", log_value = log10(expr))
 
+quantms_dist <- quantms_serum %>%
+  filter(!is.na(abundance) & abundance > 0) %>%
+  mutate(Database = "quantms", log_value = log10(abundance))
+
 # Combined distribution data
 dist_data <- bind_rows(
   gpmdb_dist %>% select(gene, Database, log_value),
   paxdb_dist %>% select(gene, Database, log_value),
-  hpa_dist %>% select(gene, Database, log_value)
+  hpa_dist %>% select(gene, Database, log_value),
+  quantms_dist %>% select(gene, Database, log_value)
 )
 
 # Apply z-score normalization
@@ -262,7 +284,8 @@ p4 <- ggplot(dist_data, aes(x = log_value, fill = Database)) +
   facet_wrap(~Database, scales = "free", ncol = 1, 
              labeller = labeller(Database = c("GPMDB" = "(a) GPMDB", 
                                              "PAXDB" = "(b) PAXDB", 
-                                             "HPA Immunoassay" = "(c) HPA Immunoassay"))) +
+                                             "HPA Immunoassay" = "(c) HPA Immunoassay",
+                                             "quantms" = "(d) quantms"))) +
   scale_fill_viridis_d(option = "plasma") +
   theme_minimal(base_size = 12) +
   theme(
@@ -285,7 +308,8 @@ p4z <- ggplot(dist_data_zscore, aes(x = z_score, fill = Database)) +
   facet_wrap(~Database, scales = "free", ncol = 1, 
              labeller = labeller(Database = c("GPMDB" = "(a) GPMDB", 
                                              "PAXDB" = "(b) PAXDB", 
-                                             "HPA Immunoassay" = "(c) HPA Immunoassay"))) +
+                                             "HPA Immunoassay" = "(c) HPA Immunoassay",
+                                             "quantms" = "(d) quantms"))) +
   scale_fill_viridis_d(option = "plasma") +
   theme_minimal(base_size = 12) +
   theme(
@@ -404,9 +428,9 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
   
   # A: Database Coverage
   coverage_data <- data.frame(
-    Database = c("GPMDB", "PAXDB", "HPA Immunoassay"),
-    Count = c(stats_summary$gpmdb_serum, stats_summary$paxdb_serum, stats_summary$hpa_immunoassay_serum),
-    Technology = c("MS", "MS", "Immunoassay")
+    Database = c("GPMDB", "PAXDB", "HPA Immunoassay", "quantms"),
+    Count = c(stats_summary$gpmdb_serum, stats_summary$paxdb_serum, stats_summary$hpa_immunoassay_serum, stats_summary$quantms_serum),
+    Technology = c("MS", "MS", "Immunoassay", "MS")
   ) %>%
     arrange(desc(Count))
   
@@ -429,7 +453,8 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
   gene_lists <- list(
     GPMDB = all_serum_data$gene[all_serum_data$source == "GPMDB"],
     PAXDB = all_serum_data$gene[all_serum_data$source == "PAXDB"],
-    `HPA Immunoassay` = all_serum_data$gene[all_serum_data$source == "HPA Immunoassay"]
+    `HPA Immunoassay` = all_serum_data$gene[all_serum_data$source == "HPA Immunoassay"],
+    quantms = all_serum_data$gene[all_serum_data$source == "quantms"]
   )
   
   # Calculate overlap statistics for subtitle
@@ -439,7 +464,7 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
   
   panel_B <- ggvenn(
     gene_lists,
-    fill_color = c("#4E79A7", "#56B4E9", "#E15759"),
+    fill_color = c("#4E79A7", "#56B4E9", "#E15759", "#D55E00"),
     stroke_size = 0.5,
     set_name_size = 4
   ) +
@@ -453,76 +478,68 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
       plot.subtitle = element_text(size = 10, hjust = 0.5)
     )
   
-  # C: Correlation Analysis
-  # First, create a wide format dataset with z-scores for MS databases only
-  correlation_data <- bind_rows(
-    gpmdb_serum %>% 
-      select(gene, total) %>% 
-      mutate(source = "GPMDB", value = total),
-    paxdb_serum %>% 
-      select(gene, abundance) %>% 
-      mutate(source = "PAXDB", value = abundance)
-  ) %>%
-    group_by(gene, source) %>%
-    summarise(
-      log_value = log10(value),
-      .groups = "drop"
-    ) %>%
+  # C: Correlation Analysis for MS databases
+  ms_data <- all_serum_data %>%
+    filter(source %in% c("GPMDB", "PAXDB", "quantms")) %>%
+    mutate(value = case_when(
+      source == "GPMDB" ~ total,
+      source == "PAXDB" ~ abundance,
+      source == "quantms" ~ abundance,
+      TRUE ~ NA_real_
+    )) %>%
+    mutate(log_value = log10(value + 1)) %>%
     group_by(source) %>%
-    mutate(
-      z_score = scale(log_value)[,1]
-    ) %>%
+    mutate(z_score = scale(log_value)[,1]) %>%
     ungroup() %>%
-    select(gene, source, z_score) %>%
+    select(gene, source, z_score)
+  
+  correlation_matrix_data <- ms_data %>%
     pivot_wider(
       names_from = source,
       values_from = z_score
     ) %>%
-    na.omit()
+    column_to_rownames("gene")
   
-  # Calculate correlation
-  cor_value <- cor(correlation_data$GPMDB, correlation_data$PAXDB)
+  correlation_matrix <- cor(correlation_matrix_data, use = "pairwise.complete.obs")
   
-  # Create correlation plot
-  panel_C <- ggplot(correlation_data, aes(x = GPMDB, y = PAXDB)) +
-    geom_point(alpha = 0.6, color = "#4E79A7", size = 1) +
-    geom_smooth(method = "lm", color = "#E15759", se = TRUE, linewidth = 0.5) +
+  # Create heatmap
+  corr_data <- as.data.frame(correlation_matrix) %>%
+    rownames_to_column("db1") %>%
+    pivot_longer(-db1, names_to = "db2", values_to = "correlation")
+  
+  panel_C <- ggplot(corr_data, aes(x = db1, y = db2, fill = correlation)) +
+    geom_tile(color = "white") +
+    geom_text(aes(label = sprintf("%.2f", correlation)), size = 3) +
+    scale_fill_gradient2(low = "#d73027", mid = "white", high = "#4575b4", midpoint = 0, limit = c(-1, 1)) +
     theme_blood_proteomics() +
-    theme(plot.title = element_text(size = 12, face = "bold")) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      axis.title = element_blank(),
+      plot.title = element_text(size = 12, face = "bold")
+    ) +
     labs(
       title = "(C) Cross-Database Correlation",
-      subtitle = sprintf("Pearson r = %.3f (MS databases only)", cor_value),
-      x = "GPMDB (z-score)",
-      y = "PAXDB (z-score)"
+      subtitle = "Pearson correlation (MS databases)",
+      fill = "Correlation"
     )
   
   # D: Distribution Violin Plot
-  distribution_data <- bind_rows(
-    gpmdb_serum %>% 
-      select(gene, total) %>% 
-      mutate(source = "GPMDB", value = total),
-    paxdb_serum %>% 
-      select(gene, abundance) %>% 
-      mutate(source = "PAXDB", value = abundance),
-    hpa_serum %>% 
-      select(gene, expr) %>% 
-      mutate(source = "HPA Immunoassay", value = expr)
-  ) %>%
-    group_by(gene, source) %>%
-    summarise(
-      log_value = log10(value),
-      .groups = "drop"
-    ) %>%
+  distribution_data <- all_serum_data %>%
+    mutate(value = case_when(
+      source == "GPMDB" ~ total,
+      source == "PAXDB" ~ abundance,
+      source == "HPA Immunoassay" ~ expr,
+      source == "quantms" ~ abundance,
+      TRUE ~ NA_real_
+    )) %>%
     group_by(source) %>%
-    mutate(
-      z_score = scale(log_value)[,1]
-    ) %>%
+    mutate(log_value = log10(value + 1), z_score = scale(log_value)[,1]) %>%
     ungroup()
   
   panel_D <- ggplot(distribution_data, aes(x = source, y = z_score, fill = source)) +
     geom_violin(alpha = 0.7, scale = "width") +
     geom_boxplot(width = 0.2, alpha = 0.8, outlier.alpha = 0.3) +
-    scale_fill_manual(values = c("GPMDB" = "#4E79A7", "PAXDB" = "#56B4E9", "HPA Immunoassay" = "#E15759")) +
+    scale_fill_manual(values = c("GPMDB" = "#4E79A7", "PAXDB" = "#56B4E9", "HPA Immunoassay" = "#E15759", "quantms" = "#D55E00")) +
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 12, face = "bold"),
@@ -557,9 +574,10 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
 
 # Prepare data for comprehensive panel
 all_serum_data <- bind_rows(
-  gpmdb_serum %>% mutate(source = "GPMDB"),
-  paxdb_serum %>% mutate(source = "PAXDB"),
-  hpa_serum %>% mutate(source = "HPA Immunoassay")
+  gpmdb_serum %>% select(gene, total) %>% mutate(source = "GPMDB"),
+  paxdb_serum %>% select(gene, abundance) %>% mutate(source = "PAXDB"),
+  hpa_serum %>% select(gene, expr) %>% mutate(source = "HPA Immunoassay"),
+  quantms_serum %>% select(gene, abundance) %>% mutate(source = "quantms")
 )
 
 # Create comprehensive panel
@@ -583,6 +601,7 @@ generate_serum_report <- function(stats_summary, plot_dir) {
     sprintf("| GPMDB Serum | MS | %d | Broad | Spectral counting |\n", stats_summary$gpmdb_serum),
     sprintf("| PAXDB Serum | MS | %d | Comprehensive | Abundance scores |\n", stats_summary$paxdb_serum),
     sprintf("| HPA Immunoassay Serum | Immunoassay | %d | Targeted | Antibody-based |\n", stats_summary$hpa_immunoassay_serum),
+    sprintf("| quantms Serum | MS | %d | Comprehensive | iBAQ |\n", stats_summary$quantms_serum),
     sprintf("| **MS Technologies Combined** | MS | %d | Combined MS | Multiple MS methods |\n", stats_summary$ms_technologies),
     sprintf("| **All Sources Combined** | Mixed | %d | Total | All technologies |\n", stats_summary$total_across_sources),
     "\n",

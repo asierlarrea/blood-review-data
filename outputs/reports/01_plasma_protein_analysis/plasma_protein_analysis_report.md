@@ -1,7 +1,7 @@
 
 # Plasma Protein Analysis Report
 
-**Analysis Date:** 2025-06-19  
+**Analysis Date:** 2025-06-20  
 **Script Version:** 2.0.0
 
 ## Summary Statistics
@@ -11,13 +11,13 @@
 | peptideatlas | MS | 4603 |
 | hpa_ms | MS | 4294 |
 | hpa_pea | PEA | 1463 |
-| hpa_immunoassay | Immunoassay | 308 |
 | gpmdb | MS | 2266 |
 | paxdb | MS | 7021 |
+| quantms | MS | 4979 |
 
 ## Key Findings
 
-- **Total proteins across all sources:** 8374
+- **Total proteins across all sources:** 8851
 - **Mass spectrometry sources:** 8043 proteins
 - **Highest individual source:** peptideatlas (4603 proteins)
 

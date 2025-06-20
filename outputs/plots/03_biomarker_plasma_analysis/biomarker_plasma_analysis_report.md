@@ -1,6 +1,6 @@
 # Biomarker Plasma Analysis Report
 
-**Analysis Date:** 2025-06-19
+**Analysis Date:** 2025-06-20
 **Script:** `03_biomarker_plasma_analysis.R`
 **Description:** Analysis of biomarker protein expression across plasma databases with waterfall plots and abundance distribution analysis.
 
@@ -13,18 +13,19 @@
 | PeptideAtlas | 4603 | 60 | 1.3% | MS |
 | HPA MS | 4294 | 59 | 1.4% | MS |
 | HPA PEA | 1436 | 37 | 2.6% | PEA |
-| HPA Immunoassay | 308 | 27 | 8.8% | Immunoassay |
 | GPMDB | 2266 | 43 | 1.9% | MS |
 | PAXDB | 7021 | 60 | 0.9% | MS |
+| quantms | 4979 | 51 | 1.0% | MS |
 
 ## Key Findings
 
 - **Biomarker representation** varies significantly across databases and technologies
-- **Immunoassays show highest biomarker percentage** due to targeted nature
+- **Targeted methods (PEA) show higher biomarker density** due to focused panels
 - **Mass spectrometry databases** provide broader coverage with substantial biomarker representation
 - **Key biomarkers** (F12, LEP, GHRL, GH1, IL1A, IL1B, etc.) consistently detected across multiple platforms
 - **Expression ranges** span 4-6 orders of magnitude across databases
 - **Cross-platform validation** possible for numerous biomarkers
+- **quantms** provides additional biomarker coverage
 
 ## Biological Insights
 
@@ -34,6 +35,7 @@
 - **Validation opportunities** through cross-platform biomarker detection
 - **Expression patterns** reveal database-specific biases and sensitivities
 - **Abundance distributions** show technology-specific detection capabilities
+- **quantms** offers additional biomarker coverage
 
 ## Database Comparison
 
@@ -45,13 +47,14 @@
 - PeptideAtlas and HPA MS show complementary biomarker profiles
 
 **Targeted Platforms:**
-- HPA Immunoassay: Highest biomarker density but limited absolute numbers
 - HPA PEA: Balanced approach with focused biomarker panels
+- quantms: Additional biomarker coverage
 
 **Cross-Platform Validation:**
 - Biomarkers detected in multiple databases show higher clinical confidence
 - Platform-specific biomarkers may represent unique detection capabilities
 - Z-score normalization enables cross-database abundance comparisons
+- quantms offers additional biomarker coverage
 
 ## Methodology
 
@@ -65,11 +68,12 @@
 ## Recommendations
 
 - **Use MS databases** for biomarker discovery and broad profiling
-- **Employ targeted methods** for validation and clinical applications
+- **Employ targeted methods (PEA)** for validation and clinical applications
 - **Cross-validate biomarkers** across multiple platforms when possible
 - **Consider abundance ranges** when selecting platforms for specific biomarkers
 - **Integrate complementary technologies** for comprehensive biomarker analysis
 - **Focus on multi-platform biomarkers** for robust clinical applications
+- **quantms** offers additional biomarker coverage
 
 ## Generated Files
 

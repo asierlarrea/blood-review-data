@@ -48,7 +48,17 @@ run_plasma_protein_analysis <- function() {
   
   # Step 1: Load all data sources
   message("\n[STEP 1] Loading data sources...")
-  data_list <- load_multiple_sources(force_mapping = force_mapping)
+  # Get all source names and remove 'hpa_immunoassay' for this specific analysis
+  all_sources <- get_all_data_sources()
+  sources_to_load <- setdiff(all_sources, "hpa_immunoassay")
+  
+  data_list <- load_multiple_sources(source_names = sources_to_load, force_mapping = force_mapping)
+  
+  # Load QuantMS data separately and add it to the list
+  quantms_data <- load_quantms_data(sample_type = "plasma", force_mapping = force_mapping)
+  if (!is.null(quantms_data)) {
+    data_list$quantms <- quantms_data
+  }
   
   if (length(data_list) == 0) {
     stop("No data sources could be loaded. Please check your data files.")
@@ -140,17 +150,6 @@ generate_and_save_summary <- function(data_list, normalized_data) {
   
   output_dir <- get_output_path("01_plasma_protein_analysis", subdir = "tables")
   write_csv(summary_stats_extended, file.path(output_dir, "plasma_protein_summary.csv"))
-  
-  # Calculate and print consistency scores
-  consistency_z <- calculate_consistency(normalized_data, "z_score")
-  consistency_q_within <- calculate_consistency(normalized_data, "quantile_normalized_within")
-  consistency_q_across <- calculate_consistency(normalized_data, "quantile_normalized_across")
-  
-  message("\n--- Normalization Consistency ---")
-  message(sprintf("Z-Score Consistency (lower is better): %.4f", consistency_z))
-  message(sprintf("Quantile Within Consistency (lower is better): %.4f", consistency_q_within))
-  message(sprintf("Quantile Across Consistency (lower is better): %.4f", consistency_q_across))
-  message("---------------------------------")
   
   return(summary_stats_extended)
 }
