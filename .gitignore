@@ -86,10 +86,7 @@ plots/**/*.csv
 # Plots and output files
 # ----------------------
 figures/
-outputs/
 results/
-plots/
-*.png
 *.jpg
 *.jpeg
 *.gif
@@ -257,4 +254,3 @@ rsconnect/
 
 .RData
 .Rhistory
-plots/

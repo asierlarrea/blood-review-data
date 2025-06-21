@@ -441,7 +441,7 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
   
   # Create a temporary file for the UpSet plot
   temp_upset_file <- tempfile(fileext = ".png")
-  png(temp_upset_file, width = 12, height = 8, units = "in", res = 300, bg = "white")
+  png(temp_upset_file, width = 12, height = 8, units = "in", res = 1200, bg = "white")
   print(UpSetR::upset(
     fromList(gene_lists),
     nsets = 3,
@@ -475,9 +475,11 @@ create_serum_comprehensive_panel <- function(all_serum_data, stats_summary, plot
       theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
     )
   
-  # Save in SVG format with standardized name
-  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.svg"), 
-         comprehensive_panel, width = 16, height = 12, device = "svg")
+  # Save in both TIFF and PNG formats with high resolution
+  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.tiff"), 
+         comprehensive_panel, width = 16, height = 12, dpi = 600, device = "tiff", compression = "lzw", bg = "white")
+  ggsave(file.path(plot_dir, "00_comprehensive_serum_analysis_panel.png"), 
+         comprehensive_panel, width = 16, height = 12, dpi = 600, device = "png", bg = "white")
   
   return(comprehensive_panel)
 }

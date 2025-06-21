@@ -1,0 +1,70 @@
+PEPTIDEATLAS QUANTIFICATION METHODS COMPARISON
+==============================================
+Enhanced Analysis with Log and Z-Score Transformations
+
+DATA SUMMARY:
+=============
+Total proteins with quantification data: 4603
+
+TRANSFORMATION ANALYSIS:
+========================
+Correlation coefficients by transformation method:
+  raw: r = 0.7065
+  log: r = 0.9656
+  z_score: r = 0.7065
+  z_score_log: r = 0.9656
+
+QUANTIFICATION STATISTICS (Log-Transformed):
+============================================
+Log10(n_observations):
+  Range: 0.301030 - 6.876223
+  Median: 2.086360
+  Mean: 2.281736
+  Standard Deviation: 1.303730
+
+Log10(norm_PSMs_per_100K):
+  Range: -3.000000 - 3.775404
+  Median: -0.876148
+  Mean: -0.701458
+  Standard Deviation: 1.340586
+
+Z-SCORE STATISTICS (on Log-Transformed Data):
+==============================================
+Z-Score Log10(n_observations):
+  Range: -1.519260 - 3.524108
+  Median: -0.149859
+  Mean: -0.000000
+  Standard Deviation: 1.000000
+
+Z-Score Log10(norm_PSMs_per_100K):
+  Range: -1.714580 - 3.339481
+  Median: -0.130309
+  Mean: -0.000000
+  Standard Deviation: 1.000000
+
+RECOMMENDATION:
+===============
+norm_PSMs_per_100K with log transformation is recommended because:
+1. Log transformation normalizes the distribution and reduces skewness
+2. Z-score normalization centers and scales the data (mean=0, sd=1)
+3. Normalized per 100K PSMs - accounts for run-to-run variation
+4. Better correlation structure preserved across transformations
+5. Standard metric used in PeptideAtlas publications
+6. Enables better cross-study comparisons and statistical analysis
+
+TRANSFORMATION NOTES:
+====================
+• Log transformation: Reduces right skewness and stabilizes variance
+• Z-score normalization: Centers data around 0 with unit variance
+• Combined approach: Log + Z-score provides optimal normalization
+• All transformations preserve correlation structure well
+
+GENERATED FILES:
+================
+• Detailed log correlation: log_correlation_plot.png
+• Z-score correlation: zscore_correlation_plot.png
+• Transformation comparison: transformation_comparison.png
+• Comprehensive analysis: comprehensive_plot.png
+• Enhanced data: peptideatlas_transformed.csv
+• Correlation summary: correlation_summary.csv
+• Summary report: quantification_analysis_summary.txt

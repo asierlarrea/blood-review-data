@@ -55,7 +55,7 @@ p1 <- ggplot(demo_data, aes(x = rank, y = log_abundance)) +
 
 # Save plot
 ggsave(file.path(output_dir, "ranked_abundance_demo.png"), p1, 
-       width = 12, height = 8, dpi = 300)
+       width = 12, height = 8, dpi = 600)
 
 # Create summary statistics
 summary_stats <- data.frame(

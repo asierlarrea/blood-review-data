@@ -10,6 +10,7 @@ suppressPackageStartupMessages({
   library(dplyr)
   library(readr)
   library(stringr)
+  library(purrr)
 })
 
 # Source dependencies
@@ -41,6 +42,8 @@ load_data_source <- function(source_name, force_mapping = FALSE) {
   raw_data <- read_csv(file_path, 
                        show_col_types = FALSE, 
                        skip = config$skip_rows)
+  
+  message(sprintf("  - Input rows for %s: %d", config$name, nrow(raw_data)))
   
   # Preprocess ID column if needed
   if (!is.null(config$id_preprocessing)) {
@@ -94,7 +97,7 @@ load_data_source <- function(source_name, force_mapping = FALSE) {
   # Validate processed data
   validate_data_source(processed_data, config)
   
-  message(sprintf("Successfully processed %s: %d unique genes", 
+  message(sprintf("  - Mapped and deduplicated genes for %s: %d", 
                   config$name, nrow(processed_data)))
   
   return(processed_data)
@@ -320,4 +323,65 @@ process_gpmdb_data <- function(data, force_mapping = FALSE) {
   
   # Return processed data
   return(data_dedup)
+}
+
+#' Load and process QuantMS data from a specific directory
+#' 
+#' @param sample_type The sample type, e.g., "plasma" or "serum". This corresponds to the subdirectory in `quantms/`.
+#' @param force_mapping Force re-mapping of protein IDs to gene symbols
+#' @return A processed data frame for QuantMS data
+#' 
+load_quantms_data <- function(sample_type, force_mapping = FALSE) {
+  
+  quantms_dir <- file.path(PROJECT_CONFIG$directories$data_raw, "quantms", sample_type)
+  
+  if (!dir.exists(quantms_dir)) {
+    warning(paste("QuantMS directory not found for sample type:", sample_type))
+    return(NULL)
+  }
+  
+  message(sprintf("Processing QuantMS %s data...", sample_type))
+  
+  # Get all CSV files
+  quantms_files <- list.files(quantms_dir, pattern = "\\.csv$", full.names = TRUE)
+  
+  if (length(quantms_files) == 0) {
+    warning(paste("No QuantMS CSV files found for sample type:", sample_type))
+    return(NULL)
+  }
+  
+  # Read and combine all files
+  all_data <- map_dfr(quantms_files, ~{
+    read_csv(.x, show_col_types = FALSE) %>%
+      select(protein_accession = ProteinName, Ibaq = Ibaq, SampleID)
+  })
+  
+  # Map protein accessions to gene symbols on the entire dataset
+  all_data$gene <- convert_to_gene_symbol(all_data$protein_accession, force_mapping = force_mapping)
+  
+  # Filter out proteins that couldn't be mapped
+  mapped_data <- all_data %>%
+    filter(!is.na(gene) & gene != "") %>%
+    select(gene, Ibaq)
+  
+  # Now, aggregate by gene
+  processed_data <- mapped_data %>%
+    group_by(gene) %>%
+    summarise(
+      abundance = median(Ibaq, na.rm = TRUE),
+      protein_count = n(),
+      .groups = "drop"
+    )
+    
+  message(sprintf("  - Mapped to %d unique genes.", n_distinct(processed_data$gene)))
+  
+  processed_data <- processed_data %>%
+    filter(!is.na(abundance) & abundance > 0)
+  
+  # Add metadata
+  processed_data$source <- "quantms"
+  processed_data$technology <- "MS"
+  processed_data$abundance_type <- "iBAQ"
+  
+  return(processed_data)
 } 
