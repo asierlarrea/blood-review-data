@@ -720,7 +720,19 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     guides(
-      shape = guide_legend(override.aes = list(size = 6, alpha = 1, color = "black"))
+      shape = guide_legend(
+        override.aes = list(
+          size = 6, 
+          alpha = 1, 
+          color = c(
+            "High PeptideAtlas (shared)" = "#d73027",
+            "Low PeptideAtlas (shared)" = "#4575b4", 
+            "High quantms (unique)" = "#85218e",
+            "Low quantms (unique)" = "#1a7922",
+            "Plasma literature" = "#a2aa09"
+          )
+        )
+      )
     ) +
     labs(
       title = "(E) quantms protein abundances by sample presence",
