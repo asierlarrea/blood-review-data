@@ -296,16 +296,16 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
-      axis.title = element_text(size = 16),
+      axis.title = element_text(size = 18),
       axis.text = element_text(size = 16),
       axis.text.y = element_text(size = 16),  # Size for the intersection counts
       axis.text.x = element_text(size = 16, face = "bold"),  # Size for other axis text
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3),
-      strip.text = element_text(size = 18, face = "bold"),  # Increased size for database names
+      strip.text = element_text(size = 18, face = "bold"),  # Database names
       strip.background = element_blank()
     ) +
     labs(
@@ -416,20 +416,20 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_A <- ggplot(source_data, aes(x = reorder(source, count), y = count, fill = technology)) +
     geom_col(alpha = 0.85, width = 0.7) +
-    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 8.0) +
+    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 12.0) +
     coord_flip() +
     scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 14),
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 18),
       legend.position = "none",
-      axis.title = element_text(size = 16),
-      axis.text = element_text(size = 16),
-      axis.text.y = element_text(size = 16, face = "bold"),
-      axis.title.x = element_text(margin = margin(t = 5)),
-      axis.title.y = element_text(margin = margin(r = 5)),
+      axis.title = element_text(size = 22),
+      axis.text = element_text(size = 20),
+      axis.text.y = element_text(size = 20, face = "bold"),
+      axis.title.x = element_text(margin = margin(t = 8)),
+      axis.title.y = element_text(margin = margin(r = 8)),
       panel.grid.major.x = element_line(color = "grey90", size = 0.3),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
@@ -463,9 +463,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_B <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
     theme(
-      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 14),
-      axis.title = element_text(size = 16),
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 18),
+      axis.title = element_text(size = 18),
       axis.text = element_text(size = 16)
     ) +
     labs(
@@ -478,16 +478,16 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   # Panel C: Abundance Distribution (Enhanced)
   panel_C <- ggplot(normalized_data, aes(x = z_score, y = reorder(source, z_score, median), fill = technology)) +
     ggridges::geom_density_ridges(alpha = 0.8, scale = 0.9, bandwidth = 0.3, color = "white", size = 0.5) +
-    stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8, 
+    stat_summary(fun = median, geom = "point", shape = 20, size = 3, color = "red", alpha = 0.8, 
                  position = position_nudge(y = 0)) +
     scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 14),
-      axis.title = element_text(size = 16),
-      axis.text = element_text(size = 16),
-      axis.text.y = element_text(size = 18, face = "bold"),
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 18),
+      axis.title = element_text(size = 22),
+      axis.text = element_text(size = 20),
+      axis.text.y = element_text(size = 22, face = "bold"),
       legend.position = "none",
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.x = element_line(color = "grey90", size = 0.3)
@@ -520,24 +520,24 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   db_colors["PeptideAtlas"] <- "#1a1a1a"  # Darker reference color
   
   panel_D <- ggplot(dot_plot_data, aes(x = order, y = z_score, color = source)) +
-    geom_point(alpha = 0.7, size = 1.0) +
+    geom_point(alpha = 0.7, size = 1.8) +
     scale_color_manual(values = db_colors, name = "Data Source") +
     scale_x_continuous(labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 16),  # Added styling for subtitle
-      axis.title = element_text(size = 16),
-      axis.text = element_text(size = 16),
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 20),  # Added styling for subtitle
+      axis.title = element_text(size = 22),
+      axis.text = element_text(size = 20),
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       legend.position = "right",
-      legend.title = element_text(size = 18, face = "bold"),
-      legend.text = element_text(size = 16),
+      legend.title = element_text(size = 22, face = "bold"),
+      legend.text = element_text(size = 20),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
-    guides(color = guide_legend(ncol = 1, override.aes = list(size = 4, alpha = 0.9))) +
+    guides(color = guide_legend(ncol = 1, override.aes = list(size = 6, alpha = 0.9))) +
     labs(
       title = "(D) Protein abundance correlation with PeptideAtlas",
       subtitle = "Proteins ordered by PeptideAtlas z-score",
@@ -655,9 +655,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   category_colors <- c(
     "High PeptideAtlas (shared)" = "#d73027",      # Red
     "Low PeptideAtlas (shared)" = "#4575b4",       # Blue  
-    "High quantms (unique)" = "#f46d43",           # Orange
-    "Low quantms (unique)" = "#74add1",            # Light Blue
-    "Plasma literature" = "#5e4fa2",               # Purple
+    "High quantms (unique)" = "#85218e",           # Orange
+    "Low quantms (unique)" = "#1a7922",            # Light Blue
+    "Plasma literature" = "#a2aa09",               # Purple
     "Other" = "grey40"                             # Grey
   )
   
@@ -675,26 +675,26 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     geom_violin(alpha = 0.6, scale = "width", trim = TRUE, width = 0.7, fill = "lightgrey", color = "grey60") +
     # Background points for all other genes
     geom_jitter(data = filter(quantms_sample_data, gene_category == "Other"),
-                alpha = 0.3, size = 1.8, width = 0.15, color = "grey50") +
+                alpha = 0.3, size = 2.5, width = 0.15, color = "grey50") +
     # Highlighted points for special gene categories
     geom_jitter(data = filter(quantms_sample_data, gene_category != "Other"),
                 aes(color = gene_category, shape = gene_category), 
-                alpha = 0.9, size = 2.8, width = 0.15, seed = 42,
+                alpha = 0.9, size = 4.0, width = 0.15, seed = 42,
                 show.legend = c(color = FALSE, shape = TRUE)) +
     # Add gene labels with dashed lines for highlighted genes
     ggrepel::geom_label_repel(
       data = filter(quantms_sample_data, gene_category != "Other"),
       aes(label = gene, color = gene_category),
-      size = 3,
+      size = 5,
       alpha = 0.9,
       fontface = "bold",
       fill = "white",
-      label.padding = 0.2,
-      label.r = 0.1,
-      box.padding = 0.3,
-      point.padding = 0.5,
+      label.padding = 0.3,
+      label.r = 0.15,
+      box.padding = 0.4,
+      point.padding = 0.6,
       segment.linetype = "dashed",
-      segment.size = 0.5,
+      segment.size = 0.7,
       segment.alpha = 0.8,
       max.overlaps = Inf,
       force = 2,
@@ -702,25 +702,25 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0, outlier.alpha = 0, 
                  show.legend = FALSE, color = "black", fill = "white") +
-    stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8) +
+    stat_summary(fun = median, geom = "point", shape = 20, size = 3, color = "red", alpha = 0.8) +
     scale_color_manual(values = category_colors, guide = "none") +
     scale_shape_manual(values = category_shapes, name = "Gene Category") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 16),
-      axis.title = element_text(size = 20, face = "bold"),
-      axis.text = element_text(size = 18),
-      axis.text.x = element_text(size = 18, face = "bold"),
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 20),
+      axis.title = element_text(size = 24, face = "bold"),
+      axis.text = element_text(size = 22),
+      axis.text.x = element_text(size = 22, face = "bold"),
       legend.position = "right",
-      legend.title = element_text(size = 20, face = "bold"),
-      legend.text = element_text(size = 18),
-      legend.key.size = unit(1.5, "lines"),
+      legend.title = element_text(size = 24, face = "bold"),
+      legend.text = element_text(size = 22),
+      legend.key.size = unit(2.0, "lines"),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
     guides(
-      shape = guide_legend(override.aes = list(size = 4, alpha = 1, color = "black"))
+      shape = guide_legend(override.aes = list(size = 6, alpha = 1, color = "black"))
     ) +
     labs(
       title = "(E) quantms protein abundances by sample presence",
@@ -754,13 +754,13 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     )
   
   # Save with enhanced specifications - both TIFF and PNG versions
-  # Save TIFF version (increased height for 3-row layout)
+  # Save TIFF version (increased height for 3-row layout, high quality but manageable DPI)
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 30, dpi = 600, device = "tiff")
+                    width = 30, height = 30, dpi = 450, device = "tiff")
   
-  # Save PNG version  
+  # Save PNG version (high resolution for better rendering)
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 30, dpi = 600, device = "png")
+                    width = 30, height = 30, dpi = 450, device = "png")
   
   message("✅ Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)
