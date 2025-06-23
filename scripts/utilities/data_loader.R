@@ -400,9 +400,9 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   processed_data$technology <- "MS"
   processed_data$abundance_type <- "iBAQ Normalized"
   
-  # Keep only the standard columns for compatibility with other data sources
+  # Keep the standard columns for compatibility (including protein_count to match other sources)
   final_data <- processed_data %>%
-    select(gene, abundance, source, technology, abundance_type, protein_count)
+    select(gene, abundance, protein_count, source, technology, abundance_type)
   
   return(final_data)
 } 

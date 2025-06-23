@@ -1289,15 +1289,92 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       y = "Z-Score"
     )
   
+  # === SECTION 3: QUANTMS SAMPLE DISTRIBUTION ANALYSIS ===
+  
+  # Panel E: QuantMS Sample Count Distribution (New)
+  message("  - Creating Panel E: QuantMS sample distribution...")
+  
+  # Get the QuantMS data and recalculate log_abundance from raw abundance (no z-score)
+  quantms_sample_data <- normalized_data %>%
+    filter(source == "quantms") %>%
+    mutate(log_abundance_raw = log10(abundance)) %>%  # Recalculate log without any normalization
+    select(gene, log_abundance_raw, abundance)
+  
+  # Calculate sample counts directly from raw data
+  message("  - Calculating sample counts from raw QuantMS data...")
+  quantms_dir <- file.path("data/raw/quantms/plasma")
+  quantms_files <- list.files(quantms_dir, pattern = "\\.csv$", full.names = TRUE)
+  
+  # Count samples per gene across all files
+  sample_counts <- map_dfr(quantms_files, ~{
+    read_csv(.x, show_col_types = FALSE) %>%
+      select(protein_accession = ProteinName, Ibaq = IbaqNorm, SampleID) %>%
+      filter(!is.na(Ibaq), Ibaq > 0)
+  }) %>%
+    # Map to genes (use existing mapping)
+    mutate(gene = convert_to_gene_symbol(protein_accession, force_mapping = FALSE)) %>%
+    filter(!is.na(gene), gene != "") %>%
+    group_by(gene) %>%
+    summarise(sample_count = n_distinct(SampleID), .groups = "drop") %>%
+    filter(sample_count >= 3) # Only genes present in 3+ samples (matching main filter)
+  
+  # Merge sample count information with z-score data
+  quantms_sample_data <- quantms_sample_data %>%
+    left_join(sample_counts, by = "gene") %>%
+    filter(!is.na(sample_count))
+  
+  # Create sample count bins as requested (3-5, 6-10, 11-20, 21-30, 31-99, 100+)
+  quantms_sample_data <- quantms_sample_data %>%
+    mutate(
+      sample_group = case_when(
+        sample_count >= 3 & sample_count <= 5 ~ "3-5",
+        sample_count >= 6 & sample_count <= 10 ~ "6-10", 
+        sample_count >= 11 & sample_count <= 20 ~ "11-20",
+        sample_count >= 21 & sample_count <= 30 ~ "21-30",
+        sample_count >= 31 & sample_count <= 49 ~ "31-49",
+        sample_count >= 50 ~ "50+",
+        TRUE ~ "Other"
+      ),
+      sample_group = factor(sample_group, levels = c("3-5", "6-10", "11-20", "21-30", "31-49", "50+"))
+    ) %>%
+    filter(!is.na(sample_group), sample_group != "Other")
+  
+  # Create violin plot
+  panel_E <- ggplot(quantms_sample_data, aes(x = sample_group, y = log_abundance_raw)) +
+    geom_violin(alpha = 0.6, scale = "width", trim = TRUE, width = 0.7, fill = "lightgrey", color = "grey60") +
+    geom_jitter(alpha = 0.3, size = 0.8, width = 0.2, color = "grey40") +
+    geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
+                 show.legend = FALSE, color = "black", fill = "white") +
+    stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8) +
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 16),
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 16),
+      axis.text.x = element_text(size = 16, face = "bold"),
+      legend.position = "none",
+      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3)
+    ) +
+    labs(
+      title = "(E) QuantMS protein abundances by sample presence",
+      subtitle = "Distribution grouped by number of samples containing each protein",
+      x = "Number of Samples",
+      y = "Log10(Abundance)"
+    )
+  
 
   
   # === COMBINE PANELS WITH ENHANCED LAYOUT ===
   
   # Row 1: Coverage and Overlap (A-B)
   # Row 2: Distribution and Cross-Database Analysis (C-D) 
+  # Row 3: QuantMS Sample Analysis (E) spanning full width
   comprehensive_panel <- (panel_A | panel_B) / 
-                         (panel_C | panel_D) +
-                         plot_layout(heights = c(1.0, 1.0)) &
+                         (panel_C | panel_D) /
+                         panel_E +
+                         plot_layout(heights = c(1.0, 1.0, 1.0)) &
                          theme(legend.position = "right")
   
   # Add overall title and enhanced annotations
@@ -1312,13 +1389,13 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     )
   
   # Save with enhanced specifications - both TIFF and PNG versions
-  # Save TIFF version
+  # Save TIFF version (increased height for 3-row layout)
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 22, dpi = 600, device = "tiff")
+                    width = 30, height = 30, dpi = 600, device = "tiff")
   
   # Save PNG version  
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 22, dpi = 600, device = "png")
+                    width = 30, height = 30, dpi = 600, device = "png")
   
   message("✅ Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)
