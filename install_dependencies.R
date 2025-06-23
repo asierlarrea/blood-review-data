@@ -74,7 +74,11 @@ viz_packages <- c(
   "ggupset",      # UpSet plots
   "VennDiagram",  # Venn diagrams
   "pheatmap",     # Heatmaps
-  "corrplot"      # Correlation plots
+  "corrplot",     # Correlation plots
+  "ggrepel",      # Text/label repelling
+  "patchwork",    # Combining plots
+  "ggpubr",       # Publication ready plots
+  "ggvenn"        # Venn diagrams with ggplot2
 )
 install_if_missing(viz_packages)
 

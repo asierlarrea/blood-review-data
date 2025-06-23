@@ -17,7 +17,7 @@ source("scripts/utilities/quantile_normalization_functions.R")
 ensure_output_dirs()
 
 # Load required packages
-required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "patchwork", "ggpubr", "UpSetR", "tibble", "ggupset", "purrr", "corrplot", "ggvenn")
+required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "patchwork", "ggpubr", "UpSetR", "tibble", "ggupset", "purrr", "corrplot", "ggvenn", "ggrepel")
 load_packages(required_packages)
 
 # Parse command line arguments
@@ -113,27 +113,6 @@ apply_all_normalizations <- function(data) {
     rename(quantile_normalized_across = quantile_normalized)
 }
 
-#' Calculate consistency score for a normalization method
-#' A lower score indicates better consistency across data sources.
-#' @param data A data frame containing the normalized data.
-#' @param value_col The name of the column with the normalization values (e.g., "z_score").
-#' @return A numeric consistency score (sum of SD of means and SD of medians).
-calculate_consistency <- function(data, value_col) {
-  consistency_stats <- data %>%
-    group_by(source) %>%
-    summarise(
-      mean_val = mean(.data[[value_col]], na.rm = TRUE),
-      median_val = median(.data[[value_col]], na.rm = TRUE),
-      .groups = "drop"
-    )
-  
-  sd_of_means <- sd(consistency_stats$mean_val, na.rm = TRUE)
-  sd_of_medians <- sd(consistency_stats$median_val, na.rm = TRUE)
-  
-  # Composite score. Lower is better.
-  sd_of_means + sd_of_medians
-}
-
 #' Generate, print, and save summary statistics
 #'
 generate_and_save_summary <- function(data_list, normalized_data) {
@@ -160,86 +139,35 @@ generate_and_save_summary <- function(data_list, normalized_data) {
   return(summary_stats_extended)
 }
 
-
 #' Create all analysis plots
 #' 
 create_analysis_plots <- function(normalized_data, summary_stats) {
   
   plot_dir <- get_output_path("01_plasma_protein_analysis", subdir = "plots")
   
-  # Plot 1: Individual source counts
-  source_data <- summary_stats %>%
-    filter(!source %in% c("Total Across Sources", "MS Technologies Combined")) %>%
-    rename(count = unique_genes) %>%
-    arrange(desc(count))
-  
-  p1 <- create_protein_count_plot(
-    source_data, 
-    color_by = "technology",
-    title = "Plasma Proteins Quantified by Data Source",
-    subtitle = "Number of unique genes detected in each database"
-  )
-  
-  # save_plot_standard(p1, "01_plasma_proteins_by_source", plot_dir)
-  
-  # Plot 2: Technology comparison
-  tech_summary <- summary_stats %>%
-    filter(!source %in% c("Total Across Sources", "MS Technologies Combined")) %>%
-    group_by(technology) %>%
-    summarise(protein_count = n_distinct(normalized_data$gene[normalized_data$technology == first(technology)]), .groups = "drop")
+  # Create UpSet analysis for protein overlap
+  create_upset_analysis(normalized_data, plot_dir)
 
-  p2 <- create_technology_comparison_plot(
-    tech_summary,
-    title = "Plasma Proteins by Technology Classification"
-  )
-  
-  # save_plot_standard(p2, "02_plasma_proteins_by_technology", plot_dir)
-  
-  # Plot 3: UpSet analysis for protein overlap
-  p3_upset <- create_upset_analysis(normalized_data, plot_dir)
-
-  # Plot 5: Plasma databases dot plot
+  # Create plasma databases dot plot
   create_plasma_databases_dot_plot_analysis(normalized_data, plot_dir)
   
-  # Plot 6: Cross-database correlation analysis
+  # Create cross-database correlation analysis
   create_cross_database_correlation_analysis(normalized_data, plot_dir)
   
-  # Plot 7: Normalization distributions
+  # Create normalization comparison plots
   create_normalization_comparison_plots(normalized_data, plot_dir)
 }
 
-#' Create abundance distribution analysis plots for all normalization methods
+#' Create normalization comparison plots (basic version for legacy compatibility)
 #' 
 create_normalization_comparison_plots <- function(data, plot_dir) {
-  
   message("Creating normalization comparison plots...")
-  
-  # Violin plots
-  p_v_log <- create_enhanced_violin_plot(data, "source", "log_abundance", "technology", "Abundance Distribution (Log10)", "Log10-transformed values")
-  p_v_z <- create_enhanced_violin_plot(data, "source", "z_score", "technology", "Abundance Distribution (Z-Score)", "Within-database standardized")
-  p_v_q_within <- create_enhanced_violin_plot(data, "source", "quantile_normalized_within", "technology", "Abundance Distribution (Quantile Within)", "Within-database quantile normalized")
-  p_v_q_across <- create_enhanced_violin_plot(data, "source", "quantile_normalized_across", "technology", "Abundance Distribution (Quantile Across)", "Cross-database quantile normalized")
-  
-  # save_plot_standard(p_v_log, "07_dist_violin_log10", plot_dir)
-  # save_plot_standard(p_v_z, "08_dist_violin_zscore", plot_dir)
-
-  
-  # Density plots
-  p_d_log <- create_density_plot(data, "log_abundance", "source", "Quantification Density (Log10)")
-  p_d_z <- create_density_plot(data, "z_score", "source", "Quantification Density (Z-Score)")
-  p_d_q_within <- create_density_plot(data, "quantile_normalized_within", "source", "Quantification Density (Quantile Within)")
-  p_d_q_across <- create_density_plot(data, "quantile_normalized_across", "source", "Quantification Density (Quantile Across)")
-  
-  combined_density <- (p_d_log + p_d_z) / (p_d_q_within + p_d_q_across) + plot_layout(guides = "collect") & theme(legend.position = "bottom")
-  # save_plot_standard(combined_density, "11_dist_density_comparison", plot_dir, width = 14, height = 12)
-
-
+  # Basic function kept for compatibility - no actual plots generated
 }
 
 #' Create plasma databases dot plot analysis
 #' 
 create_plasma_databases_dot_plot_analysis <- function(data, plot_dir) {
-  
   message("Creating plasma databases dot plot...")
   
   # Create reference ordering based on PeptideAtlas
@@ -261,56 +189,14 @@ create_plasma_databases_dot_plot_analysis <- function(data, plot_dir) {
       .groups = "drop"
     )
   
-  # Create the dot plot
-  p_dot <- create_plasma_databases_dot_plot(plot_data)
-  
-  # Save the plot
-  # save_plot_standard(p_dot, "05_plasma_databases_comparison", plot_dir,
-  #                   width = PLOT_CONFIG$dimensions$large_width,
-  #                   height = PLOT_CONFIG$dimensions$default_height)
-  
   message("✅ Plasma databases dot plot created successfully!")
   
   return(plot_data)
 }
 
-#' Create plasma databases dot plot
-#' 
-#' @param data Data frame with normalized protein data
-#' @return ggplot object
-#' 
-create_plasma_databases_dot_plot <- function(data) {
-  
-  # Get database colors, with PeptideAtlas in black as reference
-  db_colors <- get_plot_colors("databases")
-  db_colors["PeptideAtlas"] <- "black"
-  
-  # Create the plot
-  p <- ggplot(data, aes(x = order, y = z_score, color = source)) +
-    geom_point(alpha = 0.7, size = 1) +
-    scale_color_manual(values = db_colors, name = "Database") +
-    scale_x_continuous(labels = scales::comma) +
-    labs(
-      title = "Plasma Protein Abundance Comparison Across Databases",
-      subtitle = "Proteins ordered by PeptideAtlas z-score (reference database in black)",
-      x = "Proteins (sorted by PeptideAtlas z-score)",
-      y = "Z-score normalized abundance",
-      caption = "Only proteins detected in PeptideAtlas are shown for comparison"
-    ) +
-    theme_blood_proteomics() +
-    theme(
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
-      legend.position = "bottom"
-    )
-  
-  return(p)
-}
-
 #' Create cross-database correlation analysis
 #' 
 create_cross_database_correlation_analysis <- function(data, plot_dir) {
-  
   message("Creating cross-database correlation analysis...")
   
   # Prepare data for correlation analysis - only include proteins present in multiple databases
@@ -336,423 +222,14 @@ create_cross_database_correlation_analysis <- function(data, plot_dir) {
   # Calculate correlation matrix
   correlation_matrix <- cor(correlation_matrix_data, use = "pairwise.complete.obs")
   
-  # Create correlation heatmap
-  p_heatmap <- create_correlation_heatmap(correlation_matrix, data)
-  
-  # Create pairwise correlation scatter plots
-  p_scatter <- create_pairwise_correlation_plots(correlation_data)
-  
-  # Create technology-based correlation summary
-  p_tech_corr <- create_technology_correlation_summary(correlation_data)
-  
-  # Save all plots
-  # save_plot_standard(p_heatmap, "06_correlation_heatmap", plot_dir,
-  #                   width = 10, height = 8)
-  
-  # save_plot_standard(p_scatter, "06_pairwise_correlations", plot_dir,
-  #                   width = 14, height = 10)
-  
-  # save_plot_standard(p_tech_corr, "06_technology_correlations", plot_dir,
-  #                   width = 12, height = 8)
-  
   message("✅ Cross-database correlation analysis completed!")
   
   return(correlation_matrix)
 }
 
-#' Create correlation heatmap
-#' 
-create_correlation_heatmap <- function(correlation_matrix, data) {
-  
-  # Convert correlation matrix to long format for ggplot
-  corr_data <- correlation_matrix %>%
-    as.data.frame() %>%
-    rownames_to_column("database1") %>%
-    pivot_longer(cols = -database1, names_to = "database2", values_to = "correlation")
-  
-  # Add technology information
-  tech_mapping <- data %>%
-    select(source, technology) %>%
-    distinct() %>%
-    rename(database1 = source, tech1 = technology)
-  
-  tech_mapping2 <- tech_mapping %>%
-    rename(database2 = database1, tech2 = tech1)
-  
-  corr_data <- corr_data %>%
-    left_join(tech_mapping, by = "database1") %>%
-    left_join(tech_mapping2, by = "database2") %>%
-    mutate(
-      same_technology = tech1 == tech2,
-      correlation_type = case_when(
-        database1 == database2 ~ "Self",
-        same_technology ~ "Within Technology",
-        !same_technology ~ "Cross Technology"
-      )
-    )
-  
-  # Create heatmap
-  p <- ggplot(corr_data, aes(x = database1, y = database2, fill = correlation)) +
-    geom_tile(color = "white", size = 0.5) +
-    geom_text(aes(label = sprintf("%.2f", correlation)), 
-              color = ifelse(abs(corr_data$correlation) > 0.6, "white", "black"),
-              size = 3) +
-    scale_fill_gradient2(low = "#d73027", mid = "white", high = "#4575b4",
-                        midpoint = 0, limit = c(-1, 1), space = "Lab",
-                        name = "Pearson\nCorrelation") +
-    theme_blood_proteomics() +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      axis.title = element_blank(),
-      panel.grid = element_blank(),
-      panel.border = element_blank()
-    ) +
-    labs(
-      title = "Cross-Database Z-Score Correlation Matrix",
-      subtitle = "Correlation of protein abundances after z-score normalization",
-      caption = "Only proteins present in multiple databases included"
-    ) +
-    coord_fixed()
-  
-  return(p)
-}
-
-#' Create correlation heatmap for comprehensive panel (simplified version)
-#' 
-create_correlation_heatmap_for_panel <- function(correlation_matrix, data) {
-  
-  # Convert correlation matrix to long format for ggplot
-  corr_data <- correlation_matrix %>%
-    as.data.frame() %>%
-    rownames_to_column("database1") %>%
-    pivot_longer(cols = -database1, names_to = "database2", values_to = "correlation")
-  
-  # Add technology information
-  tech_mapping <- data %>%
-    select(source, technology) %>%
-    distinct() %>%
-    rename(database1 = source, tech1 = technology)
-  
-  tech_mapping2 <- tech_mapping %>%
-    rename(database2 = database1, tech2 = tech1)
-  
-  corr_data <- corr_data %>%
-    left_join(tech_mapping, by = "database1") %>%
-    left_join(tech_mapping2, by = "database2") %>%
-    mutate(
-      same_technology = tech1 == tech2,
-      correlation_type = case_when(
-        database1 == database2 ~ "Self",
-        same_technology ~ "Within Technology",
-        !same_technology ~ "Cross Technology"
-      )
-    )
-  
-  # Create enhanced heatmap for panel
-  p <- ggplot(corr_data, aes(x = database1, y = database2, fill = correlation)) +
-    geom_tile(color = "white", size = 0.4) +
-    geom_text(aes(label = sprintf("%.2f", correlation)), 
-              color = ifelse(abs(corr_data$correlation) > 0.6, "white", "black"),
-              size = 8) +
-    scale_fill_gradient2(low = "#d73027", mid = "white", high = "#1a73e8",
-                        midpoint = 0, limit = c(-1, 1), space = "Lab",
-                        guide = "none") +
-    theme_blood_proteomics() +
-    theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 16, face = "bold"),
-      axis.text.y = element_text(size = 16, face = "bold"),
-      axis.title = element_blank(),
-      panel.grid = element_blank(),
-      panel.border = element_blank(),
-      plot.title = element_text(size = 16, face = "bold"),
-      plot.subtitle = element_text(size = 12),
-      legend.position = "none"
-    ) +
-    labs(
-      title = "(G) CROSS-DATABASE CORRELATIONS",
-      subtitle = "Pairwise correlation matrix (z-scores)",
-      x = NULL,
-      y = NULL
-    ) +
-    coord_fixed()
-  
-  return(p)
-}
-
-#' Create pairwise correlation scatter plots
-#' 
-create_pairwise_correlation_plots <- function(data) {
-  
-  # Create all pairwise combinations
-  databases <- unique(data$source)
-  combinations <- combn(databases, 2, simplify = FALSE)
-  
-  # Limit to most important comparisons to avoid too many plots
-  important_combinations <- combinations[1:min(6, length(combinations))]
-  
-  plot_list <- map(important_combinations, function(pair) {
-    
-    pair_data <- data %>%
-      filter(source %in% pair) %>%
-      select(gene, source, z_score) %>%
-      pivot_wider(names_from = source, values_from = z_score) %>%
-      filter(!is.na(.data[[pair[1]]]) & !is.na(.data[[pair[2]]]))
-    
-    if (nrow(pair_data) > 10) {  # Only create plot if enough shared proteins
-      correlation <- cor(pair_data[[pair[1]]], pair_data[[pair[2]]], use = "complete.obs")
-      
-      ggplot(pair_data, aes(x = .data[[pair[1]]], y = .data[[pair[2]]])) +
-        geom_point(alpha = 0.6, size = 1) +
-        geom_smooth(method = "lm", se = TRUE, color = "#2E86AB") +
-        labs(
-          title = paste0(pair[1], " vs ", pair[2]),
-          subtitle = paste0("r = ", sprintf("%.3f", correlation), 
-                           " (n = ", nrow(pair_data), " proteins)"),
-          x = paste0(pair[1], " (Z-Score)"),
-          y = paste0(pair[2], " (Z-Score)")
-        ) +
-        theme_blood_proteomics() +
-        theme(plot.title = element_text(size = 10))
-    } else {
-      NULL
-    }
-  })
-  
-  # Remove NULL plots and combine
-  plot_list <- plot_list[!sapply(plot_list, is.null)]
-  
-  if (length(plot_list) > 0) {
-    combined_plot <- wrap_plots(plot_list, ncol = 3) +
-      plot_annotation(
-        title = "Pairwise Database Correlations (Z-Score Normalized)",
-        subtitle = "Scatter plots showing correlations between database pairs"
-      )
-    return(combined_plot)
-  } else {
-    return(NULL)
-  }
-}
-
-#' Create technology-based correlation summary
-#' 
-create_technology_correlation_summary <- function(data) {
-  
-  # Calculate all pairwise correlations and categorize by technology
-  databases <- unique(data$source)
-  combinations <- combn(databases, 2, simplify = FALSE)
-  
-  correlation_summary <- map_dfr(combinations, function(pair) {
-    
-    pair_data <- data %>%
-      filter(source %in% pair) %>%
-      select(gene, source, z_score, technology) %>%
-      pivot_wider(names_from = source, values_from = z_score) %>%
-      filter(!is.na(.data[[pair[1]]]) & !is.na(.data[[pair[2]]]))
-    
-    if (nrow(pair_data) > 5) {
-      correlation <- cor(pair_data[[pair[1]]], pair_data[[pair[2]]], use = "complete.obs")
-      
-      # Get technologies for each database
-      tech1 <- data$technology[data$source == pair[1]][1]
-      tech2 <- data$technology[data$source == pair[2]][1]
-      
-      tibble(
-        database1 = pair[1],
-        database2 = pair[2],
-        tech1 = tech1,
-        tech2 = tech2,
-        correlation = correlation,
-        n_proteins = nrow(pair_data),
-        comparison_type = ifelse(tech1 == tech2, "Within Technology", "Cross Technology")
-      )
-    } else {
-      NULL
-    }
-  }) %>%
-  filter(!is.null(.))
-  
-  # Create summary plot
-  p <- ggplot(correlation_summary, aes(x = comparison_type, y = correlation, fill = comparison_type)) +
-    geom_boxplot(alpha = 0.7) +
-    geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
-    scale_fill_manual(values = c("Within Technology" = "#4575b4", "Cross Technology" = "#d73027")) +
-    theme_blood_proteomics() +
-    theme(legend.position = "none") +
-    labs(
-      title = "Z-Score Correlation by Technology Type",
-      subtitle = "Distribution of correlations within vs across technology types",
-      x = "Comparison Type",
-      y = "Pearson Correlation",
-      caption = "Each point represents a pairwise database comparison"
-    ) +
-    stat_summary(fun = mean, geom = "point", shape = 23, size = 3, 
-                fill = "white", color = "black")
-  
-  return(p)
-}
-
-#' Create Venn diagram for GPMDB vs PeptideAtlas comparison using ggvenn
-#' 
-create_ms_venn_diagram <- function(data) {
-  
-  message("Creating MS databases Venn diagram with ggvenn (GPMDB vs PeptideAtlas)...")
-  
-  # Get gene lists for GPMDB and PeptideAtlas
-  gpmdb_genes <- data %>%
-    filter(source == "GPMDB") %>%
-    pull(gene) %>%
-    unique()
-  
-  peptideatlas_genes <- data %>%
-    filter(source == "PeptideAtlas") %>%
-    pull(gene) %>%
-    unique()
-  
-  # Create Venn diagram data as named list
-  venn_data <- list(
-    GPMDB = gpmdb_genes,
-    PeptideAtlas = peptideatlas_genes
-  )
-  
-  # Calculate statistics for annotations
-  intersection_count <- length(intersect(gpmdb_genes, peptideatlas_genes))
-  gpmdb_unique <- length(gpmdb_genes) - intersection_count
-  peptideatlas_unique <- length(peptideatlas_genes) - intersection_count
-  overlap_percent <- round(intersection_count / length(union(gpmdb_genes, peptideatlas_genes)) * 100, 1)
-  
-  # Create beautiful Venn diagram with ggvenn
-  venn_plot <- ggvenn(
-    venn_data,
-    fill_color = c("#E31A1C", "#1F78B4"),
-    stroke_color = "white",
-    stroke_size = 0.8,
-    stroke_alpha = 1,
-    fill_alpha = 0.7,
-    set_name_color = "black",
-    set_name_size = 5,
-    text_color = "black",
-    text_size = 4.5
-  ) +
-  theme_void() +
-  labs(
-    title = "MS Databases Protein Overlap Analysis",
-    subtitle = sprintf("GPMDB (%s proteins) vs PeptideAtlas (%s proteins)", 
-                      scales::comma(length(gpmdb_genes)), 
-                      scales::comma(length(peptideatlas_genes))),
-    caption = sprintf("Shared: %s proteins (%.1f%%) | GPMDB unique: %s | PeptideAtlas unique: %s", 
-                     scales::comma(intersection_count), 
-                     overlap_percent,
-                     scales::comma(gpmdb_unique),
-                     scales::comma(peptideatlas_unique))
-  ) +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5, margin = margin(b = 10)),
-    plot.subtitle = element_text(size = 12, hjust = 0.5, color = "gray40", margin = margin(b = 15)),
-    plot.caption = element_text(size = 11, hjust = 0.5, color = "gray50", lineheight = 1.2, margin = margin(t = 15)),
-    plot.margin = margin(20, 20, 20, 20),
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
-  )
-  
-  return(venn_plot)
-}
-
-#' Create Venn diagram for panel using ggvenn
-#' 
-create_ms_venn_diagram_for_panel <- function(data) {
-  
-  message("Creating enhanced MS databases Venn diagram with ggvenn (GPMDB vs PeptideAtlas)...")
-  
-  # Get gene lists for GPMDB and PeptideAtlas
-  gpmdb_genes <- data %>%
-    filter(source == "GPMDB") %>%
-    pull(gene) %>%
-    unique()
-  
-  peptideatlas_genes <- data %>%
-    filter(source == "PeptideAtlas") %>%
-    pull(gene) %>%
-    unique()
-  
-  # Create Venn diagram data as named list
-  venn_data <- list(
-    GPMDB = gpmdb_genes,
-    PeptideAtlas = peptideatlas_genes
-  )
-  
-  # Calculate statistics for annotations
-  intersection_count <- length(intersect(gpmdb_genes, peptideatlas_genes))
-  overlap_percent <- round(intersection_count / length(union(gpmdb_genes, peptideatlas_genes)) * 100, 1)
-  
-  # Create enhanced Venn diagram with ggvenn for panel
-  venn_plot <- ggvenn(
-    venn_data,
-    fill_color = c("#E31A1C", "#1F78B4"),
-    stroke_color = "white",
-    stroke_size = 0.8,
-    stroke_alpha = 1,
-    fill_alpha = 0.75,
-    set_name_color = "black",
-    set_name_size = 4,
-    text_color = "black",
-    text_size = 3.8
-  ) +
-  theme_void() +
-  labs(
-    title = "(D) MS DATABASES COMPARISON",
-    subtitle = sprintf("GPMDB (%s) vs PeptideAtlas (%s)", 
-                      scales::comma(length(gpmdb_genes)), 
-                      scales::comma(length(peptideatlas_genes))),
-    caption = sprintf("Shared: %s proteins (%.1f%% overlap)", 
-                     scales::comma(intersection_count), overlap_percent)
-  ) +
-  theme(
-    plot.title = element_text(size = 13, face = "bold", hjust = 0.5, color = "#2c3e50"),
-    plot.subtitle = element_text(size = 10, hjust = 0.5, color = "#34495e"),
-    plot.caption = element_text(size = 9, hjust = 0.5, color = "#7f8c8d", face = "bold"),
-    plot.margin = margin(10, 10, 10, 10),
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
-  )
-  
-  return(venn_plot)
-}
-
-#' Create abundance violin plot for comprehensive panel
-#' 
-create_abundance_boxplot_for_panel <- function(data) {
-  
-  message("Creating abundance distribution violin plot by data source...")
-  
-  # Create violin plot of z-score normalized abundance by source
-  violin_panel <- ggplot(data, aes(x = reorder(source, z_score, median), y = z_score, fill = technology)) +
-    geom_violin(alpha = 0.8, scale = "width", trim = TRUE) +
-    geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0.3, outlier.alpha = 0.5, 
-                 show.legend = FALSE, color = "black", fill = "white") +
-    scale_fill_manual(values = get_plot_colors("technology"), name = "Technology") +
-    theme_blood_proteomics() +
-    theme(
-      plot.title = element_text(size = 12, face = "bold"),
-      plot.subtitle = element_text(size = 10),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
-      legend.position = "bottom",
-      legend.title = element_text(size = 9),
-      legend.text = element_text(size = 8)
-    ) +
-    labs(
-      title = "(H) Abundance Distribution by Database",
-      subtitle = "Z-score normalized protein abundances (violin + boxplot)",
-      x = "Database (ordered by median abundance)",
-      y = "Z-Score Normalized Abundance"
-    )
-  
-  return(violin_panel)
-}
-
 #' Create UpSet analysis plot for protein overlap between databases
 #'
 create_upset_analysis <- function(data, plot_dir) {
-  
   message("Creating UpSet analysis for protein overlap...")
   
   # First, ensure we have unique genes per database (remove duplicates within each database)
@@ -766,48 +243,6 @@ create_upset_analysis <- function(data, plot_dir) {
   
   # Additional safety check to remove any remaining NA or empty gene names
   gene_lists <- lapply(gene_lists, function(x) unique(x[!is.na(x) & x != ""]))
-  
-  # Create technology mapping for colors
-  tech_mapping <- data %>%
-    select(source, technology) %>%
-    distinct() %>%
-    deframe()
-  
-  # Create color mapping based on technology
-  tech_colors <- get_plot_colors("technology")
-  set_colors <- tech_colors[tech_mapping[names(gene_lists)]]
-  
-  # Calculate intersection sizes
-  upset_data <- UpSetR::fromList(gene_lists)
-  intersection_sizes <- colSums(upset_data)
-  
-  # Filter to keep only intersections with 48 or more proteins
-  keep_intersections <- names(intersection_sizes[intersection_sizes >= 48])
-  
-  # Create UpSet plot using fromList approach
-  upset_plot <- UpSetR::upset(
-    UpSetR::fromList(gene_lists),
-    nsets = length(gene_lists),
-    sets = names(gene_lists),
-    keep.order = TRUE,
-    order.by = "freq",
-    decreasing = TRUE,
-    text.scale = 1,
-    point.size = 3,
-    line.size = 1.2,
-    mainbar.y.label = "Number of Proteins",
-    sets.x.label = "Total Proteins per Database",
-    sets.bar.color = "#4575b4",  # Use the same blue as panel version
-    main.bar.color = "#4575b4",  # Use the same blue as panel version
-    matrix.color = "#4575b4",    # Use the same blue as panel version
-    nintersects = NA  # Show all intersections that meet our threshold
-  )
-  
-  # Save as PNG with larger dimensions to accommodate all intersections
-  # png(file.path(plot_dir, "04_upset_protein_overlap.png"), 
-  #     width = 15, height = 8, units = "in", res = 300, bg = "white")  # Increased width to accommodate all bars
-  # print(upset_plot)
-  # dev.off()
   
   message("✅ UpSet analysis plot created successfully!")
   
@@ -874,193 +309,12 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
       strip.background = element_blank()
     ) +
     labs(
-      title = "(C) Intersection between different databases",
-      x = "Database Combinations",
+      title = "(C) Intersection between different data sources",
+      x = "Data Source Combinations",
       y = "Number of Proteins"
     )
   
   return(panel_plot)
-}
-
-#' Create plasma databases dot plot for comprehensive panel
-#' 
-#' @param data Data frame with normalized protein data
-#' @return ggplot object
-#' 
-create_plasma_databases_dot_plot_for_panel <- function(data) {
-  
-  # Get database colors, with PeptideAtlas in black as reference
-  db_colors <- get_plot_colors("databases")
-  db_colors["PeptideAtlas"] <- "black"
-  
-  # Create simplified version for panel
-  p <- ggplot(data, aes(x = order, y = z_score, color = source)) +
-    geom_point(alpha = 0.6, size = 0.5) +
-    scale_color_manual(values = db_colors, name = "Database") +
-    labs(
-      title = "(F) Protein abundance correlation with PeptideAtlas",
-      subtitle = "Z-score normalized values ordered by PeptideAtlas",
-      x = "Proteins (ordered)",
-      y = "Z-Score"
-    ) +
-    theme_blood_proteomics() +
-    theme(
-      plot.title = element_text(size = 12, face = "bold"),
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank(),
-      legend.position = "bottom",
-      legend.title = element_text(size = 10),
-      legend.text = element_text(size = 8)
-    )
-  
-  return(p)
-}
-
-#' Generic density plot function
-create_density_plot <- function(data, value_col, group_col, title) {
-  ggplot(data, aes(x = .data[[value_col]], fill = .data[[group_col]])) +
-    geom_density(alpha = 0.7) +
-    scale_fill_manual(values = get_plot_colors("databases"), name = "Data Source") +
-    labs(title = title, x = NULL, y = "Density") +
-    theme_blood_proteomics() +
-    theme(legend.position = "right")
-}
-
-
-
-#' Create detailed log vs z-score normalization comparison
-#' 
-create_log_vs_zscore_comparison <- function(data, plot_dir) {
-  
-  message("Creating log vs z-score normalization comparison plots...")
-  
-  # 1. Histogram comparison - Log10 values
-  p_hist_log <- ggplot(data, aes(x = log_abundance, fill = source)) +
-    geom_histogram(alpha = 0.7, bins = 50) +
-    facet_wrap(~source, scales = "free", ncol = 2, 
-               labeller = labeller(source = function(x) paste0("(", letters[seq_along(x)], ") ", x))) +
-    scale_fill_manual(values = get_plot_colors("databases")) +
-    theme_blood_proteomics() +
-    theme(
-      legend.position = "none",
-      strip.text = element_text(face = "bold", size = 10)
-    ) +
-    labs(
-      title = "Distribution of Protein Quantification Values (Log10)",
-      subtitle = "Log10-transformed values across plasma databases",
-      x = "Log10(Quantification Value)",
-      y = "Number of Proteins"
-    )
-  
-  save_plot_standard(p_hist_log, "plasma_proteins_quantification_distributions_log10", 
-                    plot_dir, width = 12, height = 10)
-  
-  # 2. Histogram comparison - Z-score normalized
-  p_hist_zscore <- ggplot(data, aes(x = z_score, fill = source)) +
-    geom_histogram(alpha = 0.7, bins = 50) +
-    facet_wrap(~source, scales = "free", ncol = 2,
-               labeller = labeller(source = function(x) paste0("(", letters[seq_along(x)], ") ", x))) +
-    scale_fill_manual(values = get_plot_colors("databases")) +
-    theme_blood_proteomics() +
-    theme(
-      legend.position = "none",
-      strip.text = element_text(face = "bold", size = 10)
-    ) +
-    labs(
-      title = "Distribution of Z-Score Normalized Protein Quantification Values",
-      subtitle = "Z-score normalized values for direct cross-database comparison",
-      x = "Z-Score (standardized within each database)",
-      y = "Number of Proteins",
-      caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
-    )
-  
-  save_plot_standard(p_hist_zscore, "plasma_proteins_quantification_distributions_zscore", 
-                    plot_dir, width = 12, height = 10)
-  
-  # 3. Density plots for direct comparison (log10)
-  p_density_log <- ggplot(data, aes(x = log_abundance, fill = source)) +
-    geom_density(alpha = 0.6) +
-    scale_fill_manual(values = get_plot_colors("databases")) +
-    theme_blood_proteomics() +
-    labs(
-      title = "Protein Quantification Value Distributions Comparison (Log10)",
-      subtitle = "Density plots of log10-transformed values across plasma databases",
-      x = "Log10(Quantification Value)",
-      y = "Density",
-      fill = "Database"
-    )
-  
-  save_plot_standard(p_density_log, "plasma_proteins_quantification_density_log10", plot_dir)
-  
-  # 4. Z-score normalized density plots for direct comparison
-  p_density_zscore <- ggplot(data, aes(x = z_score, fill = source)) +
-    geom_density(alpha = 0.6) +
-    scale_fill_manual(values = get_plot_colors("databases")) +
-    theme_blood_proteomics() +
-    labs(
-      title = "Z-Score Normalized Protein Quantification Value Distributions",
-      subtitle = "Z-score normalized density plots for direct cross-database comparison",
-      x = "Z-Score (standardized within each database)",
-      y = "Density",
-      fill = "Database",
-      caption = "Z-scores calculated within each database: (log10(value) - mean) / sd"
-    )
-  
-  save_plot_standard(p_density_zscore, "plasma_proteins_quantification_density_zscore", plot_dir)
-  
-  # 5. Side-by-side comparison plot
-  p_comparison <- p_density_log + p_density_zscore + 
-    plot_layout(ncol = 1) +
-    plot_annotation(
-      title = "Plasma Protein Quantification: Log10 vs Z-Score Normalized Comparison",
-      subtitle = "Comparing original log10 values (top) vs z-score normalized values (bottom)",
-      tag_levels = list(c('(a)', '(b)')),
-      theme = theme(plot.title = element_text(size = 16, face = "bold"))
-    )
-  
-  save_plot_standard(p_comparison, "plasma_proteins_log10_vs_zscore_comparison", 
-                    plot_dir, width = 12, height = 12)
-  
-  # 6. Statistical summary comparison
-  create_normalization_statistics_table(data, plot_dir)
-  
-  message("✅ Log vs z-score comparison plots created successfully!")
-}
-
-#' Create statistical summary table comparing normalization methods
-#' 
-create_normalization_statistics_table <- function(data, plot_dir) {
-  
-  # Calculate statistics for both log and z-score values
-  stats_summary <- data %>%
-    group_by(source, technology) %>%
-    summarise(
-      n_proteins = n(),
-      # Log10 statistics
-      log10_mean = round(mean(log_abundance, na.rm = TRUE), 3),
-      log10_median = round(median(log_abundance, na.rm = TRUE), 3),
-      log10_sd = round(sd(log_abundance, na.rm = TRUE), 3),
-      log10_min = round(min(log_abundance, na.rm = TRUE), 3),
-      log10_max = round(max(log_abundance, na.rm = TRUE), 3),
-      log10_range = round(log10_max - log10_min, 3),
-      # Z-score statistics  
-      zscore_mean = round(mean(z_score, na.rm = TRUE), 3),
-      zscore_median = round(median(z_score, na.rm = TRUE), 3),
-      zscore_sd = round(sd(z_score, na.rm = TRUE), 3),
-      zscore_min = round(min(z_score, na.rm = TRUE), 3),
-      zscore_max = round(max(z_score, na.rm = TRUE), 3),
-      zscore_range = round(zscore_max - zscore_min, 3),
-      .groups = "drop"
-    ) %>%
-    arrange(desc(n_proteins))
-  
-  # Save the statistics table
-  output_dir <- get_output_path("01_plasma_protein_analysis", subdir = "tables")
-  write_csv(stats_summary, file.path(output_dir, "plasma_proteins_normalization_statistics.csv"))
-  
-  message(sprintf("📊 Normalization statistics saved: %d sources compared", nrow(stats_summary)))
-  
-  return(stats_summary)
 }
 
 #' Generate analysis report
@@ -1168,18 +422,21 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_blank(),
+      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 14),
       legend.position = "none",
       axis.title = element_text(size = 16),
       axis.text = element_text(size = 16),
       axis.text.y = element_text(size = 16, face = "bold"),
+      axis.title.x = element_text(margin = margin(t = 5)),
+      axis.title.y = element_text(margin = margin(r = 5)),
       panel.grid.major.x = element_line(color = "grey90", size = 0.3),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
     ) +
     labs(
-      title = "(A) Number of proteins by database",
-      x = "Database",
+      title = "(A) Number of proteins by data source",
+      subtitle = "Unique genes detected across different technologies",
+      x = "Data Source",
       y = "Number of Proteins"
     )
   
@@ -1206,40 +463,40 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_B <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
     theme(
-      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_blank(),
+      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 14),
       axis.title = element_text(size = 16),
       axis.text = element_text(size = 16)
     ) +
     labs(
-      title = "(B) Intersection between different databases",
-      x = "Database Combinations",
+      title = "(B) Intersection between different data sources",
+      subtitle = "Overlap analysis of protein coverage",
+      x = "Data Source Combinations",
       y = "Number of Proteins"
     )
   
   # Panel C: Abundance Distribution (Enhanced)
-  panel_C <- ggplot(normalized_data, aes(x = reorder(source, z_score, median), y = z_score, fill = technology)) +
-    geom_violin(alpha = 0.8, scale = "width", trim = TRUE, width = 0.6) +
-    geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
-                 show.legend = FALSE, color = "black", fill = "white") +
-    stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8) +
+  panel_C <- ggplot(normalized_data, aes(x = z_score, y = reorder(source, z_score, median), fill = technology)) +
+    ggridges::geom_density_ridges(alpha = 0.8, scale = 0.9, bandwidth = 0.3, color = "white", size = 0.5) +
+    stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8, 
+                 position = position_nudge(y = 0)) +
     scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 18, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_blank(),
+      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 14),
       axis.title = element_text(size = 16),
       axis.text = element_text(size = 16),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 16, face = "bold"),
+      axis.text.y = element_text(size = 18, face = "bold"),
       legend.position = "none",
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
-      panel.grid.major.y = element_line(color = "grey90", size = 0.3)
+      panel.grid.major.x = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(C) Distributions of abundances by databases",
-      subtitle = "z-score normalized",
-      x = NULL,
-      y = "Z-Score"
+      title = "(C) Distribution shapes of abundances by data sources",
+      subtitle = "Ridgeline plots showing full distribution shapes",
+      x = "Z-Score",
+      y = NULL
           )
     
   # Panel D: Cross-Database Dot Plot (Enhanced)
@@ -1264,18 +521,17 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   panel_D <- ggplot(dot_plot_data, aes(x = order, y = z_score, color = source)) +
     geom_point(alpha = 0.7, size = 1.0) +
-    scale_color_manual(values = db_colors, name = "Database") +
+    scale_color_manual(values = db_colors, name = "Data Source") +
     scale_x_continuous(labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_text(size = 16),  # Added styling for subtitle
       axis.title = element_text(size = 16),
       axis.text = element_text(size = 16),
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       legend.position = "right",
-      legend.background = element_rect(fill = "white", color = "grey80"),
       legend.title = element_text(size = 18, face = "bold"),
       legend.text = element_text(size = 16),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
@@ -1318,12 +574,50 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     summarise(sample_count = n_distinct(SampleID), .groups = "drop") %>%
     filter(sample_count >= 3) # Only genes present in 3+ samples (matching main filter)
   
-  # Merge sample count information with z-score data
+  # Merge sample count information with abundance data
   quantms_sample_data <- quantms_sample_data %>%
     left_join(sample_counts, by = "gene") %>%
     filter(!is.na(sample_count))
   
-  # Create sample count bins as requested (3-5, 6-10, 11-20, 21-30, 31-99, 100+)
+  # Get PeptideAtlas data for comparison
+  peptideatlas_genes <- normalized_data %>%
+    filter(source == "PeptideAtlas") %>%
+    arrange(desc(log_abundance)) %>%
+    mutate(peptideatlas_rank = row_number())
+  
+  # Define gene categories for highlighting
+  
+  # 1) Top 10 abundant genes in PeptideAtlas that are also in quantms
+  top_peptideatlas_in_quantms <- peptideatlas_genes %>%
+    filter(gene %in% quantms_sample_data$gene) %>%
+    slice_head(n = 10) %>%
+    pull(gene)
+  
+  # 2) Bottom 10 low-abundant genes in PeptideAtlas that are also in quantms  
+  low_peptideatlas_in_quantms <- peptideatlas_genes %>%
+    filter(gene %in% quantms_sample_data$gene) %>%
+    slice_tail(n = 10) %>%
+    pull(gene)
+  
+  # 3) Top 10 abundant quantms genes not in PeptideAtlas
+  quantms_only_high <- quantms_sample_data %>%
+    filter(!gene %in% peptideatlas_genes$gene) %>%
+    arrange(desc(log_abundance_raw)) %>%
+    slice_head(n = 10) %>%
+    pull(gene)
+  
+  # 4) Bottom 10 low-abundant quantms genes not in PeptideAtlas
+  quantms_only_low <- quantms_sample_data %>%
+    filter(!gene %in% peptideatlas_genes$gene) %>%
+    arrange(log_abundance_raw) %>%
+    slice_head(n = 10) %>%
+    pull(gene)
+  
+  # 5) Well-known plasma proteins from literature
+  plasma_literature_genes <- c("ALB", "APOA1", "APOA2", "APOB", "APOE", "FGB", "FGG", "FGA", "HP", "TF")
+  plasma_lit_in_data <- intersect(plasma_literature_genes, quantms_sample_data$gene)
+  
+  # Create sample count bins and gene categories
   quantms_sample_data <- quantms_sample_data %>%
     mutate(
       sample_group = case_when(
@@ -1335,32 +629,103 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
         sample_count >= 50 ~ "50+",
         TRUE ~ "Other"
       ),
-      sample_group = factor(sample_group, levels = c("3-5", "6-10", "11-20", "21-30", "31-49", "50+"))
-    ) %>%
+      sample_group = factor(sample_group, levels = c("3-5", "6-10", "11-20", "21-30", "31-49", "50+")),
+             gene_category = case_when(
+         gene %in% top_peptideatlas_in_quantms ~ "High PeptideAtlas (shared)",
+         gene %in% low_peptideatlas_in_quantms ~ "Low PeptideAtlas (shared)", 
+         gene %in% quantms_only_high ~ "High quantms (unique)",
+         gene %in% quantms_only_low ~ "Low quantms (unique)",
+         gene %in% plasma_lit_in_data ~ "Plasma literature",
+         TRUE ~ "Other"
+       ),
+       gene_category = factor(gene_category, levels = c("High PeptideAtlas (shared)", "Low PeptideAtlas (shared)", 
+                                                       "High quantms (unique)", "Low quantms (unique)",
+                                                       "Plasma literature", "Other"))
+          ) %>%
     filter(!is.na(sample_group), sample_group != "Other")
   
-  # Create violin plot
+  # Print summary of highlighted genes
+  message(sprintf("  - High PeptideAtlas (shared): %s", paste(top_peptideatlas_in_quantms, collapse = ", ")))
+  message(sprintf("  - Low PeptideAtlas (shared): %s", paste(low_peptideatlas_in_quantms, collapse = ", ")))
+  message(sprintf("  - High quantms (unique): %s", paste(quantms_only_high, collapse = ", ")))
+  message(sprintf("  - Low quantms (unique): %s", paste(quantms_only_low, collapse = ", ")))
+  message(sprintf("  - Plasma literature: %s", paste(plasma_lit_in_data, collapse = ", ")))
+  
+  # Define colors and shapes for gene categories
+  category_colors <- c(
+    "High PeptideAtlas (shared)" = "#d73027",      # Red
+    "Low PeptideAtlas (shared)" = "#4575b4",       # Blue  
+    "High quantms (unique)" = "#f46d43",           # Orange
+    "Low quantms (unique)" = "#74add1",            # Light Blue
+    "Plasma literature" = "#5e4fa2",               # Purple
+    "Other" = "grey40"                             # Grey
+  )
+  
+  category_shapes <- c(
+    "High PeptideAtlas (shared)" = 16,             # Circle
+    "Low PeptideAtlas (shared)" = 17,              # Triangle
+    "High quantms (unique)" = 15,                  # Square
+    "Low quantms (unique)" = 18,                   # Diamond
+    "Plasma literature" = 8,                       # Star
+    "Other" = 20                                   # Small circle
+  )
+  
+  # Create violin plot with highlighted gene categories
   panel_E <- ggplot(quantms_sample_data, aes(x = sample_group, y = log_abundance_raw)) +
     geom_violin(alpha = 0.6, scale = "width", trim = TRUE, width = 0.7, fill = "lightgrey", color = "grey60") +
-    geom_jitter(alpha = 0.3, size = 0.8, width = 0.2, color = "grey40") +
-    geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0.4, outlier.alpha = 0.6, 
+    # Background points for all other genes
+    geom_jitter(data = filter(quantms_sample_data, gene_category == "Other"),
+                alpha = 0.3, size = 1.8, width = 0.15, color = "grey50") +
+    # Highlighted points for special gene categories
+    geom_jitter(data = filter(quantms_sample_data, gene_category != "Other"),
+                aes(color = gene_category, shape = gene_category), 
+                alpha = 0.9, size = 2.8, width = 0.15, seed = 42,
+                show.legend = c(color = FALSE, shape = TRUE)) +
+    # Add gene labels with dashed lines for highlighted genes
+    ggrepel::geom_label_repel(
+      data = filter(quantms_sample_data, gene_category != "Other"),
+      aes(label = gene, color = gene_category),
+      size = 3,
+      alpha = 0.9,
+      fontface = "bold",
+      fill = "white",
+      label.padding = 0.2,
+      label.r = 0.1,
+      box.padding = 0.3,
+      point.padding = 0.5,
+      segment.linetype = "dashed",
+      segment.size = 0.5,
+      segment.alpha = 0.8,
+      max.overlaps = Inf,
+      force = 2,
+      seed = 42
+    ) +
+    geom_boxplot(width = 0.1, alpha = 0.9, outlier.size = 0, outlier.alpha = 0, 
                  show.legend = FALSE, color = "black", fill = "white") +
     stat_summary(fun = median, geom = "point", shape = 20, size = 2, color = "red", alpha = 0.8) +
+    scale_color_manual(values = category_colors, guide = "none") +
+    scale_shape_manual(values = category_shapes, name = "Gene Category") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 20, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 22, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_text(size = 16),
-      axis.title = element_text(size = 16),
-      axis.text = element_text(size = 16),
-      axis.text.x = element_text(size = 16, face = "bold"),
-      legend.position = "none",
+      axis.title = element_text(size = 20, face = "bold"),
+      axis.text = element_text(size = 18),
+      axis.text.x = element_text(size = 18, face = "bold"),
+      legend.position = "right",
+      legend.title = element_text(size = 20, face = "bold"),
+      legend.text = element_text(size = 18),
+      legend.key.size = unit(1.5, "lines"),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3)
     ) +
+    guides(
+      shape = guide_legend(override.aes = list(size = 4, alpha = 1, color = "black"))
+    ) +
     labs(
-      title = "(E) QuantMS protein abundances by sample presence",
-      subtitle = "Distribution grouped by number of samples containing each protein",
-      x = "Number of Samples",
+      title = "(E) quantms protein abundances by sample presence",
+      subtitle = "Distribution with highlighted gene categories (10 genes per category)",
+      x = "Number of Samples", 
       y = "Log10(Abundance)"
     )
   
@@ -1417,16 +782,4 @@ tryCatch({
   quit(status = 1)
 })
 
-message("\n🎉 Plasma protein analysis completed successfully!")
-
-# 5. GPMDB
-message("Processing GPMDB plasma data...")
-gpmdb_plasma_raw <- read_csv("data/raw/gpmdb/gpmdb_plasma.csv", show_col_types = FALSE)
-
-# Process using standardized function
-gpmdb_plasma <- process_gpmdb_data(gpmdb_plasma_raw, force_mapping = force_mapping)
-
-# Add metadata
-gpmdb_plasma$source <- "GPMDB"
-gpmdb_plasma$technology <- "MS"
-gpmdb_plasma$abundance_type <- "Spectral Count" 
+message("\n🎉 Plasma protein analysis completed successfully!") 
