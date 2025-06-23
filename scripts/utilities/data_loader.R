@@ -370,7 +370,7 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
     summarise(sample_count = n_distinct(SampleID), .groups = "drop")
   
   genes_with_sufficient_samples <- gene_sample_counts %>%
-    filter(sample_count >= 3) %>%
+          filter(sample_count >= 10) %>%
     pull(gene)
   
   message(sprintf("  - Genes present in >=3 samples: %d out of %d total genes", 

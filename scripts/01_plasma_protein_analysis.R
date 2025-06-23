@@ -279,10 +279,10 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     ungroup() %>%
     select(gene, databases)
   
-  # Count frequencies and filter out those below 48
+  # Count frequencies and filter out those below 100
   intersection_counts <- upset_data_wide %>%
     count(databases) %>%
-    filter(n >= 48) %>%
+    filter(n >= 100) %>%
     arrange(desc(n))
   
   # Create UpSet plot using ggupset with single blue color
@@ -291,21 +291,21 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
            map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
     ggplot(aes(x = databases)) +
     geom_bar(fill = "#4575b4", alpha = 0.85) +
-    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 8) +
+    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 10) +
     scale_x_upset(order_by = "freq") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
-      axis.title = element_text(size = 18),
-      axis.text = element_text(size = 16),
-      axis.text.y = element_text(size = 16),  # Size for the intersection counts
-      axis.text.x = element_text(size = 16, face = "bold"),  # Size for other axis text
+      axis.title = element_text(size = 22),
+      axis.text = element_text(size = 20),
+      axis.text.y = element_text(size = 20),  # Size for the intersection counts
+      axis.text.x = element_text(size = 20, face = "bold"),  # Size for other axis text
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3),
-      strip.text = element_text(size = 18, face = "bold"),  # Database names
+      strip.text = element_text(size = 22, face = "bold"),  # Database names
       strip.background = element_blank()
     ) +
     labs(
@@ -465,8 +465,8 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     theme(
       plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_text(size = 18),
-      axis.title = element_text(size = 18),
-      axis.text = element_text(size = 16)
+      axis.title = element_text(size = 22),
+      axis.text = element_text(size = 20)
     ) +
     labs(
       title = "(B) Intersection between different data sources",
@@ -572,7 +572,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     filter(!is.na(gene), gene != "") %>%
     group_by(gene) %>%
     summarise(sample_count = n_distinct(SampleID), .groups = "drop") %>%
-    filter(sample_count >= 3) # Only genes present in 3+ samples (matching main filter)
+    filter(sample_count >= 10) # Only genes present in 10+ samples (reduces sample count bias)
   
   # Merge sample count information with abundance data
   quantms_sample_data <- quantms_sample_data %>%
@@ -599,10 +599,11 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     slice_tail(n = 10) %>%
     pull(gene)
   
-  # 3) Top 10 abundant quantms genes not in PeptideAtlas
+  # 3) Top 10 quantms genes not in PeptideAtlas - prioritize by abundance, then sample count
+  # (Changed to prioritize abundance over sample count to avoid high-sample-count genes in wrong visual groups)
   quantms_only_high <- quantms_sample_data %>%
     filter(!gene %in% peptideatlas_genes$gene) %>%
-    arrange(desc(log_abundance_raw)) %>%
+    arrange(desc(log_abundance_raw), desc(sample_count)) %>%
     slice_head(n = 10) %>%
     pull(gene)
   
@@ -621,15 +622,14 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   quantms_sample_data <- quantms_sample_data %>%
     mutate(
       sample_group = case_when(
-        sample_count >= 3 & sample_count <= 5 ~ "3-5",
-        sample_count >= 6 & sample_count <= 10 ~ "6-10", 
-        sample_count >= 11 & sample_count <= 20 ~ "11-20",
+        sample_count >= 10 & sample_count <= 15 ~ "10-15",
+        sample_count >= 16 & sample_count <= 20 ~ "16-20", 
         sample_count >= 21 & sample_count <= 30 ~ "21-30",
         sample_count >= 31 & sample_count <= 49 ~ "31-49",
         sample_count >= 50 ~ "50+",
         TRUE ~ "Other"
       ),
-      sample_group = factor(sample_group, levels = c("3-5", "6-10", "11-20", "21-30", "31-49", "50+")),
+      sample_group = factor(sample_group, levels = c("10-15", "16-20", "21-30", "31-49", "50+")),
              gene_category = case_when(
          gene %in% top_peptideatlas_in_quantms ~ "High PeptideAtlas (shared)",
          gene %in% low_peptideatlas_in_quantms ~ "Low PeptideAtlas (shared)", 
@@ -685,7 +685,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ggrepel::geom_label_repel(
       data = filter(quantms_sample_data, gene_category != "Other"),
       aes(label = gene, color = gene_category),
-      size = 5,
+      size = 7,
       alpha = 0.9,
       fontface = "bold",
       fill = "white",
