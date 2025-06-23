@@ -353,7 +353,7 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   # Read and combine all files
   all_data <- map_dfr(quantms_files, ~{
     read_csv(.x, show_col_types = FALSE) %>%
-      select(protein_accession = ProteinName, Ibaq = Ibaq, SampleID)
+      select(protein_accession = ProteinName, Ibaq = IbaqNorm, SampleID)
   })
   
   # Map protein accessions to gene symbols on the entire dataset
@@ -361,14 +361,31 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   
   # Filter out proteins that couldn't be mapped
   mapped_data <- all_data %>%
-    filter(!is.na(gene) & gene != "") %>%
-    select(gene, Ibaq)
+    filter(!is.na(gene) & gene != "" & !is.na(Ibaq) & Ibaq > 0) %>%
+    select(gene, Ibaq, SampleID)
+  
+  # Filter genes that are present in 3 or more samples
+  gene_sample_counts <- mapped_data %>%
+    group_by(gene) %>%
+    summarise(sample_count = n_distinct(SampleID), .groups = "drop")
+  
+  genes_with_sufficient_samples <- gene_sample_counts %>%
+    filter(sample_count >= 3) %>%
+    pull(gene)
+  
+  message(sprintf("  - Genes present in >=3 samples: %d out of %d total genes", 
+                  length(genes_with_sufficient_samples), nrow(gene_sample_counts)))
+  
+  # Filter mapped data to include only genes present in >=3 samples
+  filtered_data <- mapped_data %>%
+    filter(gene %in% genes_with_sufficient_samples)
   
   # Now, aggregate by gene
-  processed_data <- mapped_data %>%
+  processed_data <- filtered_data %>%
     group_by(gene) %>%
     summarise(
       abundance = median(Ibaq, na.rm = TRUE),
+      sample_count = n_distinct(SampleID),
       protein_count = n(),
       .groups = "drop"
     )
@@ -381,7 +398,11 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   # Add metadata
   processed_data$source <- "quantms"
   processed_data$technology <- "MS"
-  processed_data$abundance_type <- "iBAQ"
+  processed_data$abundance_type <- "iBAQ Normalized"
   
-  return(processed_data)
+  # Keep only the standard columns for compatibility with other data sources
+  final_data <- processed_data %>%
+    select(gene, abundance, source, technology, abundance_type, protein_count)
+  
+  return(final_data)
 } 

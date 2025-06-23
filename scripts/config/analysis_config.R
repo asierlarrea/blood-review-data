@@ -66,10 +66,10 @@ DATA_SOURCES <- list(
     file_path = "hpa/hpa_pea.csv", 
     id_column = "Gene",
     gene_column = "Gene",
-    quant_column = "Variation between individuals",
+    quant_column = "median_npx",
     skip_rows = 0,
     requires_id_mapping = FALSE,
-    abundance_type = "Coefficient of Variation"
+    abundance_type = "Median NPX"
   ),
   
   hpa_immunoassay = list(
