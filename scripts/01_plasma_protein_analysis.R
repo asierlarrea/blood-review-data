@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
 # ============================================================================
-# PLASMA PROTEIN ANALYSIS (REFACTORED)
+# PLASMA PROTEIN ANALYSIS
 # ============================================================================
 # Description: Comprehensive analysis of plasma proteins from multiple sources
-# Uses modular components for cleaner, more maintainable code
+# Uses quantile-to-normal normalization for robust cross-database comparisons
 # ============================================================================
 
 # Load utilities and configuration
@@ -11,13 +11,12 @@ source("scripts/utilities/load_packages.R")
 source("scripts/config/analysis_config.R")
 source("scripts/utilities/data_loader.R")
 source("scripts/utilities/plot_themes.R")
-source("scripts/utilities/quantile_normalization_functions.R")
 
 # Set up environment
 ensure_output_dirs()
 
 # Load required packages
-required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "patchwork", "ggpubr", "UpSetR", "tibble", "ggupset", "purrr", "corrplot", "ggvenn", "ggrepel")
+required_packages <- c("ggplot2", "dplyr", "tidyr", "readr", "stringr", "scales", "patchwork", "ggpubr", "UpSetR", "tibble", "ggupset", "purrr")
 load_packages(required_packages)
 
 # Parse command line arguments
@@ -39,7 +38,7 @@ if (!is.null(formats_arg)) {
 }
 
 message(paste(rep("=", 60), collapse = ""))
-message("PLASMA PROTEIN ANALYSIS - REFACTORED VERSION")
+message("PLASMA PROTEIN ANALYSIS")
 message(paste(rep("=", 60), collapse = ""))
 
 #' Main analysis function
@@ -48,7 +47,6 @@ run_plasma_protein_analysis <- function() {
   
   # Step 1: Load all data sources
   message("\n[STEP 1] Loading data sources...")
-  # Get all source names and remove 'hpa_immunoassay' for this specific analysis
   all_sources <- get_all_data_sources()
   sources_to_load <- setdiff(all_sources, "hpa_immunoassay")
   
@@ -67,7 +65,7 @@ run_plasma_protein_analysis <- function() {
   # Step 2: Combine and normalize data
   message("\n[STEP 2] Combining and normalizing data...")
   combined_data <- combine_data_sources(data_list)
-  normalized_data <- apply_all_normalizations(combined_data)
+  normalized_data <- apply_normalization(combined_data)
   
   # Step 3: Generate summary statistics
   message("\n[STEP 3] Generating summary statistics...")
@@ -85,32 +83,25 @@ run_plasma_protein_analysis <- function() {
   ))
 }
 
-#' Apply all normalization methods
+#' Apply quantile-to-normal normalization
 #'
-apply_all_normalizations <- function(data) {
+apply_normalization <- function(data) {
   message("  - Filtering out zero abundance values...")
   data <- data %>%
     filter(abundance > 0)
   
   message("  - Applying log10 transformation...")
   data <- data %>%
-    mutate(log_abundance = ifelse(source %in% c("PeptideAtlas", "PAXDB", "HPA MS"), 
-                                  log10(abundance + 1), 
-                                  log10(abundance)))
+    mutate(log_abundance = log10(abundance + 1))
   
-  message("  - Applying Z-score normalization...")
-  data <- apply_zscore_normalization(data, "log_abundance", "source")
-  
-  message("  - Applying quantile normalization (within databases)...")
-  quantile_within_data <- apply_quantile_normalization_within(data, "log_abundance", "source")
-  
-  message("  - Applying quantile normalization (across databases)...")
-  quantile_across_data <- apply_quantile_normalization_base(data, "log_abundance", "source")
-  
+  message("  - Applying quantile-to-normal normalization...")
   data %>%
-    left_join(quantile_within_data %>% select(gene, source, quantile_normalized_within), by = c("gene", "source")) %>%
-    left_join(quantile_across_data %>% select(gene, source, quantile_normalized), by = c("gene", "source")) %>%
-    rename(quantile_normalized_across = quantile_normalized)
+    group_by(source) %>%
+    mutate(
+      rank_quantile = rank(log_abundance) / (n() + 1),
+      z_score = qnorm(rank_quantile)
+    ) %>%
+    ungroup()
 }
 
 #' Generate, print, and save summary statistics
@@ -142,97 +133,21 @@ generate_and_save_summary <- function(data_list, normalized_data) {
 #' Create all analysis plots
 #' 
 create_analysis_plots <- function(normalized_data, summary_stats) {
-  
   plot_dir <- get_output_path("01_plasma_protein_analysis", subdir = "plots")
   
   # Create UpSet analysis for protein overlap
-  create_upset_analysis(normalized_data, plot_dir)
-
-  # Create plasma databases dot plot
-  create_plasma_databases_dot_plot_analysis(normalized_data, plot_dir)
+  gene_lists <- create_upset_analysis(normalized_data)
   
-  # Create cross-database correlation analysis
-  create_cross_database_correlation_analysis(normalized_data, plot_dir)
-  
-  # Create normalization comparison plots
-  create_normalization_comparison_plots(normalized_data, plot_dir)
-}
-
-#' Create normalization comparison plots (basic version for legacy compatibility)
-#' 
-create_normalization_comparison_plots <- function(data, plot_dir) {
-  message("Creating normalization comparison plots...")
-  # Basic function kept for compatibility - no actual plots generated
-}
-
-#' Create plasma databases dot plot analysis
-#' 
-create_plasma_databases_dot_plot_analysis <- function(data, plot_dir) {
-  message("Creating plasma databases dot plot...")
-  
-  # Create reference ordering based on PeptideAtlas
-  peptideatlas_data <- data %>%
-    filter(source == "PeptideAtlas") %>%
-    arrange(z_score) %>%
-    mutate(order = row_number()) %>%
-    select(gene, order)
-  
-  # Filter other databases to only include genes present in PeptideAtlas
-  plot_data <- data %>%
-    inner_join(peptideatlas_data, by = "gene") %>%
-    # Remove duplicate entries by taking median if multiple entries per gene/source
-    group_by(gene, source) %>%
-    summarise(
-      z_score = median(z_score, na.rm = TRUE),
-      log_abundance = median(log_abundance, na.rm = TRUE),
-      order = first(order),
-      .groups = "drop"
-    )
-  
-  message("✅ Plasma databases dot plot created successfully!")
-  
-  return(plot_data)
-}
-
-#' Create cross-database correlation analysis
-#' 
-create_cross_database_correlation_analysis <- function(data, plot_dir) {
-  message("Creating cross-database correlation analysis...")
-  
-  # Prepare data for correlation analysis - only include proteins present in multiple databases
-  correlation_data <- data %>%
-    select(gene, source, z_score, technology) %>%
-    group_by(gene) %>%
-    filter(n() > 1) %>%  # Only genes present in multiple databases
-    ungroup() %>%
-    # Remove duplicates by taking median if multiple entries per gene/source
-    group_by(gene, source) %>%
-    summarise(
-      z_score = median(z_score, na.rm = TRUE),
-      technology = first(technology),
-      .groups = "drop"
-    )
-  
-  # Create wide format for correlation matrix
-  correlation_matrix_data <- correlation_data %>%
-    select(gene, source, z_score) %>%
-    pivot_wider(names_from = source, values_from = z_score) %>%
-    column_to_rownames("gene")
-  
-  # Calculate correlation matrix
-  correlation_matrix <- cor(correlation_matrix_data, use = "pairwise.complete.obs")
-  
-  message("✅ Cross-database correlation analysis completed!")
-  
-  return(correlation_matrix)
+  # Create comprehensive panel
+  create_comprehensive_panel(normalized_data, summary_stats, plot_dir)
 }
 
 #' Create UpSet analysis plot for protein overlap between databases
 #'
-create_upset_analysis <- function(data, plot_dir) {
+create_upset_analysis <- function(data) {
   message("Creating UpSet analysis for protein overlap...")
   
-  # First, ensure we have unique genes per database (remove duplicates within each database)
+  # Ensure we have unique genes per database
   deduplicated_data <- data %>%
     select(gene, source) %>%
     distinct() %>%
@@ -241,136 +156,12 @@ create_upset_analysis <- function(data, plot_dir) {
   # Create gene lists for overlap analysis
   gene_lists <- split(deduplicated_data$gene, deduplicated_data$source)
   
-  # Additional safety check to remove any remaining NA or empty gene names
+  # Remove any remaining NA or empty gene names
   gene_lists <- lapply(gene_lists, function(x) unique(x[!is.na(x) & x != ""]))
   
   message("✅ UpSet analysis plot created successfully!")
   
-  # Return the gene lists for use in comprehensive panel
   return(gene_lists)
-}
-
-#' Create UpSet plot for integration into comprehensive panel using ggupset
-#'
-create_upset_plot_for_panel <- function(gene_lists, set_colors) {
-  
-  # Convert gene lists to a tidy format for ggupset
-  upset_data <- tibble()
-  
-  for (db_name in names(gene_lists)) {
-    if (length(gene_lists[[db_name]]) > 0) {
-      db_data <- tibble(
-        gene = gene_lists[[db_name]],
-        database = db_name
-      )
-      upset_data <- bind_rows(upset_data, db_data)
-    }
-  }
-  
-  # Create the data structure for ggupset
-  upset_data_wide <- upset_data %>%
-    distinct() %>%
-    mutate(present = 1) %>%
-    pivot_wider(names_from = database, values_from = present, values_fill = 0) %>%
-    rowwise() %>%
-    mutate(
-      databases = list(names(gene_lists)[c_across(-gene) == 1])
-    ) %>%
-    ungroup() %>%
-    select(gene, databases)
-  
-  # Count frequencies and filter out those below 100
-  intersection_counts <- upset_data_wide %>%
-    count(databases) %>%
-    filter(n >= 100) %>%
-    arrange(desc(n))
-  
-  # Create UpSet plot using ggupset with single blue color
-  panel_plot <- upset_data_wide %>%
-    filter(map_chr(databases, paste, collapse = ",") %in% 
-           map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
-    ggplot(aes(x = databases)) +
-    geom_bar(fill = "#4575b4", alpha = 0.85) +
-    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 10) +
-    scale_x_upset(order_by = "freq") +
-    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-    theme_blood_proteomics() +
-    theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_blank(),
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
-      axis.text.y = element_text(size = 20),  # Size for the intersection counts
-      axis.text.x = element_text(size = 20, face = "bold"),  # Size for other axis text
-      panel.grid.major.x = element_blank(),
-      panel.grid.minor.x = element_blank(),
-      panel.grid.major.y = element_line(color = "grey90", size = 0.3),
-      strip.text = element_text(size = 22, face = "bold"),  # Database names
-      strip.background = element_blank()
-    ) +
-    labs(
-      title = "(C) Intersection between different data sources",
-      x = "Data Source Combinations",
-      y = "Number of Proteins"
-    )
-  
-  return(panel_plot)
-}
-
-#' Generate analysis report
-#' 
-generate_analysis_report <- function(results) {
-  
-  report_dir <- get_output_path("01_plasma_protein_analysis", subdir = "reports")
-  if (!dir.exists(report_dir)) {
-    dir.create(report_dir, recursive = TRUE)
-  }
-  report_file <- file.path(report_dir, "plasma_protein_analysis_report.md")
-  
-  # Create report content
-  report_content <- sprintf("
-# Plasma Protein Analysis Report
-
-**Analysis Date:** %s  
-**Script Version:** %s
-
-## Summary Statistics
-
-| Data Source | Technology | Unique Proteins |
-|-------------|------------|-----------------|
-%s
-
-## Key Findings
-
-- **Total proteins across all sources:** %d
-- **Mass spectrometry sources:** %d proteins
-- **Highest individual source:** %s (%d proteins)
-
-## Files Generated
-
-- Summary data: `%s`
-- Plots: `%s/plots/01_plasma_protein_analysis/`
-
----
-*Generated by the refactored plasma protein analysis pipeline*
-",
-    Sys.Date(),
-    PROJECT_CONFIG$version,
-    paste(sprintf("| %s | %s | %d |", 
-                  results$summary$source[1:6], 
-                  results$summary$technology[1:6], 
-                  results$summary$unique_genes[1:6]), 
-          collapse = "\n"),
-    results$summary$unique_genes[results$summary$source == "Total Across Sources"],
-    results$summary$unique_genes[results$summary$source == "MS Technologies Combined"],
-    results$summary$source[1],
-    results$summary$unique_genes[1],
-    "outputs/tables/01_plasma_protein_analysis/plasma_protein_summary.csv",
-    "outputs"
-  )
-  
-  writeLines(report_content, report_file)
-  message(sprintf("Generated report: %s", report_file))
 }
 
 #' Create comprehensive analysis panel for plasma proteins
@@ -475,12 +266,22 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       y = "Number of Proteins"
     )
   
-  # Panel C: Abundance Distribution (Enhanced)
-  panel_C <- ggplot(normalized_data, aes(x = z_score, y = reorder(source, z_score, median), fill = technology)) +
+  # Panel C: Abundance Distribution (Enhanced) - Using traditional z-score for distribution shapes
+  # Create data with traditional z-score normalization to show actual distribution differences
+  panel_c_data <- normalized_data %>%
+    group_by(source) %>%
+    mutate(
+      # Traditional z-score normalization to preserve distribution shapes
+      z_score_traditional = (log_abundance - mean(log_abundance, na.rm = TRUE)) / sd(log_abundance, na.rm = TRUE)
+    ) %>%
+    ungroup()
+  
+  panel_C <- ggplot(panel_c_data, aes(x = z_score_traditional, y = reorder(source, z_score_traditional, median), fill = technology)) +
     ggridges::geom_density_ridges(alpha = 0.8, scale = 0.9, bandwidth = 0.3, color = "white", size = 0.5) +
     stat_summary(fun = median, geom = "point", shape = 20, size = 3, color = "red", alpha = 0.8, 
                  position = position_nudge(y = 0)) +
     scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
+    scale_x_continuous(limits = c(-5, 5), breaks = seq(-4, 4, 2)) +
     theme_blood_proteomics() +
     theme(
       plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
@@ -493,9 +294,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.grid.major.x = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(C) Distribution shapes of abundances by data sources",
-      subtitle = "Ridgeline plots showing full distribution shapes",
-      x = "Z-Score",
+      title = "(C) Distribution of abundance/expression by data sources",
+      subtitle = "Ridgeline plots showing actual distribution differences (traditional z-score)",
+      x = "Traditional Z-Score (log abundance/expression)",
       y = NULL
           )
     
@@ -539,10 +340,10 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     guides(color = guide_legend(ncol = 1, override.aes = list(size = 6, alpha = 0.9))) +
     labs(
-      title = "(D) Protein abundance correlation with PeptideAtlas",
-      subtitle = "Proteins ordered by PeptideAtlas z-score",
+      title = "(D) Protein abundance/expression correlation with PeptideAtlas",
+      subtitle = "Proteins ordered by PeptideAtlas quantile-normalized observations",
       x = NULL,  # Removed x-axis title
-      y = "Z-Score"
+      y = "Quantile-normalized Values"
     )
   
   # === SECTION 3: QUANTMS SAMPLE DISTRIBUTION ANALYSIS ===
@@ -550,11 +351,10 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   # Panel E: QuantMS Sample Count Distribution (New)
   message("  - Creating Panel E: QuantMS sample distribution...")
   
-  # Get the QuantMS data and recalculate log_abundance from raw abundance (no z-score)
+  # Get the QuantMS data with quantile-normalized z-scores
   quantms_sample_data <- normalized_data %>%
     filter(source == "quantms") %>%
-    mutate(log_abundance_raw = log10(abundance)) %>%  # Recalculate log without any normalization
-    select(gene, log_abundance_raw, abundance)
+    select(gene, z_score, abundance, log_abundance)
   
   # Calculate sample counts directly from raw data
   message("  - Calculating sample counts from raw QuantMS data...")
@@ -599,18 +399,17 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     slice_tail(n = 10) %>%
     pull(gene)
   
-  # 3) Top 10 quantms genes not in PeptideAtlas - prioritize by abundance, then sample count
-  # (Changed to prioritize abundance over sample count to avoid high-sample-count genes in wrong visual groups)
+  # 3) Top 10 quantms genes not in PeptideAtlas - prioritize by z-score, then sample count
   quantms_only_high <- quantms_sample_data %>%
     filter(!gene %in% peptideatlas_genes$gene) %>%
-    arrange(desc(log_abundance_raw), desc(sample_count)) %>%
+    arrange(desc(z_score), desc(sample_count)) %>%
     slice_head(n = 10) %>%
     pull(gene)
   
   # 4) Bottom 10 low-abundant quantms genes not in PeptideAtlas
   quantms_only_low <- quantms_sample_data %>%
     filter(!gene %in% peptideatlas_genes$gene) %>%
-    arrange(log_abundance_raw) %>%
+    arrange(z_score) %>%
     slice_head(n = 10) %>%
     pull(gene)
   
@@ -622,14 +421,12 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   quantms_sample_data <- quantms_sample_data %>%
     mutate(
       sample_group = case_when(
-        sample_count >= 10 & sample_count <= 15 ~ "10-15",
-        sample_count >= 16 & sample_count <= 20 ~ "16-20", 
-        sample_count >= 21 & sample_count <= 30 ~ "21-30",
-        sample_count >= 31 & sample_count <= 49 ~ "31-49",
-        sample_count >= 50 ~ "50+",
+        sample_count >= 10 & sample_count <= 20 ~ "10-20",
+        sample_count >= 21 & sample_count <= 39 ~ "21-39", 
+        sample_count >= 40 ~ "40+",
         TRUE ~ "Other"
       ),
-      sample_group = factor(sample_group, levels = c("10-15", "16-20", "21-30", "31-49", "50+")),
+      sample_group = factor(sample_group, levels = c("10-20", "21-39", "40+")),
              gene_category = case_when(
          gene %in% top_peptideatlas_in_quantms ~ "High PeptideAtlas (shared)",
          gene %in% low_peptideatlas_in_quantms ~ "Low PeptideAtlas (shared)", 
@@ -671,7 +468,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   )
   
   # Create violin plot with highlighted gene categories
-  panel_E <- ggplot(quantms_sample_data, aes(x = sample_group, y = log_abundance_raw)) +
+  panel_E <- ggplot(quantms_sample_data, aes(x = sample_group, y = z_score)) +
     geom_violin(alpha = 0.6, scale = "width", trim = TRUE, width = 0.7, fill = "lightgrey", color = "grey60") +
     # Background points for all other genes
     geom_jitter(data = filter(quantms_sample_data, gene_category == "Other"),
@@ -735,22 +532,137 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       )
     ) +
     labs(
-      title = "(E) quantms protein abundances by sample presence",
-      subtitle = "Distribution with highlighted gene categories (10 genes per category)",
+      title = "(E) QuantMS protein expression by sample presence",
+      subtitle = "Quantile-normalized expression distribution with highlighted gene categories (10 genes per category)",
       x = "Number of Samples", 
-      y = "Log10(Abundance)"
+      y = "Quantile-normalized Expression"
     )
   
 
+  
+  # === SECTION 4: COMPLEMENTARY PLATFORMS ANALYSIS ===
+  
+  # Panel F: Complementary Platform Strengths
+  message("  - Creating Panel F: Complementary platforms analysis...")
+  
+  # Create complementary analysis using current quantile-normalized data
+  # Extract PeptideAtlas and QuantMS data with quantile-normalized z-scores
+  peptideatlas_data_f <- normalized_data %>%
+    filter(source == "PeptideAtlas") %>%
+    select(gene, z_score) %>%
+    rename(z_score_PeptideAtlas = z_score)
+  
+  quantms_data_f <- normalized_data %>%
+    filter(source == "quantms") %>%
+    select(gene, z_score) %>%
+    rename(z_score_QuantMS = z_score)
+  
+  # Create complementary analysis data using current quantile-normalized z-scores
+  complementary_data <- inner_join(peptideatlas_data_f, quantms_data_f, by = "gene") %>%
+    mutate(
+      # Calculate platform advantages
+      peptideatlas_advantage = z_score_PeptideAtlas - z_score_QuantMS,
+      quantms_advantage = z_score_QuantMS - z_score_PeptideAtlas,
+      # Determine platform strength
+      platform_strength = case_when(
+        abs(peptideatlas_advantage) < 0.5 ~ "Both Platforms Equivalent",
+        peptideatlas_advantage > 0.5 ~ "PeptideAtlas Superior", 
+        quantms_advantage > 0.5 ~ "QuantMS Superior",
+        TRUE ~ "Both Platforms Equivalent"
+      ),
+      # Calculate combined evidence and detection categories
+      combined_evidence = sqrt(z_score_PeptideAtlas^2 + z_score_QuantMS^2),
+      detection_category = case_when(
+        z_score_PeptideAtlas > 1 & z_score_QuantMS > 1 ~ "High in Both",
+        z_score_PeptideAtlas > 1 & z_score_QuantMS <= 1 ~ "High in PeptideAtlas Only",
+        z_score_PeptideAtlas <= 1 & z_score_QuantMS > 1 ~ "High in QuantMS Only",
+        TRUE ~ "Low in Both"
+      )
+    )
+  
+  # If complementary analysis file exists, load it for comparison but use current data
+  complementary_file <- file.path("outputs/tables/01_plasma_protein_analysis/all_proteins_complementary_analysis.csv")
+  
+  # Calculate statistics for plot annotations
+  coverage_stats <- complementary_data %>%
+    summarise(
+      total_proteins = n(),
+      both_high = sum(detection_category == "High in Both"),
+      pa_only_high = sum(detection_category == "High in PeptideAtlas Only"),
+      qms_only_high = sum(detection_category == "High in QuantMS Only")
+    )
+  
+  # Create the complementary platforms plot
+  panel_F <- ggplot(complementary_data, aes(x = z_score_PeptideAtlas, y = z_score_QuantMS)) +
+    # Background quadrants
+    annotate("rect", xmin = -Inf, xmax = 1, ymin = -Inf, ymax = 1, 
+             fill = "lightgray", alpha = 0.2) +
+    annotate("rect", xmin = 1, xmax = Inf, ymin = 1, ymax = Inf, 
+             fill = "gold", alpha = 0.2) +
+    annotate("rect", xmin = 1, xmax = Inf, ymin = -Inf, ymax = 1, 
+             fill = "lightblue", alpha = 0.2) +
+    annotate("rect", xmin = -Inf, xmax = 1, ymin = 1, ymax = Inf, 
+             fill = "lightcoral", alpha = 0.2) +
+    
+    # Points colored by platform strength
+    geom_point(aes(color = platform_strength, size = combined_evidence), alpha = 0.7) +
+    
+    # Reference lines
+    geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
+    geom_vline(xintercept = 1, linetype = "dashed", color = "gray50") +
+    geom_abline(intercept = 0, slope = 1, linetype = "dotted", color = "black", alpha = 0.5) +
+    
+    # Dynamic quadrant labels with actual counts
+    annotate("text", x = max(complementary_data$z_score_PeptideAtlas) * 0.85, 
+             y = max(complementary_data$z_score_QuantMS) * 0.85, 
+             label = paste0("Both High\n(n=", coverage_stats$both_high, ")"), 
+             size = 8, fontface = "bold", color = "darkgoldenrod") +
+    annotate("text", x = max(complementary_data$z_score_PeptideAtlas) * 0.85, 
+             y = min(complementary_data$z_score_QuantMS) * 0.85, 
+             label = paste0("PeptideAtlas\nSuperior\n(n=", coverage_stats$pa_only_high, ")"), 
+             size = 8, fontface = "bold", color = "blue") +
+    annotate("text", x = min(complementary_data$z_score_PeptideAtlas) * 0.5, 
+             y = max(complementary_data$z_score_QuantMS) * 0.85, 
+             label = paste0("QuantMS\nSuperior\n(n=", coverage_stats$qms_only_high, ")"), 
+             size = 8, fontface = "bold", color = "red") +
+    
+    scale_color_manual(values = c("PeptideAtlas Superior" = "#4575b4", 
+                                 "QuantMS Superior" = "#d73027",
+                                 "Both Platforms Equivalent" = "#35978f"),
+                      name = "Platform Strength") +
+    scale_size_continuous(range = c(0.8, 3), name = "Combined\nEvidence") +
+    
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 20),
+      axis.title = element_text(size = 24, face = "bold"),
+      axis.text = element_text(size = 22),
+      legend.position = "right",
+      legend.title = element_text(size = 22, face = "bold"),
+      legend.text = element_text(size = 20),
+      legend.key.size = unit(1.5, "lines"),
+      panel.grid.major = element_line(color = "grey90", linewidth = 0.3)
+    ) +
+    guides(
+      color = guide_legend(override.aes = list(size = 6, alpha = 1)),
+      size = guide_legend(override.aes = list(alpha = 1))
+    ) +
+    labs(
+      title = "(F) Complementary platform strengths",
+      subtitle = sprintf("Quantile-normalized analysis of %d proteins present in both platforms", coverage_stats$total_proteins),
+      x = "PeptideAtlas Quantile-normalized Observations", 
+      y = "QuantMS Quantile-normalized Expression"
+    )
   
   # === COMBINE PANELS WITH ENHANCED LAYOUT ===
   
   # Row 1: Coverage and Overlap (A-B)
   # Row 2: Distribution and Cross-Database Analysis (C-D) 
-  # Row 3: QuantMS Sample Analysis (E) spanning full width
+  # Row 3: QuantMS Sample Analysis and Complementary Platforms (E-F)
   comprehensive_panel <- (panel_A | panel_B) / 
                          (panel_C | panel_D) /
-                         panel_E +
+                         (panel_E | panel_F) +
                          plot_layout(heights = c(1.0, 1.0, 1.0)) &
                          theme(legend.position = "right")
   
@@ -776,6 +688,167 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   message("✅ Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)
+}
+
+#' Create UpSet plot for integration into comprehensive panel using ggupset
+#'
+create_upset_plot_for_panel <- function(gene_lists, set_colors) {
+  
+  # Convert gene lists to a tidy format for ggupset
+  upset_data <- tibble()
+  
+  for (db_name in names(gene_lists)) {
+    if (length(gene_lists[[db_name]]) > 0) {
+      db_data <- tibble(
+        gene = gene_lists[[db_name]],
+        database = db_name
+      )
+      upset_data <- bind_rows(upset_data, db_data)
+    }
+  }
+  
+  # Create the data structure for ggupset
+  upset_data_wide <- upset_data %>%
+    distinct() %>%
+    mutate(present = 1) %>%
+    pivot_wider(names_from = database, values_from = present, values_fill = 0) %>%
+    rowwise() %>%
+    mutate(
+      databases = list(names(gene_lists)[c_across(-gene) == 1])
+    ) %>%
+    ungroup() %>%
+    select(gene, databases)
+  
+  # Count frequencies and filter out those below 100
+  intersection_counts <- upset_data_wide %>%
+    count(databases) %>%
+    filter(n >= 100) %>%
+    arrange(desc(n))
+  
+  # Create UpSet plot using ggupset with single blue color
+  panel_plot <- upset_data_wide %>%
+    filter(map_chr(databases, paste, collapse = ",") %in% 
+           map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
+    ggplot(aes(x = databases)) +
+    geom_bar(fill = "#4575b4", alpha = 0.85) +
+    geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 8) +
+    scale_x_upset(order_by = "freq") +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
+    theme_blood_proteomics() +
+    theme(
+      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_blank(),
+      axis.title = element_text(size = 22),
+      axis.text = element_text(size = 20),
+      axis.text.y = element_text(size = 20),  # Size for the intersection counts
+      axis.text.x = element_text(size = 20, face = "bold"),  # Size for other axis text
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.y = element_line(color = "grey90", size = 0.3),
+      strip.text = element_text(size = 22, face = "bold"),  # Database names
+      strip.background = element_blank()
+    ) +
+    labs(
+      title = "(C) Intersection between different data sources",
+      x = "Data Source Combinations",
+      y = "Number of Proteins"
+    )
+  
+  return(panel_plot)
+}
+
+#' Generate analysis report
+#' 
+generate_analysis_report <- function(results) {
+  
+  report_dir <- get_output_path("01_plasma_protein_analysis", subdir = "reports")
+  if (!dir.exists(report_dir)) {
+    dir.create(report_dir, recursive = TRUE)
+  }
+  report_file <- file.path(report_dir, "plasma_protein_analysis_report.md")
+  
+  # Extract key metrics
+  total_unique_genes <- results$summary$unique_genes[results$summary$source == "Total Across Sources"]
+  ms_unique_genes <- results$summary$unique_genes[results$summary$source == "MS Technologies Combined"]
+  highest_source_idx <- which.max(results$summary$unique_genes[!results$summary$source %in% c("Total Across Sources", "MS Technologies Combined")])
+  highest_source <- results$summary$source[!results$summary$source %in% c("Total Across Sources", "MS Technologies Combined")][highest_source_idx]
+  highest_source_count <- results$summary$unique_genes[!results$summary$source %in% c("Total Across Sources", "MS Technologies Combined")][highest_source_idx]
+  
+  # Create detailed summary table
+  detailed_summary <- results$summary %>%
+    filter(!source %in% c("Total Across Sources", "MS Technologies Combined")) %>%
+    arrange(desc(unique_genes))
+  
+  # Create report content
+  report_content <- sprintf("
+# Plasma Protein Analysis Report
+
+**Analysis Date:** %s  
+**Script Version:** %s
+
+## 🔬 TOTAL UNIQUE GENES DETECTED: %s
+
+This analysis identified **%s unique genes** across all plasma protein databases, representing the most comprehensive plasma proteome compilation to date.
+
+## Summary Statistics
+
+### Complete Data Source Overview
+| Data Source | Technology | Unique Proteins | Total Entries | Median Abundance | Abundance Type |
+|-------------|------------|-----------------|---------------|------------------|----------------|
+%s
+
+### Key Findings
+
+- **🎯 Total unique genes across all sources:** **%s**
+- **⚗️ Mass spectrometry technologies combined:** %s unique genes
+- **🥇 Highest individual source:** %s (%s proteins)
+- **📊 Data sources analyzed:** %d databases
+- **🔬 Technologies represented:** %s
+
+### Source-Specific Details
+%s
+
+## Files Generated
+
+- **Summary data:** `%s`
+- **Comprehensive plots:** `%s/plots/01_plasma_protein_analysis/`
+- **Detailed analysis:** `%s/reports/01_plasma_protein_analysis/`
+
+---
+*Generated by the refactored plasma protein analysis pipeline*  
+*Total proteome coverage: %s unique genes*
+",
+    Sys.Date(),
+    PROJECT_CONFIG$version,
+    scales::comma(total_unique_genes),
+    scales::comma(total_unique_genes),
+    paste(sprintf("| %s | %s | %s | %s | %g | %s |", 
+                  detailed_summary$source, 
+                  detailed_summary$technology, 
+                  scales::comma(detailed_summary$unique_genes),
+                  scales::comma(detailed_summary$total_entries),
+                  detailed_summary$median_abundance,
+                  detailed_summary$abundance_type), 
+          collapse = "\n"),
+    scales::comma(total_unique_genes),
+    scales::comma(ms_unique_genes),
+    highest_source,
+    scales::comma(highest_source_count),
+    nrow(detailed_summary),
+    paste(unique(detailed_summary$technology), collapse = ", "),
+    paste(sprintf("- **%s**: %s proteins (%s technology)", 
+                  detailed_summary$source[1:min(3, nrow(detailed_summary))], 
+                  scales::comma(detailed_summary$unique_genes[1:min(3, nrow(detailed_summary))]),
+                  detailed_summary$technology[1:min(3, nrow(detailed_summary))]), 
+          collapse = "\n"),
+    "outputs/tables/01_plasma_protein_analysis/plasma_protein_summary.csv",
+    "outputs",
+    "outputs",
+    scales::comma(total_unique_genes)
+  )
+  
+  writeLines(report_content, report_file)
+  message(sprintf("Generated report: %s", report_file))
 }
 
 # Execute analysis
