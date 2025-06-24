@@ -214,7 +214,30 @@ convert_to_gene_symbol <- function(ids, cache_file = "data/cache/protein_to_gene
   cache_hits <- 0
   db_queries <- 0
   
+  # Initialize progress tracking
+  total_ids <- length(ids)
+  progress_interval <- 100
+  last_progress <- 0
+  
+  # Create simple progress bar display
+  cat("Progress: [")
+  progress_width <- 50
+  cat(paste(rep(" ", progress_width), collapse = ""))
+  cat("] 0%\r")
+  flush.console()
+  
   for (i in seq_along(ids)) {
+    # Update progress bar every 100 iterations or at the end
+    if (i %% progress_interval == 0 || i == total_ids) {
+      percent_complete <- round(100 * i / total_ids)
+      filled_width <- round(progress_width * i / total_ids)
+      
+      cat("Progress: [")
+      cat(paste(rep("=", filled_width), collapse = ""))
+      cat(paste(rep(" ", progress_width - filled_width), collapse = ""))
+      cat(sprintf("] %d%% (%d/%d)\r", percent_complete, i, total_ids))
+      flush.console()
+    }
     id <- as.character(ids[i])
     
     # Skip if already NA or empty
@@ -272,6 +295,9 @@ convert_to_gene_symbol <- function(ids, cache_file = "data/cache/protein_to_gene
       Sys.sleep(1)  # 1 second pause every 10 queries
     }
   }
+  
+  # Complete the progress bar
+  cat("\n")
   
   # Count successes
   mapped_count <- sum(!is.na(results))

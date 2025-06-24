@@ -1,0 +1,40 @@
+
+ALL PROTEINS COMPLEMENTARY ANALYSIS SUMMARY
+===========================================
+
+DATASET OVERVIEW:
+- Total proteins analyzed: 2138 (present in both platforms)
+- PeptideAtlas total proteins: 4603  
+- QuantMS total proteins: 2799
+- Overlap percentage: 46.4% of PeptideAtlas, 76.4% of QuantMS
+
+PLATFORM STRENGTHS:
+- PeptideAtlas Superior: 409 proteins (19.1%)
+- QuantMS Superior: 443 proteins (20.7%)  
+- Both Platforms Equivalent: 1286 proteins (60.1%)
+
+DETECTION CATEGORIES:
+- High in Both Platforms: 83 proteins (3.9%)
+- High in PeptideAtlas Only: 174 proteins (8.1%)
+- High in QuantMS Only: 181 proteins (8.5%)
+- Moderate in Both: 141 proteins (6.6%)
+- Low in Both: 1559 proteins (72.9%)
+
+CORRELATION ANALYSIS:
+- Pearson correlation: 0.220
+- Spearman correlation: 0.008
+
+COMPLEMENTARITY METRICS:
+- Total proteins with high confidence in at least one platform: 438 (20.5%)
+- Proteins with synergistic high detection in both: 83 (3.9%)
+- Proteins unique to PeptideAtlas (high): 37
+- Proteins unique to QuantMS (high): 166
+- Mean combined evidence score: 1.149
+
+KEY INSIGHTS:
+1. 39.9% of proteins show platform-specific advantages
+2. 3.9% benefit from both platforms working together at high confidence
+3. Each platform contributes unique high-confidence detections
+4. Combined approach provides more comprehensive proteome coverage
+5. Correlation of 0.220 indicates moderate agreement with substantial complementarity
+

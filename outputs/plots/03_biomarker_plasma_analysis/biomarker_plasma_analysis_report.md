@@ -1,6 +1,6 @@
 # Biomarker Plasma Analysis Report
 
-**Analysis Date:** 2025-06-20
+**Analysis Date:** 2025-06-24
 **Script:** `03_biomarker_plasma_analysis.R`
 **Description:** Analysis of biomarker protein expression across plasma databases with waterfall plots and abundance distribution analysis.
 
@@ -15,7 +15,7 @@
 | HPA PEA | 1436 | 37 | 2.6% | PEA |
 | GPMDB | 2266 | 43 | 1.9% | MS |
 | PAXDB | 7021 | 60 | 0.9% | MS |
-| quantms | 4979 | 51 | 1.0% | MS |
+| quantms | 2799 | 39 | 1.4% | MS |
 
 ## Key Findings
 

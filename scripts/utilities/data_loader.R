@@ -329,9 +329,10 @@ process_gpmdb_data <- function(data, force_mapping = FALSE) {
 #' 
 #' @param sample_type The sample type, e.g., "plasma" or "serum". This corresponds to the subdirectory in `quantms/`.
 #' @param force_mapping Force re-mapping of protein IDs to gene symbols
+#' @param min_samples Minimum number of samples required for gene inclusion (default: 10, set to 0 for no filtering)
 #' @return A processed data frame for QuantMS data
 #' 
-load_quantms_data <- function(sample_type, force_mapping = FALSE) {
+load_quantms_data <- function(sample_type, force_mapping = FALSE, min_samples = 10) {
   
   quantms_dir <- file.path(PROJECT_CONFIG$directories$data_raw, "quantms", sample_type)
   
@@ -353,7 +354,7 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   # Read and combine all files
   all_data <- map_dfr(quantms_files, ~{
     read_csv(.x, show_col_types = FALSE) %>%
-      select(protein_accession = ProteinName, Ibaq = Ibaq, SampleID)
+      select(protein_accession = ProteinName, Ibaq = IbaqNorm, SampleID)
   })
   
   # Map protein accessions to gene symbols on the entire dataset
@@ -361,14 +362,36 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   
   # Filter out proteins that couldn't be mapped
   mapped_data <- all_data %>%
-    filter(!is.na(gene) & gene != "") %>%
-    select(gene, Ibaq)
+    filter(!is.na(gene) & gene != "" & !is.na(Ibaq) & Ibaq > 0) %>%
+    select(gene, Ibaq, SampleID)
+  
+  # Filter genes by sample prevalence if min_samples > 0
+  if (min_samples > 0) {
+    gene_sample_counts <- mapped_data %>%
+      group_by(gene) %>%
+      summarise(sample_count = n_distinct(SampleID), .groups = "drop")
+    
+    genes_with_sufficient_samples <- gene_sample_counts %>%
+      filter(sample_count >= min_samples) %>%
+      pull(gene)
+    
+    message(sprintf("  - Genes present in >=%d samples: %d out of %d total genes", 
+                    min_samples, length(genes_with_sufficient_samples), nrow(gene_sample_counts)))
+    
+    # Filter mapped data to include only genes present in >=min_samples samples
+    filtered_data <- mapped_data %>%
+      filter(gene %in% genes_with_sufficient_samples)
+  } else {
+    message("  - No sample filtering applied, keeping all genes")
+    filtered_data <- mapped_data
+  }
   
   # Now, aggregate by gene
-  processed_data <- mapped_data %>%
+  processed_data <- filtered_data %>%
     group_by(gene) %>%
     summarise(
       abundance = median(Ibaq, na.rm = TRUE),
+      sample_count = n_distinct(SampleID),
       protein_count = n(),
       .groups = "drop"
     )
@@ -381,7 +404,11 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE) {
   # Add metadata
   processed_data$source <- "quantms"
   processed_data$technology <- "MS"
-  processed_data$abundance_type <- "iBAQ"
+  processed_data$abundance_type <- "iBAQ Normalized"
   
-  return(processed_data)
+  # Keep the standard columns for compatibility (including protein_count to match other sources)
+  final_data <- processed_data %>%
+    select(gene, abundance, protein_count, source, technology, abundance_type)
+  
+  return(final_data)
 } 

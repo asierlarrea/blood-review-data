@@ -241,7 +241,9 @@ apply_zscore_normalization <- function(data, abundance_col = "abundance", group_
     mutate(log_abundance = log10(.data[[abundance_col]] + PROJECT_CONFIG$analysis$log_transform_offset)) %>%
     group_by(.data[[group_col]]) %>%
     mutate(
-      z_score = (log_abundance - mean(log_abundance, na.rm = TRUE)) / sd(log_abundance, na.rm = TRUE)
+      # Apply quantile-to-normal transformation for robust handling of outliers
+      rank_quantile = rank(log_abundance, ties.method = "average") / (n() + 1),
+      z_score = qnorm(rank_quantile)   # qnorm already produces standard normal distribution
     ) %>%
     ungroup()
 }
