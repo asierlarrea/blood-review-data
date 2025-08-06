@@ -1,0 +1,2139 @@
+gene	category
+A1BG	Both High
+ACTA2	Both High
+ADIPOQ	Both High
+AFM	Both High
+AFP	Both High
+AGT	Both High
+AHSG	Both High
+AMBP	Both High
+ANG	Both High
+APCS	Both High
+APOA1	Both High
+APOA2	Both High
+APOA4	Both High
+APOB	Both High
+APOC1	Both High
+APOC2	Both High
+APOC3	Both High
+APOE	Both High
+APOH	Both High
+APOL1	Both High
+APOM	Both High
+AZGP1	Both High
+BTD	Both High
+C1QA	Both High
+C1QB	Both High
+C1QC	Both High
+C1R	Both High
+C1S	Both High
+C2	Both High
+C3	Both High
+C4BPA	Both High
+C4BPB	Both High
+C6	Both High
+C7	Both High
+C8A	Both High
+C8B	Both High
+C8G	Both High
+C9	Both High
+CCL28	Both High
+CD14	Both High
+CFB	Both High
+CFH	Both High
+CFI	Both High
+CLEC3B	Both High
+CLU	Both High
+CNDP1	Both High
+CP	Both High
+CPB2	Both High
+CPN1	Both High
+CPN2	Both High
+CST3	Both High
+EFEMP1	Both High
+F10	Both High
+F12	Both High
+F13B	Both High
+F2	Both High
+FCN3	Both High
+FETUB	Both High
+FN1	Both High
+GC	Both High
+GP5	Both High
+GPX3	Both High
+H2AX	Both High
+HABP2	Both High
+HBZ	Both High
+HPX	Both High
+HRG	Both High
+IGFALS	Both High
+IGFBP3	Both High
+IGKV1D-43	Both High
+IGLV7-43	Both High
+ITIH1	Both High
+ITIH2	Both High
+ITIH3	Both High
+ITIH4	Both High
+KLKB1	Both High
+KNG1	Both High
+LBP	Both High
+LRG1	Both High
+LUM	Both High
+MASP1	Both High
+MDK	Both High
+PF4	Both High
+PGLYRP2	Both High
+PLG	Both High
+PPBP	Both High
+PRB2	Both High
+PROC	Both High
+PROS1	Both High
+PSG1	Both High
+PTN	Both High
+PZP	Both High
+RBP4	Both High
+S100A8	Both High
+S100A9	Both High
+SAA4	Both High
+SERPINA10	Both High
+SERPINA3	Both High
+SERPINA4	Both High
+SERPINA5	Both High
+SERPINA6	Both High
+SERPINA7	Both High
+SERPIND1	Both High
+SERPINF1	Both High
+SERPINF2	Both High
+SERPING1	Both High
+SFRP1	Both High
+SH3BGRL3	Both High
+SHBG	Both High
+SPARC	Both High
+VTN	Both High
+ADAMTS8	Low in Both
+ADAMTSL3	Low in Both
+ADGRA2	Low in Both
+ADH6	Low in Both
+AGXT	Low in Both
+AHCYL2	Low in Both
+AKR7A3	Low in Both
+AKT1	Low in Both
+AMIGO2	Low in Both
+ANGPT1	Low in Both
+AOC1	Low in Both
+AP2A2	Low in Both
+APOBR	Low in Both
+ARG1	Low in Both
+ARHGAP18	Low in Both
+ARHGAP21	Low in Both
+ARRB1	Low in Both
+ASGR2	Low in Both
+ATE1	Low in Both
+ATXN2L	Low in Both
+B4GALT2	Low in Both
+BCAN	Low in Both
+BCAT2	Low in Both
+BCL2L13	Low in Both
+BHMT2	Low in Both
+C11ORF54	Low in Both
+CACHD1	Low in Both
+CADM3	Low in Both
+CALML3	Low in Both
+CALU	Low in Both
+CAMK2B	Low in Both
+CAMK2G	Low in Both
+CBL	Low in Both
+CCN3	Low in Both
+CD101	Low in Both
+CD163L1	Low in Both
+CD200R1	Low in Both
+CD86	Low in Both
+CDH8	Low in Both
+CDSN	Low in Both
+CELA2B	Low in Both
+CEP170	Low in Both
+CES3	Low in Both
+CHMP4A	Low in Both
+CHRD	Low in Both
+CLC	Low in Both
+CLEC11A	Low in Both
+CLEC4M	Low in Both
+CLIP2	Low in Both
+CLSTN2	Low in Both
+CLSTN3	Low in Both
+CNTN5	Low in Both
+CNTN6	Low in Both
+CNTNAP4	Low in Both
+COCH	Low in Both
+COL11A1	Low in Both
+COL16A1	Low in Both
+COL21A1	Low in Both
+COL2A1	Low in Both
+COL5A3	Low in Both
+COL9A1	Low in Both
+CRB2	Low in Both
+CRIM1	Low in Both
+CRIP1	Low in Both
+CRISP2	Low in Both
+CRLF3	Low in Both
+CRNN	Low in Both
+CSF2RA	Low in Both
+CST4	Low in Both
+CTSV	Low in Both
+DCC	Low in Both
+DCPS	Low in Both
+DDC	Low in Both
+DES	Low in Both
+DNPEP	Low in Both
+DNPH1	Low in Both
+EEA1	Low in Both
+EIF4A2	Low in Both
+ELN	Low in Both
+EMILIN3	Low in Both
+EML2	Low in Both
+ENPP3	Low in Both
+ENPP7	Low in Both
+ENTPD7	Low in Both
+EPB41L3	Low in Both
+EPHA7	Low in Both
+EPHB2	Low in Both
+EPHB6	Low in Both
+EPHX2	Low in Both
+ERBB2	Low in Both
+ERBB3	Low in Both
+EXTL1	Low in Both
+FAM171A1	Low in Both
+FAM20B	Low in Both
+FAS	Low in Both
+FCER2	Low in Both
+FGFR2	Low in Both
+FLRT3	Low in Both
+FLT1	Low in Both
+FLT3	Low in Both
+FST	Low in Both
+FSTL3	Low in Both
+FTCD	Low in Both
+FURIN	Low in Both
+GALM	Low in Both
+GALNT3	Low in Both
+GATM	Low in Both
+GFRA3	Low in Both
+GH1	Low in Both
+GLDC	Low in Both
+GNPDA2	Low in Both
+GNPTAB	Low in Both
+GPC6	Low in Both
+GSDMA	Low in Both
+GYS1	Low in Both
+H4C1	Low in Both
+HAAO	Low in Both
+HAVCR2	Low in Both
+HDHD2	Low in Both
+HGD	Low in Both
+HHIPL1	Low in Both
+HIBADH	Low in Both
+HLA-DRA	Low in Both
+HPN	Low in Both
+HS6ST1	Low in Both
+HS6ST3	Low in Both
+HSPA5	Low in Both
+IDUA	Low in Both
+IFNAR1	Low in Both
+IGSF10	Low in Both
+IL10RB	Low in Both
+IL1R1	Low in Both
+IL27RA	Low in Both
+INAFM2	Low in Both
+INHBA	Low in Both
+INSR	Low in Both
+ISOC1	Low in Both
+ITGA4	Low in Both
+ITGB5	Low in Both
+ITGB7	Low in Both
+JAG2	Low in Both
+KIAA1549L	Low in Both
+KLB	Low in Both
+KLK7	Low in Both
+KPRP	Low in Both
+LAMC2	Low in Both
+LAMC3	Low in Both
+LGALS1	Low in Both
+LGALS7	Low in Both
+LGALSL	Low in Both
+LOXL3	Low in Both
+LRIG1	Low in Both
+LRRC15	Low in Both
+LRRC32	Low in Both
+LRRC4	Low in Both
+LTBP3	Low in Both
+LXN	Low in Both
+MAN2C1	Low in Both
+MASP2	Low in Both
+MAVS	Low in Both
+MEGF6	Low in Both
+METRNL	Low in Both
+MGAM	Low in Both
+MINK1	Low in Both
+MMP11	Low in Both
+MPP1	Low in Both
+MRI1	Low in Both
+MUC6	Low in Both
+MXRA8	Low in Both
+MYBPC1	Low in Both
+MYL3	Low in Both
+MYO18A	Low in Both
+MYOM2	Low in Both
+MYRF	Low in Both
+NDST2	Low in Both
+NECTIN4	Low in Both
+NELL1	Low in Both
+NFASC	Low in Both
+NICOL1	Low in Both
+NIT2	Low in Both
+NPTX2	Low in Both
+NPTXR	Low in Both
+NRXN3	Low in Both
+NUCB1	Low in Both
+NUCB2	Low in Both
+OAS3	Low in Both
+OPTN	Low in Both
+OTC	Low in Both
+PARD3	Low in Both
+PCCA	Low in Both
+PCDH10	Low in Both
+PCDH7	Low in Both
+PCDHB15	Low in Both
+PDLIM3	Low in Both
+PGAM2	Low in Both
+PIP4K2A	Low in Both
+PIPOX	Low in Both
+PKD1	Low in Both
+PKP1	Low in Both
+PLAUR	Low in Both
+PLBD2	Low in Both
+PLCG2	Low in Both
+PLXNC1	Low in Both
+PNLIPRP1	Low in Both
+POF1B	Low in Both
+PRELP	Low in Both
+PRRT3	Low in Both
+PSG2	Low in Both
+PSG3	Low in Both
+PSG4	Low in Both
+PSG6	Low in Both
+PSG8	Low in Both
+PSMA5	Low in Both
+PSMB10	Low in Both
+PURA	Low in Both
+RASA1	Low in Both
+RCN1	Low in Both
+RCN3	Low in Both
+RCSD1	Low in Both
+REG3A	Low in Both
+RGMB	Low in Both
+RPL22	Low in Both
+RPL23A	Low in Both
+RPL35A	Low in Both
+RPS16	Low in Both
+RPS20	Low in Both
+RPS25	Low in Both
+RPS3	Low in Both
+RPS5	Low in Both
+RPS9	Low in Both
+S100A11	Low in Both
+S100A12	Low in Both
+S100A6	Low in Both
+SARDH	Low in Both
+SCLY	Low in Both
+SCRN1	Low in Both
+SDC1	Low in Both
+SDC4	Low in Both
+SDF4	Low in Both
+SDHB	Low in Both
+SEMA3D	Low in Both
+SERPINB10	Low in Both
+SERPINB12	Low in Both
+SERPINB13	Low in Both
+SERPINB9	Low in Both
+SERPINE1	Low in Both
+SIGLEC1	Low in Both
+SIGLEC9	Low in Both
+SLC44A2	Low in Both
+SLITRK3	Low in Both
+SLITRK4	Low in Both
+SMPD1	Low in Both
+SMPDL3B	Low in Both
+SORT1	Low in Both
+SPOCK2	Low in Both
+SSR1	Low in Both
+STK10	Low in Both
+SUSD1	Low in Both
+SYNE1	Low in Both
+TATDN1	Low in Both
+TBCA	Low in Both
+TCTN3	Low in Both
+TFR2	Low in Both
+TGFBR2	Low in Both
+THY1	Low in Both
+TINAGL1	Low in Both
+TMEM132D	Low in Both
+TMEM132E	Low in Both
+TMEM25	Low in Both
+TNFRSF1A	Low in Both
+TNFRSF1B	Low in Both
+TNFSF13B	Low in Both
+TNR	Low in Both
+TP53I3	Low in Both
+TWSG1	Low in Both
+UBA7	Low in Both
+UBE2O	Low in Both
+UCHL1	Low in Both
+UPB1	Low in Both
+VEGFC	Low in Both
+VLDLR	Low in Both
+VWCE	Low in Both
+WAS	Low in Both
+WNK1	Low in Both
+A2M	PeptideAtlas Superior
+A2ML1	PeptideAtlas Superior
+ABI3BP	PeptideAtlas Superior
+ACACA	PeptideAtlas Superior
+ACAN	PeptideAtlas Superior
+ACE	PeptideAtlas Superior
+ACLY	PeptideAtlas Superior
+ACO1	PeptideAtlas Superior
+ACP1	PeptideAtlas Superior
+ACTN1	PeptideAtlas Superior
+ACTN3	PeptideAtlas Superior
+ACTN4	PeptideAtlas Superior
+ACTR2	PeptideAtlas Superior
+ACTR3	PeptideAtlas Superior
+ACY1	PeptideAtlas Superior
+ADA2	PeptideAtlas Superior
+ADAM17	PeptideAtlas Superior
+ADAM23	PeptideAtlas Superior
+ADAMTS13	PeptideAtlas Superior
+ADAMTS2	PeptideAtlas Superior
+ADAMTSL1	PeptideAtlas Superior
+ADAMTSL2	PeptideAtlas Superior
+ADAMTSL4	PeptideAtlas Superior
+ADGRA3	PeptideAtlas Superior
+ADGRF5	PeptideAtlas Superior
+ADGRG2	PeptideAtlas Superior
+ADGRG6	PeptideAtlas Superior
+ADGRL4	PeptideAtlas Superior
+ADH1A	PeptideAtlas Superior
+ADH1B	PeptideAtlas Superior
+ADH4	PeptideAtlas Superior
+ADH5	PeptideAtlas Superior
+AEBP1	PeptideAtlas Superior
+AGA	PeptideAtlas Superior
+AGRN	PeptideAtlas Superior
+AHCY	PeptideAtlas Superior
+AHNAK	PeptideAtlas Superior
+AHSP	PeptideAtlas Superior
+AK1	PeptideAtlas Superior
+AKAP12	PeptideAtlas Superior
+AKR1A1	PeptideAtlas Superior
+ALAD	PeptideAtlas Superior
+ALCAM	PeptideAtlas Superior
+ALDH1A1	PeptideAtlas Superior
+ALDOA	PeptideAtlas Superior
+ALDOB	PeptideAtlas Superior
+ALDOC	PeptideAtlas Superior
+ALG13	PeptideAtlas Superior
+ALPL	PeptideAtlas Superior
+ANGPTL3	PeptideAtlas Superior
+ANGPTL6	PeptideAtlas Superior
+ANK1	PeptideAtlas Superior
+ANK2	PeptideAtlas Superior
+ANKRD2	PeptideAtlas Superior
+ANPEP	PeptideAtlas Superior
+ANTXR1	PeptideAtlas Superior
+ANTXR2	PeptideAtlas Superior
+ANXA1	PeptideAtlas Superior
+ANXA3	PeptideAtlas Superior
+AOC3	PeptideAtlas Superior
+APLP1	PeptideAtlas Superior
+APLP2	PeptideAtlas Superior
+APMAP	PeptideAtlas Superior
+APOA5	PeptideAtlas Superior
+APOC4	PeptideAtlas Superior
+APOD	PeptideAtlas Superior
+APOF	PeptideAtlas Superior
+APP	PeptideAtlas Superior
+ARHGAP1	PeptideAtlas Superior
+ARHGDIA	PeptideAtlas Superior
+ARHGDIB	PeptideAtlas Superior
+ARMH4	PeptideAtlas Superior
+ARPC2	PeptideAtlas Superior
+ARPC3	PeptideAtlas Superior
+ARPC4	PeptideAtlas Superior
+ARPC5	PeptideAtlas Superior
+ARSA	PeptideAtlas Superior
+ART3	PeptideAtlas Superior
+ART4	PeptideAtlas Superior
+ASAH1	PeptideAtlas Superior
+ASAH2	PeptideAtlas Superior
+ASL	PeptideAtlas Superior
+ASPN	PeptideAtlas Superior
+ASS1	PeptideAtlas Superior
+ATF6	PeptideAtlas Superior
+ATF6B	PeptideAtlas Superior
+ATIC	PeptideAtlas Superior
+ATP1B1	PeptideAtlas Superior
+ATP2A1	PeptideAtlas Superior
+ATP5F1A	PeptideAtlas Superior
+ATP5F1B	PeptideAtlas Superior
+ATRN	PeptideAtlas Superior
+ATRNL1	PeptideAtlas Superior
+AXL	PeptideAtlas Superior
+B3GNT2	PeptideAtlas Superior
+B3GNT7	PeptideAtlas Superior
+B3GNT8	PeptideAtlas Superior
+B4GALT1	PeptideAtlas Superior
+B4GAT1	PeptideAtlas Superior
+BASP1	PeptideAtlas Superior
+BCAM	PeptideAtlas Superior
+BCHE	PeptideAtlas Superior
+BGN	PeptideAtlas Superior
+BHMT	PeptideAtlas Superior
+BIN2	PeptideAtlas Superior
+BLMH	PeptideAtlas Superior
+BLVRB	PeptideAtlas Superior
+BMP1	PeptideAtlas Superior
+BMP10	PeptideAtlas Superior
+BPGM	PeptideAtlas Superior
+BPIFB1	PeptideAtlas Superior
+BST1	PeptideAtlas Superior
+C1QTNF3	PeptideAtlas Superior
+C1QTNF5	PeptideAtlas Superior
+C1RL	PeptideAtlas Superior
+C4A	PeptideAtlas Superior
+C4B	PeptideAtlas Superior
+C5	PeptideAtlas Superior
+CA3	PeptideAtlas Superior
+CACNA2D1	PeptideAtlas Superior
+CACNA2D2	PeptideAtlas Superior
+CAD	PeptideAtlas Superior
+CADM1	PeptideAtlas Superior
+CALD1	PeptideAtlas Superior
+CALML5	PeptideAtlas Superior
+CALR	PeptideAtlas Superior
+CAMP	PeptideAtlas Superior
+CAND1	PeptideAtlas Superior
+CANT1	PeptideAtlas Superior
+CANX	PeptideAtlas Superior
+CAP1	PeptideAtlas Superior
+CAPG	PeptideAtlas Superior
+CAPN1	PeptideAtlas Superior
+CAPN2	PeptideAtlas Superior
+CAPNS1	PeptideAtlas Superior
+CAPZA1	PeptideAtlas Superior
+CAPZA2	PeptideAtlas Superior
+CAPZB	PeptideAtlas Superior
+CAST	PeptideAtlas Superior
+CAVIN2	PeptideAtlas Superior
+CBLN1	PeptideAtlas Superior
+CBLN4	PeptideAtlas Superior
+CCDC126	PeptideAtlas Superior
+CCL14	PeptideAtlas Superior
+CCL16	PeptideAtlas Superior
+CCL5	PeptideAtlas Superior
+CCN2	PeptideAtlas Superior
+CCT2	PeptideAtlas Superior
+CCT3	PeptideAtlas Superior
+CCT4	PeptideAtlas Superior
+CCT7	PeptideAtlas Superior
+CD109	PeptideAtlas Superior
+CD163	PeptideAtlas Superior
+CD177	PeptideAtlas Superior
+CD1C	PeptideAtlas Superior
+CD248	PeptideAtlas Superior
+CD276	PeptideAtlas Superior
+CD33	PeptideAtlas Superior
+CD34	PeptideAtlas Superior
+CD44	PeptideAtlas Superior
+CD46	PeptideAtlas Superior
+CD48	PeptideAtlas Superior
+CD55	PeptideAtlas Superior
+CD58	PeptideAtlas Superior
+CD59	PeptideAtlas Superior
+CD5L	PeptideAtlas Superior
+CD84	PeptideAtlas Superior
+CD9	PeptideAtlas Superior
+CD93	PeptideAtlas Superior
+CDC42	PeptideAtlas Superior
+CDH1	PeptideAtlas Superior
+CDH11	PeptideAtlas Superior
+CDH13	PeptideAtlas Superior
+CDH17	PeptideAtlas Superior
+CDH19	PeptideAtlas Superior
+CDH2	PeptideAtlas Superior
+CDH23	PeptideAtlas Superior
+CDH5	PeptideAtlas Superior
+CDH6	PeptideAtlas Superior
+CDHR2	PeptideAtlas Superior
+CDHR5	PeptideAtlas Superior
+CDON	PeptideAtlas Superior
+CEACAM1	PeptideAtlas Superior
+CELSR2	PeptideAtlas Superior
+CEMIP	PeptideAtlas Superior
+CES1	PeptideAtlas Superior
+CES2	PeptideAtlas Superior
+CETP	PeptideAtlas Superior
+CFD	PeptideAtlas Superior
+CFHR1	PeptideAtlas Superior
+CFHR2	PeptideAtlas Superior
+CFHR3	PeptideAtlas Superior
+CFHR4	PeptideAtlas Superior
+CFHR5	PeptideAtlas Superior
+CFL1	PeptideAtlas Superior
+CFP	PeptideAtlas Superior
+CGREF1	PeptideAtlas Superior
+CHAD	PeptideAtlas Superior
+CHGA	PeptideAtlas Superior
+CHGB	PeptideAtlas Superior
+CHI3L1	PeptideAtlas Superior
+CHID1	PeptideAtlas Superior
+CHIT1	PeptideAtlas Superior
+CHL1	PeptideAtlas Superior
+CHRDL1	PeptideAtlas Superior
+CHRDL2	PeptideAtlas Superior
+CHST10	PeptideAtlas Superior
+CHST12	PeptideAtlas Superior
+CHST3	PeptideAtlas Superior
+CILP	PeptideAtlas Superior
+CILP2	PeptideAtlas Superior
+CLCA4	PeptideAtlas Superior
+CLIC1	PeptideAtlas Superior
+CLSTN1	PeptideAtlas Superior
+CMPK1	PeptideAtlas Superior
+CNBP	PeptideAtlas Superior
+CNN2	PeptideAtlas Superior
+CNTFR	PeptideAtlas Superior
+CNTN1	PeptideAtlas Superior
+CNTN3	PeptideAtlas Superior
+CNTN4	PeptideAtlas Superior
+COL12A1	PeptideAtlas Superior
+COL14A1	PeptideAtlas Superior
+COL15A1	PeptideAtlas Superior
+COL18A1	PeptideAtlas Superior
+COL1A1	PeptideAtlas Superior
+COL1A2	PeptideAtlas Superior
+COL3A1	PeptideAtlas Superior
+COL4A2	PeptideAtlas Superior
+COL5A1	PeptideAtlas Superior
+COL5A2	PeptideAtlas Superior
+COL6A1	PeptideAtlas Superior
+COL6A2	PeptideAtlas Superior
+COL6A3	PeptideAtlas Superior
+COL6A5	PeptideAtlas Superior
+COLEC10	PeptideAtlas Superior
+COLEC11	PeptideAtlas Superior
+COLEC12	PeptideAtlas Superior
+COMP	PeptideAtlas Superior
+CORO1A	PeptideAtlas Superior
+CORO1B	PeptideAtlas Superior
+CORO1C	PeptideAtlas Superior
+COTL1	PeptideAtlas Superior
+CPA1	PeptideAtlas Superior
+CPA2	PeptideAtlas Superior
+CPAMD8	PeptideAtlas Superior
+CPB1	PeptideAtlas Superior
+CPD	PeptideAtlas Superior
+CPE	PeptideAtlas Superior
+CPM	PeptideAtlas Superior
+CPQ	PeptideAtlas Superior
+CPXM1	PeptideAtlas Superior
+CR1	PeptideAtlas Superior
+CR2	PeptideAtlas Superior
+CRELD1	PeptideAtlas Superior
+CRHBP	PeptideAtlas Superior
+CRISP3	PeptideAtlas Superior
+CRKL	PeptideAtlas Superior
+CRTAC1	PeptideAtlas Superior
+CRYZ	PeptideAtlas Superior
+CSF1R	PeptideAtlas Superior
+CSPG4	PeptideAtlas Superior
+CSRP1	PeptideAtlas Superior
+CST6	PeptideAtlas Superior
+CSTA	PeptideAtlas Superior
+CSTB	PeptideAtlas Superior
+CTBS	PeptideAtlas Superior
+CTSA	PeptideAtlas Superior
+CTSB	PeptideAtlas Superior
+CTSC	PeptideAtlas Superior
+CTSF	PeptideAtlas Superior
+CTSH	PeptideAtlas Superior
+CTSL	PeptideAtlas Superior
+CTSS	PeptideAtlas Superior
+CTSW	PeptideAtlas Superior
+CTSZ	PeptideAtlas Superior
+CTTN	PeptideAtlas Superior
+CXCL12	PeptideAtlas Superior
+CYFIP2	PeptideAtlas Superior
+DAG1	PeptideAtlas Superior
+DBH	PeptideAtlas Superior
+DBI	PeptideAtlas Superior
+DBNL	PeptideAtlas Superior
+DCBLD2	PeptideAtlas Superior
+DCD	PeptideAtlas Superior
+DCHS1	PeptideAtlas Superior
+DCN	PeptideAtlas Superior
+DCXR	PeptideAtlas Superior
+DDR1	PeptideAtlas Superior
+DDX21	PeptideAtlas Superior
+DDX5	PeptideAtlas Superior
+DHX9	PeptideAtlas Superior
+DKK3	PeptideAtlas Superior
+DLD	PeptideAtlas Superior
+DMBT1	PeptideAtlas Superior
+DMTN	PeptideAtlas Superior
+DNAJC3	PeptideAtlas Superior
+DNER	PeptideAtlas Superior
+DPEP2	PeptideAtlas Superior
+DPEP3	PeptideAtlas Superior
+DPP3	PeptideAtlas Superior
+DPP4	PeptideAtlas Superior
+DPP7	PeptideAtlas Superior
+DPT	PeptideAtlas Superior
+DPYSL2	PeptideAtlas Superior
+DSC1	PeptideAtlas Superior
+DSC2	PeptideAtlas Superior
+DSC3	PeptideAtlas Superior
+DSG1	PeptideAtlas Superior
+DSG2	PeptideAtlas Superior
+ECI1	PeptideAtlas Superior
+ECM1	PeptideAtlas Superior
+ECM2	PeptideAtlas Superior
+EEF1B2	PeptideAtlas Superior
+EEF1G	PeptideAtlas Superior
+EEF2	PeptideAtlas Superior
+EFNA1	PeptideAtlas Superior
+EFNB1	PeptideAtlas Superior
+EGFR	PeptideAtlas Superior
+EHD1	PeptideAtlas Superior
+EHD3	PeptideAtlas Superior
+EIF4G1	PeptideAtlas Superior
+EMILIN1	PeptideAtlas Superior
+ENDOD1	PeptideAtlas Superior
+ENG	PeptideAtlas Superior
+ENO1	PeptideAtlas Superior
+ENO3	PeptideAtlas Superior
+ENPEP	PeptideAtlas Superior
+ENPP1	PeptideAtlas Superior
+ENPP2	PeptideAtlas Superior
+ENTPD5	PeptideAtlas Superior
+EPB41	PeptideAtlas Superior
+EPHA1	PeptideAtlas Superior
+EPHA4	PeptideAtlas Superior
+EPHB4	PeptideAtlas Superior
+ERAP1	PeptideAtlas Superior
+ERAP2	PeptideAtlas Superior
+ERBB4	PeptideAtlas Superior
+ERP44	PeptideAtlas Superior
+ESAM	PeptideAtlas Superior
+ESD	PeptideAtlas Superior
+EXT1	PeptideAtlas Superior
+EXT2	PeptideAtlas Superior
+EXTL2	PeptideAtlas Superior
+EZR	PeptideAtlas Superior
+F11	PeptideAtlas Superior
+F11R	PeptideAtlas Superior
+F13A1	PeptideAtlas Superior
+F5	PeptideAtlas Superior
+F7	PeptideAtlas Superior
+F8	PeptideAtlas Superior
+F9	PeptideAtlas Superior
+FABP1	PeptideAtlas Superior
+FABP4	PeptideAtlas Superior
+FABP5	PeptideAtlas Superior
+FABP6	PeptideAtlas Superior
+FAH	PeptideAtlas Superior
+FAM20A	PeptideAtlas Superior
+FAM20C	PeptideAtlas Superior
+FAM234A	PeptideAtlas Superior
+FAM3C	PeptideAtlas Superior
+FAP	PeptideAtlas Superior
+FAT1	PeptideAtlas Superior
+FAT4	PeptideAtlas Superior
+FBLN1	PeptideAtlas Superior
+FBN1	PeptideAtlas Superior
+FBP1	PeptideAtlas Superior
+FCGBP	PeptideAtlas Superior
+FCGRT	PeptideAtlas Superior
+FCMR	PeptideAtlas Superior
+FCN1	PeptideAtlas Superior
+FCN2	PeptideAtlas Superior
+FCRL5	PeptideAtlas Superior
+FERMT3	PeptideAtlas Superior
+FGA	PeptideAtlas Superior
+FGB	PeptideAtlas Superior
+FGFBP2	PeptideAtlas Superior
+FGFR1	PeptideAtlas Superior
+FGFR3	PeptideAtlas Superior
+FGFR4	PeptideAtlas Superior
+FGG	PeptideAtlas Superior
+FGL1	PeptideAtlas Superior
+FGL2	PeptideAtlas Superior
+FKBP1A	PeptideAtlas Superior
+FLNA	PeptideAtlas Superior
+FLNB	PeptideAtlas Superior
+FLNC	PeptideAtlas Superior
+FLT4	PeptideAtlas Superior
+FMOD	PeptideAtlas Superior
+FOLR2	PeptideAtlas Superior
+FOLR3	PeptideAtlas Superior
+FREM1	PeptideAtlas Superior
+FREM2	PeptideAtlas Superior
+FSTL1	PeptideAtlas Superior
+FTH1	PeptideAtlas Superior
+FTL	PeptideAtlas Superior
+FUCA1	PeptideAtlas Superior
+FUCA2	PeptideAtlas Superior
+FUT11	PeptideAtlas Superior
+FUT8	PeptideAtlas Superior
+FYB1	PeptideAtlas Superior
+G6PD	PeptideAtlas Superior
+GAA	PeptideAtlas Superior
+GALNS	PeptideAtlas Superior
+GALNT1	PeptideAtlas Superior
+GALNT10	PeptideAtlas Superior
+GALNT2	PeptideAtlas Superior
+GALNT4	PeptideAtlas Superior
+GALNT5	PeptideAtlas Superior
+GALNT6	PeptideAtlas Superior
+GALNT7	PeptideAtlas Superior
+GANAB	PeptideAtlas Superior
+GAPDH	PeptideAtlas Superior
+GAS6	PeptideAtlas Superior
+GBA1	PeptideAtlas Superior
+GBE1	PeptideAtlas Superior
+GCLC	PeptideAtlas Superior
+GCNT2	PeptideAtlas Superior
+GDA	PeptideAtlas Superior
+GDF2	PeptideAtlas Superior
+GDI1	PeptideAtlas Superior
+GDI2	PeptideAtlas Superior
+GFRA2	PeptideAtlas Superior
+GGH	PeptideAtlas Superior
+GGT5	PeptideAtlas Superior
+GGT7	PeptideAtlas Superior
+GHR	PeptideAtlas Superior
+GKN1	PeptideAtlas Superior
+GLA	PeptideAtlas Superior
+GLB1	PeptideAtlas Superior
+GLCE	PeptideAtlas Superior
+GLG1	PeptideAtlas Superior
+GLIPR2	PeptideAtlas Superior
+GLO1	PeptideAtlas Superior
+GLOD4	PeptideAtlas Superior
+GLRX	PeptideAtlas Superior
+GM2A	PeptideAtlas Superior
+GMFG	PeptideAtlas Superior
+GNPTG	PeptideAtlas Superior
+GNS	PeptideAtlas Superior
+GOLIM4	PeptideAtlas Superior
+GOLM1	PeptideAtlas Superior
+GOLM2	PeptideAtlas Superior
+GOT1	PeptideAtlas Superior
+GP1BA	PeptideAtlas Superior
+GP6	PeptideAtlas Superior
+GPC1	PeptideAtlas Superior
+GPD1	PeptideAtlas Superior
+GPI	PeptideAtlas Superior
+GPLD1	PeptideAtlas Superior
+GPNMB	PeptideAtlas Superior
+GPT	PeptideAtlas Superior
+GRB2	PeptideAtlas Superior
+GRN	PeptideAtlas Superior
+GSR	PeptideAtlas Superior
+GSS	PeptideAtlas Superior
+GSTO1	PeptideAtlas Superior
+GUCA2A	PeptideAtlas Superior
+GUSB	PeptideAtlas Superior
+GXYLT1	PeptideAtlas Superior
+H1-5	PeptideAtlas Superior
+H6PD	PeptideAtlas Superior
+HEATR1	PeptideAtlas Superior
+HEG1	PeptideAtlas Superior
+HEPACAM2	PeptideAtlas Superior
+HEPH	PeptideAtlas Superior
+HEXA	PeptideAtlas Superior
+HEXB	PeptideAtlas Superior
+HGFAC	PeptideAtlas Superior
+HLA-A	PeptideAtlas Superior
+HLA-B	PeptideAtlas Superior
+HLA-C	PeptideAtlas Superior
+HLA-DPA1	PeptideAtlas Superior
+HLA-DRB1	PeptideAtlas Superior
+HMBS	PeptideAtlas Superior
+HMCN1	PeptideAtlas Superior
+HMCN2	PeptideAtlas Superior
+HNRNPA2B1	PeptideAtlas Superior
+HNRNPK	PeptideAtlas Superior
+HNRNPM	PeptideAtlas Superior
+HNRNPU	PeptideAtlas Superior
+HP	PeptideAtlas Superior
+HPD	PeptideAtlas Superior
+HPRT1	PeptideAtlas Superior
+HPSE	PeptideAtlas Superior
+HSP90AA1	PeptideAtlas Superior
+HSP90AB1	PeptideAtlas Superior
+HSP90B1	PeptideAtlas Superior
+HSPA13	PeptideAtlas Superior
+HSPA2	PeptideAtlas Superior
+HSPA4	PeptideAtlas Superior
+HSPA8	PeptideAtlas Superior
+HSPB1	PeptideAtlas Superior
+HSPD1	PeptideAtlas Superior
+HSPE1	PeptideAtlas Superior
+HSPG2	PeptideAtlas Superior
+HSPH1	PeptideAtlas Superior
+HTRA1	PeptideAtlas Superior
+HYOU1	PeptideAtlas Superior
+ICAM1	PeptideAtlas Superior
+ICAM2	PeptideAtlas Superior
+ICAM3	PeptideAtlas Superior
+ICAM5	PeptideAtlas Superior
+ICOSLG	PeptideAtlas Superior
+IDH1	PeptideAtlas Superior
+IDS	PeptideAtlas Superior
+IGDCC4	PeptideAtlas Superior
+IGF1	PeptideAtlas Superior
+IGF2R	PeptideAtlas Superior
+IGFBP1	PeptideAtlas Superior
+IGFBP2	PeptideAtlas Superior
+IGFBP4	PeptideAtlas Superior
+IGFBP5	PeptideAtlas Superior
+IGFBP6	PeptideAtlas Superior
+IGFBP7	PeptideAtlas Superior
+IGHA1	PeptideAtlas Superior
+IGHG2	PeptideAtlas Superior
+IGHG3	PeptideAtlas Superior
+IGHG4	PeptideAtlas Superior
+IGHM	PeptideAtlas Superior
+IGKC	PeptideAtlas Superior
+IL13RA1	PeptideAtlas Superior
+IL18BP	PeptideAtlas Superior
+IL1R2	PeptideAtlas Superior
+IL1RAP	PeptideAtlas Superior
+IL6R	PeptideAtlas Superior
+IL6ST	PeptideAtlas Superior
+ILF2	PeptideAtlas Superior
+INHBC	PeptideAtlas Superior
+INHBE	PeptideAtlas Superior
+INPP5D	PeptideAtlas Superior
+ISLR	PeptideAtlas Superior
+ITGA1	PeptideAtlas Superior
+ITGA2	PeptideAtlas Superior
+ITGA2B	PeptideAtlas Superior
+ITGA7	PeptideAtlas Superior
+ITGAL	PeptideAtlas Superior
+ITGB1	PeptideAtlas Superior
+ITGB2	PeptideAtlas Superior
+ITGB3	PeptideAtlas Superior
+ITGB4	PeptideAtlas Superior
+ITIH5	PeptideAtlas Superior
+ITM2B	PeptideAtlas Superior
+IVL	PeptideAtlas Superior
+JAG1	PeptideAtlas Superior
+JCHAIN	PeptideAtlas Superior
+JUP	PeptideAtlas Superior
+KALRN	PeptideAtlas Superior
+KCTD12	PeptideAtlas Superior
+KDR	PeptideAtlas Superior
+KIAA0319L	PeptideAtlas Superior
+KIT	PeptideAtlas Superior
+KITLG	PeptideAtlas Superior
+KLK6	PeptideAtlas Superior
+KRT1	PeptideAtlas Superior
+KRT2	PeptideAtlas Superior
+KRT32	PeptideAtlas Superior
+KRT33A	PeptideAtlas Superior
+KRT78	PeptideAtlas Superior
+KRT9	PeptideAtlas Superior
+L1CAM	PeptideAtlas Superior
+LAMA2	PeptideAtlas Superior
+LAMA3	PeptideAtlas Superior
+LAMA4	PeptideAtlas Superior
+LAMA5	PeptideAtlas Superior
+LAMB1	PeptideAtlas Superior
+LAMB2	PeptideAtlas Superior
+LAMC1	PeptideAtlas Superior
+LAMP1	PeptideAtlas Superior
+LAMP2	PeptideAtlas Superior
+LAP3	PeptideAtlas Superior
+LASP1	PeptideAtlas Superior
+LCAT	PeptideAtlas Superior
+LCN2	PeptideAtlas Superior
+LCP1	PeptideAtlas Superior
+LDHA	PeptideAtlas Superior
+LDHB	PeptideAtlas Superior
+LDLR	PeptideAtlas Superior
+LECT2	PeptideAtlas Superior
+LEPR	PeptideAtlas Superior
+LGALS3	PeptideAtlas Superior
+LGALS3BP	PeptideAtlas Superior
+LGMN	PeptideAtlas Superior
+LILRA2	PeptideAtlas Superior
+LILRA3	PeptideAtlas Superior
+LILRB1	PeptideAtlas Superior
+LILRB5	PeptideAtlas Superior
+LIPC	PeptideAtlas Superior
+LIPG	PeptideAtlas Superior
+LMAN1	PeptideAtlas Superior
+LMAN2	PeptideAtlas Superior
+LMNA	PeptideAtlas Superior
+LMNB1	PeptideAtlas Superior
+LPA	PeptideAtlas Superior
+LPL	PeptideAtlas Superior
+LRP1	PeptideAtlas Superior
+LRP1B	PeptideAtlas Superior
+LRP5	PeptideAtlas Superior
+LRRC4B	PeptideAtlas Superior
+LRRN1	PeptideAtlas Superior
+LSAMP	PeptideAtlas Superior
+LSP1	PeptideAtlas Superior
+LSR	PeptideAtlas Superior
+LTA4H	PeptideAtlas Superior
+LTBP1	PeptideAtlas Superior
+LTBP2	PeptideAtlas Superior
+LTBP4	PeptideAtlas Superior
+LY6G6F	PeptideAtlas Superior
+LY75	PeptideAtlas Superior
+LY96	PeptideAtlas Superior
+LYPD3	PeptideAtlas Superior
+LYVE1	PeptideAtlas Superior
+LZIC	PeptideAtlas Superior
+MADCAM1	PeptideAtlas Superior
+MAN1A1	PeptideAtlas Superior
+MAN1A2	PeptideAtlas Superior
+MAN1B1	PeptideAtlas Superior
+MAN1C1	PeptideAtlas Superior
+MAN2A1	PeptideAtlas Superior
+MAN2A2	PeptideAtlas Superior
+MAN2B1	PeptideAtlas Superior
+MAN2B2	PeptideAtlas Superior
+MANBA	PeptideAtlas Superior
+MANF	PeptideAtlas Superior
+MANSC1	PeptideAtlas Superior
+MAPK1	PeptideAtlas Superior
+MAPRE1	PeptideAtlas Superior
+MAPRE2	PeptideAtlas Superior
+MARCKS	PeptideAtlas Superior
+MARCO	PeptideAtlas Superior
+MATR3	PeptideAtlas Superior
+MBL2	PeptideAtlas Superior
+MCAM	PeptideAtlas Superior
+MCM4	PeptideAtlas Superior
+MCM6	PeptideAtlas Superior
+MDH1	PeptideAtlas Superior
+MDH2	PeptideAtlas Superior
+ME1	PeptideAtlas Superior
+MEGF10	PeptideAtlas Superior
+MEGF8	PeptideAtlas Superior
+MEGF9	PeptideAtlas Superior
+MELTF	PeptideAtlas Superior
+MEPE	PeptideAtlas Superior
+MERTK	PeptideAtlas Superior
+MESD	PeptideAtlas Superior
+MET	PeptideAtlas Superior
+MGAT1	PeptideAtlas Superior
+MGAT2	PeptideAtlas Superior
+MGAT3	PeptideAtlas Superior
+MGAT5	PeptideAtlas Superior
+MGP	PeptideAtlas Superior
+MINPP1	PeptideAtlas Superior
+MLEC	PeptideAtlas Superior
+MME	PeptideAtlas Superior
+MMP19	PeptideAtlas Superior
+MMP2	PeptideAtlas Superior
+MMP3	PeptideAtlas Superior
+MMP8	PeptideAtlas Superior
+MMP9	PeptideAtlas Superior
+MMRN1	PeptideAtlas Superior
+MMRN2	PeptideAtlas Superior
+MNDA	PeptideAtlas Superior
+MOGS	PeptideAtlas Superior
+MPIG6B	PeptideAtlas Superior
+MPO	PeptideAtlas Superior
+MRC1	PeptideAtlas Superior
+MRC2	PeptideAtlas Superior
+MSLN	PeptideAtlas Superior
+MSN	PeptideAtlas Superior
+MST1	PeptideAtlas Superior
+MST1L	PeptideAtlas Superior
+MSTN	PeptideAtlas Superior
+MTPN	PeptideAtlas Superior
+MTTP	PeptideAtlas Superior
+MUC20	PeptideAtlas Superior
+MUC5AC	PeptideAtlas Superior
+MXRA5	PeptideAtlas Superior
+MYDGF	PeptideAtlas Superior
+MYH1	PeptideAtlas Superior
+MYH7	PeptideAtlas Superior
+MYH9	PeptideAtlas Superior
+MYL6	PeptideAtlas Superior
+MYLK	PeptideAtlas Superior
+MYOC	PeptideAtlas Superior
+NAGA	PeptideAtlas Superior
+NAGLU	PeptideAtlas Superior
+NAGPA	PeptideAtlas Superior
+NASP	PeptideAtlas Superior
+NBL1	PeptideAtlas Superior
+NCAM1	PeptideAtlas Superior
+NCAM2	PeptideAtlas Superior
+NCK2	PeptideAtlas Superior
+NCL	PeptideAtlas Superior
+NDST1	PeptideAtlas Superior
+NECTIN1	PeptideAtlas Superior
+NECTIN2	PeptideAtlas Superior
+NECTIN3	PeptideAtlas Superior
+NEGR1	PeptideAtlas Superior
+NELL2	PeptideAtlas Superior
+NENF	PeptideAtlas Superior
+NEO1	PeptideAtlas Superior
+NEXN	PeptideAtlas Superior
+NHERF1	PeptideAtlas Superior
+NHLRC3	PeptideAtlas Superior
+NIBAN2	PeptideAtlas Superior
+NID1	PeptideAtlas Superior
+NID2	PeptideAtlas Superior
+NIF3L1	PeptideAtlas Superior
+NME1	PeptideAtlas Superior
+NOTCH1	PeptideAtlas Superior
+NOTCH2	PeptideAtlas Superior
+NOTCH3	PeptideAtlas Superior
+NOTUM	PeptideAtlas Superior
+NPC2	PeptideAtlas Superior
+NPEPPS	PeptideAtlas Superior
+NPPA	PeptideAtlas Superior
+NRCAM	PeptideAtlas Superior
+NRP1	PeptideAtlas Superior
+NRP2	PeptideAtlas Superior
+NRXN2	PeptideAtlas Superior
+NSFL1C	PeptideAtlas Superior
+NTM	PeptideAtlas Superior
+NTRK2	PeptideAtlas Superior
+NTRK3	PeptideAtlas Superior
+NUTF2	PeptideAtlas Superior
+OAF	PeptideAtlas Superior
+OGN	PeptideAtlas Superior
+OIT3	PeptideAtlas Superior
+OLA1	PeptideAtlas Superior
+OLFM1	PeptideAtlas Superior
+OLFML2A	PeptideAtlas Superior
+OLFML3	PeptideAtlas Superior
+OMD	PeptideAtlas Superior
+OPCML	PeptideAtlas Superior
+ORM1	PeptideAtlas Superior
+ORM2	PeptideAtlas Superior
+OSCAR	PeptideAtlas Superior
+OSMR	PeptideAtlas Superior
+OTUB1	PeptideAtlas Superior
+P4HB	PeptideAtlas Superior
+PA2G4	PeptideAtlas Superior
+PAICS	PeptideAtlas Superior
+PAM	PeptideAtlas Superior
+PAMR1	PeptideAtlas Superior
+PAPLN	PeptideAtlas Superior
+PARK7	PeptideAtlas Superior
+PARP1	PeptideAtlas Superior
+PARVB	PeptideAtlas Superior
+PCBP1	PeptideAtlas Superior
+PCDH1	PeptideAtlas Superior
+PCDH12	PeptideAtlas Superior
+PCDH18	PeptideAtlas Superior
+PCDH9	PeptideAtlas Superior
+PCDHAC2	PeptideAtlas Superior
+PCDHGC3	PeptideAtlas Superior
+PCMT1	PeptideAtlas Superior
+PCOLCE	PeptideAtlas Superior
+PCOLCE2	PeptideAtlas Superior
+PCSK6	PeptideAtlas Superior
+PCSK9	PeptideAtlas Superior
+PCYOX1	PeptideAtlas Superior
+PDCD1LG2	PeptideAtlas Superior
+PDCD6IP	PeptideAtlas Superior
+PDE5A	PeptideAtlas Superior
+PDGFD	PeptideAtlas Superior
+PDGFRA	PeptideAtlas Superior
+PDGFRB	PeptideAtlas Superior
+PDIA3	PeptideAtlas Superior
+PDIA4	PeptideAtlas Superior
+PDIA6	PeptideAtlas Superior
+PDLIM1	PeptideAtlas Superior
+PEA15	PeptideAtlas Superior
+PEAR1	PeptideAtlas Superior
+PEBP1	PeptideAtlas Superior
+PEBP4	PeptideAtlas Superior
+PECAM1	PeptideAtlas Superior
+PEPD	PeptideAtlas Superior
+PFN1	PeptideAtlas Superior
+PGAM1	PeptideAtlas Superior
+PGD	PeptideAtlas Superior
+PGK1	PeptideAtlas Superior
+PGM1	PeptideAtlas Superior
+PHB1	PeptideAtlas Superior
+PHB2	PeptideAtlas Superior
+PI16	PeptideAtlas Superior
+PIGR	PeptideAtlas Superior
+PIK3IP1	PeptideAtlas Superior
+PIP	PeptideAtlas Superior
+PKHD1L1	PeptideAtlas Superior
+PKLR	PeptideAtlas Superior
+PKM	PeptideAtlas Superior
+PLA2G15	PeptideAtlas Superior
+PLA2G7	PeptideAtlas Superior
+PLA2R1	PeptideAtlas Superior
+PLBD1	PeptideAtlas Superior
+PLEC	PeptideAtlas Superior
+PLEK	PeptideAtlas Superior
+PLIN3	PeptideAtlas Superior
+PLOD1	PeptideAtlas Superior
+PLOD3	PeptideAtlas Superior
+PLS3	PeptideAtlas Superior
+PLTP	PeptideAtlas Superior
+PLXDC1	PeptideAtlas Superior
+PLXDC2	PeptideAtlas Superior
+PLXNA2	PeptideAtlas Superior
+PLXNB1	PeptideAtlas Superior
+PLXNB2	PeptideAtlas Superior
+PLXND1	PeptideAtlas Superior
+PM20D1	PeptideAtlas Superior
+PMEL	PeptideAtlas Superior
+PNLIP	PeptideAtlas Superior
+PNP	PeptideAtlas Superior
+PODN	PeptideAtlas Superior
+PODXL	PeptideAtlas Superior
+POMGNT1	PeptideAtlas Superior
+PON1	PeptideAtlas Superior
+PON3	PeptideAtlas Superior
+POSTN	PeptideAtlas Superior
+PPIB	PeptideAtlas Superior
+PPP1R7	PeptideAtlas Superior
+PRAP1	PeptideAtlas Superior
+PRCP	PeptideAtlas Superior
+PRDX2	PeptideAtlas Superior
+PRDX4	PeptideAtlas Superior
+PRDX5	PeptideAtlas Superior
+PRDX6	PeptideAtlas Superior
+PREP	PeptideAtlas Superior
+PRF1	PeptideAtlas Superior
+PRG2	PeptideAtlas Superior
+PRG4	PeptideAtlas Superior
+PRKAR1A	PeptideAtlas Superior
+PRKCSH	PeptideAtlas Superior
+PROCR	PeptideAtlas Superior
+PROZ	PeptideAtlas Superior
+PSAP	PeptideAtlas Superior
+PSAT1	PeptideAtlas Superior
+PSMA1	PeptideAtlas Superior
+PSMA2	PeptideAtlas Superior
+PSMA3	PeptideAtlas Superior
+PSMA4	PeptideAtlas Superior
+PSMA6	PeptideAtlas Superior
+PSMA7	PeptideAtlas Superior
+PSMB1	PeptideAtlas Superior
+PSMB2	PeptideAtlas Superior
+PSMB5	PeptideAtlas Superior
+PSMB6	PeptideAtlas Superior
+PSMB7	PeptideAtlas Superior
+PSMB8	PeptideAtlas Superior
+PSMD10	PeptideAtlas Superior
+PSME1	PeptideAtlas Superior
+PSME2	PeptideAtlas Superior
+PTBP1	PeptideAtlas Superior
+PTGDS	PeptideAtlas Superior
+PTGES3	PeptideAtlas Superior
+PTGFRN	PeptideAtlas Superior
+PTK7	PeptideAtlas Superior
+PTPA	PeptideAtlas Superior
+PTPN6	PeptideAtlas Superior
+PTPRB	PeptideAtlas Superior
+PTPRC	PeptideAtlas Superior
+PTPRD	PeptideAtlas Superior
+PTPRF	PeptideAtlas Superior
+PTPRG	PeptideAtlas Superior
+PTPRJ	PeptideAtlas Superior
+PTPRK	PeptideAtlas Superior
+PTPRM	PeptideAtlas Superior
+PTPRN2	PeptideAtlas Superior
+PTPRS	PeptideAtlas Superior
+PTPRZ1	PeptideAtlas Superior
+PVR	PeptideAtlas Superior
+PXDN	PeptideAtlas Superior
+PYGL	PeptideAtlas Superior
+QSOX1	PeptideAtlas Superior
+QSOX2	PeptideAtlas Superior
+RAB10	PeptideAtlas Superior
+RAB14	PeptideAtlas Superior
+RAB27B	PeptideAtlas Superior
+RAB7A	PeptideAtlas Superior
+RAD23A	PeptideAtlas Superior
+RAD23B	PeptideAtlas Superior
+RAN	PeptideAtlas Superior
+RANBP1	PeptideAtlas Superior
+RARRES2	PeptideAtlas Superior
+RDX	PeptideAtlas Superior
+RECK	PeptideAtlas Superior
+REG1A	PeptideAtlas Superior
+REG1B	PeptideAtlas Superior
+RELN	PeptideAtlas Superior
+RET	PeptideAtlas Superior
+RETN	PeptideAtlas Superior
+RGMA	PeptideAtlas Superior
+RNASE1	PeptideAtlas Superior
+RNASE2	PeptideAtlas Superior
+RNASE4	PeptideAtlas Superior
+RNASET2	PeptideAtlas Superior
+RNH1	PeptideAtlas Superior
+RNPEP	PeptideAtlas Superior
+ROBO1	PeptideAtlas Superior
+ROBO2	PeptideAtlas Superior
+ROBO4	PeptideAtlas Superior
+RPL6	PeptideAtlas Superior
+RPL7	PeptideAtlas Superior
+RPL7A	PeptideAtlas Superior
+RPLP2	PeptideAtlas Superior
+RPS11	PeptideAtlas Superior
+RPS2	PeptideAtlas Superior
+RPS7	PeptideAtlas Superior
+RSU1	PeptideAtlas Superior
+RTN4R	PeptideAtlas Superior
+RTN4RL2	PeptideAtlas Superior
+S100A4	PeptideAtlas Superior
+SAA1	PeptideAtlas Superior
+SBSN	PeptideAtlas Superior
+SCARA3	PeptideAtlas Superior
+SCARF1	PeptideAtlas Superior
+SCG3	PeptideAtlas Superior
+SCGB1A1	PeptideAtlas Superior
+SCUBE3	PeptideAtlas Superior
+SDK1	PeptideAtlas Superior
+SDK2	PeptideAtlas Superior
+SELE	PeptideAtlas Superior
+SELENBP1	PeptideAtlas Superior
+SELENOP	PeptideAtlas Superior
+SELL	PeptideAtlas Superior
+SELP	PeptideAtlas Superior
+SEMA3A	PeptideAtlas Superior
+SEMA3F	PeptideAtlas Superior
+SEMA3G	PeptideAtlas Superior
+SEMA4A	PeptideAtlas Superior
+SEMA4B	PeptideAtlas Superior
+SEMA4D	PeptideAtlas Superior
+SEMA4G	PeptideAtlas Superior
+SEMA6B	PeptideAtlas Superior
+SEMA6C	PeptideAtlas Superior
+SEMA7A	PeptideAtlas Superior
+SERBP1	PeptideAtlas Superior
+SERPINA1	PeptideAtlas Superior
+SERPINA11	PeptideAtlas Superior
+SERPINB1	PeptideAtlas Superior
+SERPINB3	PeptideAtlas Superior
+SERPINB4	PeptideAtlas Superior
+SERPINE2	PeptideAtlas Superior
+SEZ6L	PeptideAtlas Superior
+SEZ6L2	PeptideAtlas Superior
+SFRP4	PeptideAtlas Superior
+SFTPB	PeptideAtlas Superior
+SH3BGRL	PeptideAtlas Superior
+SIAE	PeptideAtlas Superior
+SIRPB1	PeptideAtlas Superior
+SKAP2	PeptideAtlas Superior
+SLC25A5	PeptideAtlas Superior
+SLC38A10	PeptideAtlas Superior
+SLC39A10	PeptideAtlas Superior
+SLC3A2	PeptideAtlas Superior
+SLPI	PeptideAtlas Superior
+SMPDL3A	PeptideAtlas Superior
+SNCA	PeptideAtlas Superior
+SNED1	PeptideAtlas Superior
+SOD2	PeptideAtlas Superior
+SOD3	PeptideAtlas Superior
+SORL1	PeptideAtlas Superior
+SPARCL1	PeptideAtlas Superior
+SPINK5	PeptideAtlas Superior
+SPINT1	PeptideAtlas Superior
+SPON1	PeptideAtlas Superior
+SPP1	PeptideAtlas Superior
+SPP2	PeptideAtlas Superior
+SPTAN1	PeptideAtlas Superior
+SPTB	PeptideAtlas Superior
+SRGN	PeptideAtlas Superior
+SSC5D	PeptideAtlas Superior
+ST14	PeptideAtlas Superior
+ST3GAL6	PeptideAtlas Superior
+ST6GAL1	PeptideAtlas Superior
+ST6GALNAC1	PeptideAtlas Superior
+ST8SIA4	PeptideAtlas Superior
+STAB1	PeptideAtlas Superior
+STAB2	PeptideAtlas Superior
+STC2	PeptideAtlas Superior
+STIP1	PeptideAtlas Superior
+STMN1	PeptideAtlas Superior
+SULF2	PeptideAtlas Superior
+SUMF1	PeptideAtlas Superior
+SUSD2	PeptideAtlas Superior
+SUSD5	PeptideAtlas Superior
+SVEP1	PeptideAtlas Superior
+SYTL4	PeptideAtlas Superior
+TAGLN	PeptideAtlas Superior
+TAGLN2	PeptideAtlas Superior
+TALDO1	PeptideAtlas Superior
+TCN1	PeptideAtlas Superior
+TCN2	PeptideAtlas Superior
+TCP1	PeptideAtlas Superior
+TEK	PeptideAtlas Superior
+TF	PeptideAtlas Superior
+TFG	PeptideAtlas Superior
+TFPI	PeptideAtlas Superior
+TFRC	PeptideAtlas Superior
+TGFB1	PeptideAtlas Superior
+TGFBI	PeptideAtlas Superior
+TGFBR3	PeptideAtlas Superior
+TGM1	PeptideAtlas Superior
+TGM3	PeptideAtlas Superior
+TGOLN2	PeptideAtlas Superior
+THBS1	PeptideAtlas Superior
+THBS2	PeptideAtlas Superior
+THBS3	PeptideAtlas Superior
+THBS4	PeptideAtlas Superior
+THOP1	PeptideAtlas Superior
+THSD1	PeptideAtlas Superior
+THSD7A	PeptideAtlas Superior
+TIE1	PeptideAtlas Superior
+TIMD4	PeptideAtlas Superior
+TIMP1	PeptideAtlas Superior
+TIMP2	PeptideAtlas Superior
+TINAG	PeptideAtlas Superior
+TJP2	PeptideAtlas Superior
+TKT	PeptideAtlas Superior
+TLL1	PeptideAtlas Superior
+TLN1	PeptideAtlas Superior
+TMEM132C	PeptideAtlas Superior
+TNC	PeptideAtlas Superior
+TNFAIP6	PeptideAtlas Superior
+TNN	PeptideAtlas Superior
+TNXB	PeptideAtlas Superior
+TPD52L2	PeptideAtlas Superior
+TPI1	PeptideAtlas Superior
+TPM1	PeptideAtlas Superior
+TPM3	PeptideAtlas Superior
+TPM4	PeptideAtlas Superior
+TPP1	PeptideAtlas Superior
+TREH	PeptideAtlas Superior
+TREML1	PeptideAtlas Superior
+TREML2	PeptideAtlas Superior
+TRHDE	PeptideAtlas Superior
+TTN	PeptideAtlas Superior
+TTR	PeptideAtlas Superior
+TUBA4A	PeptideAtlas Superior
+TUBB	PeptideAtlas Superior
+TUBB1	PeptideAtlas Superior
+TWF2	PeptideAtlas Superior
+TXNDC15	PeptideAtlas Superior
+TXNDC17	PeptideAtlas Superior
+TXNDC5	PeptideAtlas Superior
+TYMP	PeptideAtlas Superior
+UBA1	PeptideAtlas Superior
+UBE2L3	PeptideAtlas Superior
+UBE2N	PeptideAtlas Superior
+UGGT1	PeptideAtlas Superior
+UGP2	PeptideAtlas Superior
+UMOD	PeptideAtlas Superior
+UROC1	PeptideAtlas Superior
+USP14	PeptideAtlas Superior
+UTRN	PeptideAtlas Superior
+VASN	PeptideAtlas Superior
+VASP	PeptideAtlas Superior
+VAT1	PeptideAtlas Superior
+VCAM1	PeptideAtlas Superior
+VCAN	PeptideAtlas Superior
+VCL	PeptideAtlas Superior
+VCP	PeptideAtlas Superior
+VIM	PeptideAtlas Superior
+VMO1	PeptideAtlas Superior
+VNN1	PeptideAtlas Superior
+VSIG4	PeptideAtlas Superior
+VWF	PeptideAtlas Superior
+WARS1	PeptideAtlas Superior
+WDR1	PeptideAtlas Superior
+WDR44	PeptideAtlas Superior
+WFIKKN2	PeptideAtlas Superior
+XPNPEP2	PeptideAtlas Superior
+XYLT2	PeptideAtlas Superior
+YWHAB	PeptideAtlas Superior
+YWHAE	PeptideAtlas Superior
+YWHAG	PeptideAtlas Superior
+YWHAH	PeptideAtlas Superior
+YWHAQ	PeptideAtlas Superior
+YWHAZ	PeptideAtlas Superior
+ZG16	PeptideAtlas Superior
+ZYX	PeptideAtlas Superior
+ABCD3	QuantMS Superior
+ABHD10	QuantMS Superior
+ABHD11	QuantMS Superior
+ABHD14A	QuantMS Superior
+ABHD16A	QuantMS Superior
+ABLIM1	QuantMS Superior
+ABLIM3	QuantMS Superior
+ABO	QuantMS Superior
+ACADS	QuantMS Superior
+ACADSB	QuantMS Superior
+ACE2	QuantMS Superior
+ACHE	QuantMS Superior
+ACSL1	QuantMS Superior
+ACSS2	QuantMS Superior
+ADA	QuantMS Superior
+ADAM11	QuantMS Superior
+ADAM12	QuantMS Superior
+ADAM19	QuantMS Superior
+ADAM8	QuantMS Superior
+ADAMTSL5	QuantMS Superior
+ADCY6	QuantMS Superior
+ADD1	QuantMS Superior
+ADD2	QuantMS Superior
+ADGRB2	QuantMS Superior
+ADGRB3	QuantMS Superior
+ADGRE1	QuantMS Superior
+ADGRG1	QuantMS Superior
+ADGRL1	QuantMS Superior
+ADGRL2	QuantMS Superior
+ADM	QuantMS Superior
+ADPGK	QuantMS Superior
+ADPRH	QuantMS Superior
+ADPRS	QuantMS Superior
+AGO2	QuantMS Superior
+AGR3	QuantMS Superior
+AIDA	QuantMS Superior
+AK3	QuantMS Superior
+ALDH1L1	QuantMS Superior
+ALDH4A1	QuantMS Superior
+ALDH6A1	QuantMS Superior
+ALPI	QuantMS Superior
+AMBN	QuantMS Superior
+AMH	QuantMS Superior
+AMOTL1	QuantMS Superior
+AMPD3	QuantMS Superior
+ANGPT2	QuantMS Superior
+ANGPT4	QuantMS Superior
+ANGPTL4	QuantMS Superior
+ANGPTL8	QuantMS Superior
+ANKFY1	QuantMS Superior
+ANKRD28	QuantMS Superior
+ANKS1A	QuantMS Superior
+AP1S2	QuantMS Superior
+AP3D1	QuantMS Superior
+APPL1	QuantMS Superior
+AQP1	QuantMS Superior
+ARHGAP10	QuantMS Superior
+ARHGAP15	QuantMS Superior
+ARHGAP6	QuantMS Superior
+ARHGEF1	QuantMS Superior
+ARHGEF12	QuantMS Superior
+ASAP1	QuantMS Superior
+ASAP2	QuantMS Superior
+ASGR1	QuantMS Superior
+ASMTL	QuantMS Superior
+ASPRV1	QuantMS Superior
+ATG4A	QuantMS Superior
+ATG4B	QuantMS Superior
+ATG7	QuantMS Superior
+ATG9A	QuantMS Superior
+ATL1	QuantMS Superior
+ATP1B2	QuantMS Superior
+ATP1B4	QuantMS Superior
+ATP2B4	QuantMS Superior
+ATP5ME	QuantMS Superior
+ATP6AP1	QuantMS Superior
+ATP6AP2	QuantMS Superior
+ATP6V1D	QuantMS Superior
+ATP6V1E1	QuantMS Superior
+AZU1	QuantMS Superior
+B3GALNT1	QuantMS Superior
+B3GALT6	QuantMS Superior
+B3GAT3	QuantMS Superior
+B4GALNT1	QuantMS Superior
+BCAT1	QuantMS Superior
+BMPER	QuantMS Superior
+BPIFA1	QuantMS Superior
+BPIFB2	QuantMS Superior
+BST2	QuantMS Superior
+BTK	QuantMS Superior
+C1GALT1	QuantMS Superior
+C1ORF198	QuantMS Superior
+C2ORF88	QuantMS Superior
+CA12	QuantMS Superior
+CA13	QuantMS Superior
+CAB39	QuantMS Superior
+CACNA2D3	QuantMS Superior
+CADM2	QuantMS Superior
+CAMK2A	QuantMS Superior
+CARHSP1	QuantMS Superior
+CASP14	QuantMS Superior
+CASP3	QuantMS Superior
+CASP6	QuantMS Superior
+CASS4	QuantMS Superior
+CBR4	QuantMS Superior
+CCDC47	QuantMS Superior
+CCER2	QuantMS Superior
+CCN1	QuantMS Superior
+CD302	QuantMS Superior
+CD40LG	QuantMS Superior
+CD8A	QuantMS Superior
+CD96	QuantMS Superior
+CDCP1	QuantMS Superior
+CDH15	QuantMS Superior
+CDH4	QuantMS Superior
+CDHR1	QuantMS Superior
+CELSR1	QuantMS Superior
+CEMIP2	QuantMS Superior
+CERS2	QuantMS Superior
+CHI3L2	QuantMS Superior
+CHMP6	QuantMS Superior
+CHST1	QuantMS Superior
+CHST14	QuantMS Superior
+CKMT1A	QuantMS Superior
+CLCA2	QuantMS Superior
+CLEC1B	QuantMS Superior
+CLMP	QuantMS Superior
+CLTA	QuantMS Superior
+CMA1	QuantMS Superior
+CMIP	QuantMS Superior
+CMTM5	QuantMS Superior
+CNRIP1	QuantMS Superior
+CNST	QuantMS Superior
+CNTN2	QuantMS Superior
+COL10A1	QuantMS Superior
+COL17A1	QuantMS Superior
+COL24A1	QuantMS Superior
+COL6A6	QuantMS Superior
+COL7A1	QuantMS Superior
+CORO7	QuantMS Superior
+COX5A	QuantMS Superior
+CPA3	QuantMS Superior
+CPA4	QuantMS Superior
+CPPED1	QuantMS Superior
+CRABP2	QuantMS Superior
+CRACD	QuantMS Superior
+CRAT	QuantMS Superior
+CREB3L3	QuantMS Superior
+CRH	QuantMS Superior
+CRISPLD1	QuantMS Superior
+CRISPLD2	QuantMS Superior
+CRYL1	QuantMS Superior
+CRYZL1	QuantMS Superior
+CSNK2A2	QuantMS Superior
+CSRP3	QuantMS Superior
+CST1	QuantMS Superior
+CUL5	QuantMS Superior
+CXCL17	QuantMS Superior
+CZIB	QuantMS Superior
+DAAM1	QuantMS Superior
+DAP	QuantMS Superior
+DAPP1	QuantMS Superior
+DCTD	QuantMS Superior
+DCTN3	QuantMS Superior
+DCTN4	QuantMS Superior
+DDRGK1	QuantMS Superior
+DENND4C	QuantMS Superior
+DERA	QuantMS Superior
+DHRS11	QuantMS Superior
+DLGAP4	QuantMS Superior
+DLK1	QuantMS Superior
+DMP1	QuantMS Superior
+DNAJB2	QuantMS Superior
+DNAJC5	QuantMS Superior
+DNASE2	QuantMS Superior
+DNM1	QuantMS Superior
+DNM3	QuantMS Superior
+DOK1	QuantMS Superior
+DOK3	QuantMS Superior
+DPP9	QuantMS Superior
+DSG3	QuantMS Superior
+DUSP23	QuantMS Superior
+ECHDC1	QuantMS Superior
+EHBP1L1	QuantMS Superior
+EMILIN2	QuantMS Superior
+ENDOU	QuantMS Superior
+ENTPD4	QuantMS Superior
+ENTPD6	QuantMS Superior
+EPHB3	QuantMS Superior
+EPN1	QuantMS Superior
+EPS15	QuantMS Superior
+EPS8L2	QuantMS Superior
+EPX	QuantMS Superior
+ERBIN	QuantMS Superior
+ERMP1	QuantMS Superior
+ERVH48-1	QuantMS Superior
+ERVW-1	QuantMS Superior
+ESM1	QuantMS Superior
+FAM114A2	QuantMS Superior
+FAM151A	QuantMS Superior
+FAM162A	QuantMS Superior
+FAM3B	QuantMS Superior
+FAM3D	QuantMS Superior
+FAT2	QuantMS Superior
+FBN2	QuantMS Superior
+FCER1G	QuantMS Superior
+FGD3	QuantMS Superior
+FGFBP1	QuantMS Superior
+FGGY	QuantMS Superior
+FKBP15	QuantMS Superior
+FLRT2	QuantMS Superior
+FNBP1L	QuantMS Superior
+FNDC1	QuantMS Superior
+FOLH1	QuantMS Superior
+FRMD4B	QuantMS Superior
+FRZB	QuantMS Superior
+FTO	QuantMS Superior
+FUT1	QuantMS Superior
+FYN	QuantMS Superior
+GABARAPL2	QuantMS Superior
+GAL3ST4	QuantMS Superior
+GALK1	QuantMS Superior
+GALK2	QuantMS Superior
+GALNT12	QuantMS Superior
+GALNT14	QuantMS Superior
+GALNT15	QuantMS Superior
+GALNT18	QuantMS Superior
+GALT	QuantMS Superior
+GAMT	QuantMS Superior
+GAS1	QuantMS Superior
+GASK1A	QuantMS Superior
+GCA	QuantMS Superior
+GCNT1	QuantMS Superior
+GGACT	QuantMS Superior
+GINM1	QuantMS Superior
+GIT1	QuantMS Superior
+GLDN	QuantMS Superior
+GLTPD2	QuantMS Superior
+GMDS	QuantMS Superior
+GMPR2	QuantMS Superior
+GNA13	QuantMS Superior
+GNAQ	QuantMS Superior
+GNAZ	QuantMS Superior
+GPC3	QuantMS Superior
+GPD1L	QuantMS Superior
+GRAP2	QuantMS Superior
+GREM1	QuantMS Superior
+GREM2	QuantMS Superior
+GRK2	QuantMS Superior
+GRK6	QuantMS Superior
+GSDMD	QuantMS Superior
+GSK3B	QuantMS Superior
+GTPBP2	QuantMS Superior
+GUCY1A1	QuantMS Superior
+GYG1	QuantMS Superior
+HAGH	QuantMS Superior
+HBM	QuantMS Superior
+HBQ1	QuantMS Superior
+HDDC2	QuantMS Superior
+HDHD3	QuantMS Superior
+HEBP2	QuantMS Superior
+HGF	QuantMS Superior
+HHIP	QuantMS Superior
+HIBCH	QuantMS Superior
+HJV	QuantMS Superior
+HK3	QuantMS Superior
+HMGCL	QuantMS Superior
+HMGCS2	QuantMS Superior
+HPGDS	QuantMS Superior
+HPS4	QuantMS Superior
+HRC	QuantMS Superior
+HS1BP3	QuantMS Superior
+HSD17B1	QuantMS Superior
+HSPB6	QuantMS Superior
+HSPB7	QuantMS Superior
+HTRA4	QuantMS Superior
+HTT	QuantMS Superior
+IGBP1	QuantMS Superior
+IGF1R	QuantMS Superior
+IGSF1	QuantMS Superior
+IGSF21	QuantMS Superior
+IL16	QuantMS Superior
+IL17RC	QuantMS Superior
+IL2RA	QuantMS Superior
+IL4R	QuantMS Superior
+INHBB	QuantMS Superior
+INPP1	QuantMS Superior
+INPP4B	QuantMS Superior
+INPP5B	QuantMS Superior
+IRAG2	QuantMS Superior
+ISLR2	QuantMS Superior
+ISM1	QuantMS Superior
+ISM2	QuantMS Superior
+ITGA8	QuantMS Superior
+ITGAE	QuantMS Superior
+ITGBL1	QuantMS Superior
+ITPKB	QuantMS Superior
+ITPRID2	QuantMS Superior
+JAM2	QuantMS Superior
+KAZALD1	QuantMS Superior
+KERA	QuantMS Superior
+KHK	QuantMS Superior
+KIAA1549	QuantMS Superior
+KIF13B	QuantMS Superior
+KIF2A	QuantMS Superior
+KIRREL1	QuantMS Superior
+KISS1	QuantMS Superior
+KLHL41	QuantMS Superior
+KPLCE	QuantMS Superior
+KPNA4	QuantMS Superior
+LAMTOR2	QuantMS Superior
+LAMTOR3	QuantMS Superior
+LANCL2	QuantMS Superior
+LAT	QuantMS Superior
+LCN1	QuantMS Superior
+LDLRAP1	QuantMS Superior
+LGALS4	QuantMS Superior
+LHPP	QuantMS Superior
+LIFR	QuantMS Superior
+LIMD1	QuantMS Superior
+LINGO1	QuantMS Superior
+LNPEP	QuantMS Superior
+LNPK	QuantMS Superior
+LOXL1	QuantMS Superior
+LRIG2	QuantMS Superior
+LRP11	QuantMS Superior
+LRP6	QuantMS Superior
+LRRC19	QuantMS Superior
+LRRC57	QuantMS Superior
+LRRC70	QuantMS Superior
+LVRN	QuantMS Superior
+LY86	QuantMS Superior
+LY9	QuantMS Superior
+LYN	QuantMS Superior
+LYPLAL1	QuantMS Superior
+MACROH2A2	QuantMS Superior
+MALRD1	QuantMS Superior
+MANEA	QuantMS Superior
+MANEAL	QuantMS Superior
+MAOB	QuantMS Superior
+MAP1A	QuantMS Superior
+MAP2K3	QuantMS Superior
+MAPK3	QuantMS Superior
+MAPKAPK2	QuantMS Superior
+MATN2	QuantMS Superior
+MATN3	QuantMS Superior
+MATN4	QuantMS Superior
+MBTPS1	QuantMS Superior
+MDGA1	QuantMS Superior
+MDP1	QuantMS Superior
+ME2	QuantMS Superior
+MEMO1	QuantMS Superior
+MEP1B	QuantMS Superior
+MFNG	QuantMS Superior
+MGAT4B	QuantMS Superior
+MGST3	QuantMS Superior
+MGU	QuantMS Superior
+MIA	QuantMS Superior
+MIEN1	QuantMS Superior
+MILR1	QuantMS Superior
+MINDY1	QuantMS Superior
+MINDY3	QuantMS Superior
+MMP7	QuantMS Superior
+MOB4	QuantMS Superior
+MSMP	QuantMS Superior
+MSR1	QuantMS Superior
+MT-CO2	QuantMS Superior
+MTM1	QuantMS Superior
+MUC2	QuantMS Superior
+MVD	QuantMS Superior
+MYBPC3	QuantMS Superior
+MYCBP	QuantMS Superior
+MYCT1	QuantMS Superior
+MYO1F	QuantMS Superior
+MYO1G	QuantMS Superior
+MYO9B	QuantMS Superior
+NADSYN1	QuantMS Superior
+NAXD	QuantMS Superior
+NBEAL2	QuantMS Superior
+NCEH1	QuantMS Superior
+NCF2	QuantMS Superior
+NCF4	QuantMS Superior
+NCK1	QuantMS Superior
+NCKAP1L	QuantMS Superior
+NCKIPSD	QuantMS Superior
+NCR3LG1	QuantMS Superior
+NCS1	QuantMS Superior
+NCSTN	QuantMS Superior
+NDNF	QuantMS Superior
+NDRG2	QuantMS Superior
+NECAP2	QuantMS Superior
+NEMF	QuantMS Superior
+NEU1	QuantMS Superior
+NHERF2	QuantMS Superior
+NIBAN1	QuantMS Superior
+NIPSNAP3A	QuantMS Superior
+NIT1	QuantMS Superior
+NLGN1	QuantMS Superior
+NLGN2	QuantMS Superior
+NMI	QuantMS Superior
+NPL	QuantMS Superior
+NPPB	QuantMS Superior
+NPTX1	QuantMS Superior
+NRGN	QuantMS Superior
+NRN1	QuantMS Superior
+NRXN1	QuantMS Superior
+NT5C	QuantMS Superior
+NT5C3A	QuantMS Superior
+NT5E	QuantMS Superior
+NTN1	QuantMS Superior
+NUDCD1	QuantMS Superior
+NUMB	QuantMS Superior
+NXN	QuantMS Superior
+OGFOD3	QuantMS Superior
+OGFR	QuantMS Superior
+OPA1	QuantMS Superior
+OS9	QuantMS Superior
+OSBP	QuantMS Superior
+OSBP2	QuantMS Superior
+OSTM1	QuantMS Superior
+OTOA	QuantMS Superior
+OTULIN	QuantMS Superior
+OXR1	QuantMS Superior
+OXT	QuantMS Superior
+PACS1	QuantMS Superior
+PAEP	QuantMS Superior
+PAPPA	QuantMS Superior
+PAPPA2	QuantMS Superior
+PAXX	QuantMS Superior
+PBXIP1	QuantMS Superior
+PCDH15	QuantMS Superior
+PCDH17	QuantMS Superior
+PCDH19	QuantMS Superior
+PCDHB14	QuantMS Superior
+PCDHGA12	QuantMS Superior
+PCSK1N	QuantMS Superior
+PCSK2	QuantMS Superior
+PCSK7	QuantMS Superior
+PDIA5	QuantMS Superior
+PDXP	QuantMS Superior
+PENK	QuantMS Superior
+PGGT1B	QuantMS Superior
+PGM2L1	QuantMS Superior
+PHYKPL	QuantMS Superior
+PIP4P2	QuantMS Superior
+PITHD1	QuantMS Superior
+PITPNM2	QuantMS Superior
+PKDCC	QuantMS Superior
+PLA2G1B	QuantMS Superior
+PLCB1	QuantMS Superior
+PLCB2	QuantMS Superior
+PLPBP	QuantMS Superior
+PLVAP	QuantMS Superior
+PMM2	QuantMS Superior
+PNLIPRP2	QuantMS Superior
+PNPO	QuantMS Superior
+PODXL2	QuantMS Superior
+POGLUT2	QuantMS Superior
+PPCS	QuantMS Superior
+PPM1A	QuantMS Superior
+PPM1B	QuantMS Superior
+PPM1F	QuantMS Superior
+PPM1L	QuantMS Superior
+PPP1R12C	QuantMS Superior
+PPP6R1	QuantMS Superior
+PRB4	QuantMS Superior
+PRG3	QuantMS Superior
+PRH1	QuantMS Superior
+PRKACB	QuantMS Superior
+PRKAR2B	QuantMS Superior
+PRKCB	QuantMS Superior
+PRKCD	QuantMS Superior
+PRKG1	QuantMS Superior
+PROSER2	QuantMS Superior
+PRP4K	QuantMS Superior
+PRTFDC1	QuantMS Superior
+PSG11	QuantMS Superior
+PSG5	QuantMS Superior
+PSG9	QuantMS Superior
+PSTPIP2	QuantMS Superior
+PTGS1	QuantMS Superior
+PTK2	QuantMS Superior
+PTP4A2	QuantMS Superior
+PTPN23	QuantMS Superior
+PTPRN	QuantMS Superior
+PUDP	QuantMS Superior
+PYCARD	QuantMS Superior
+RAB21	QuantMS Superior
+RAB4A	QuantMS Superior
+RAB4B	QuantMS Superior
+RAB5B	QuantMS Superior
+RAB6B	QuantMS Superior
+RALB	QuantMS Superior
+RAP1GAP2	QuantMS Superior
+RASA3	QuantMS Superior
+RBBP9	QuantMS Superior
+RBP1	QuantMS Superior
+RBP2	QuantMS Superior
+RDH11	QuantMS Superior
+RELCH	QuantMS Superior
+REN	QuantMS Superior
+RFESD	QuantMS Superior
+RGS18	QuantMS Superior
+RGS6	QuantMS Superior
+RIC8A	QuantMS Superior
+RIDA	QuantMS Superior
+RILP	QuantMS Superior
+RIN3	QuantMS Superior
+RMDN3	QuantMS Superior
+RNF123	QuantMS Superior
+RP2	QuantMS Superior
+RRAS	QuantMS Superior
+RTCA	QuantMS Superior
+RTN1	QuantMS Superior
+S100A14	QuantMS Superior
+S100B	QuantMS Superior
+SACM1L	QuantMS Superior
+SAMD14	QuantMS Superior
+SARAF	QuantMS Superior
+SAV1	QuantMS Superior
+SCG2	QuantMS Superior
+SCG5	QuantMS Superior
+SCGB3A2	QuantMS Superior
+SCRG1	QuantMS Superior
+SCRN2	QuantMS Superior
+SCRN3	QuantMS Superior
+SCYL2	QuantMS Superior
+SDSL	QuantMS Superior
+SEC14L2	QuantMS Superior
+SEC14L4	QuantMS Superior
+SEC24C	QuantMS Superior
+SEC24D	QuantMS Superior
+SELENOM	QuantMS Superior
+SEMA3B	QuantMS Superior
+SEMA3C	QuantMS Superior
+SEMA5A	QuantMS Superior
+SEMA6A	QuantMS Superior
+SERPINB2	QuantMS Superior
+SERPINI1	QuantMS Superior
+SEZ6	QuantMS Superior
+SFRP2	QuantMS Superior
+SFRP5	QuantMS Superior
+SGCE	QuantMS Superior
+SH3GLB1	QuantMS Superior
+SHTN1	QuantMS Superior
+SIL1	QuantMS Superior
+SLAIN2	QuantMS Superior
+SLAMF1	QuantMS Superior
+SLAMF7	QuantMS Superior
+SLC44A1	QuantMS Superior
+SLITRK1	QuantMS Superior
+SLITRK2	QuantMS Superior
+SLITRK6	QuantMS Superior
+SLK	QuantMS Superior
+SLMAP	QuantMS Superior
+SMPX	QuantMS Superior
+SMTN	QuantMS Superior
+SNF8	QuantMS Superior
+SNTB1	QuantMS Superior
+SNX17	QuantMS Superior
+SOST	QuantMS Superior
+SPAG9	QuantMS Superior
+SPECC1	QuantMS Superior
+SPESP1	QuantMS Superior
+SRL	QuantMS Superior
+SSC4D	QuantMS Superior
+ST3GAL4	QuantMS Superior
+ST6GAL2	QuantMS Superior
+ST8SIA5	QuantMS Superior
+STAM	QuantMS Superior
+STC1	QuantMS Superior
+STK38	QuantMS Superior
+STK39	QuantMS Superior
+STRN	QuantMS Superior
+STRN4	QuantMS Superior
+STT3B	QuantMS Superior
+SUCO	QuantMS Superior
+SULF1	QuantMS Superior
+SUPT6H	QuantMS Superior
+SWAP70	QuantMS Superior
+SYNM	QuantMS Superior
+TACC1	QuantMS Superior
+TACC3	QuantMS Superior
+TANGO2	QuantMS Superior
+TAOK1	QuantMS Superior
+TAOK3	QuantMS Superior
+TAP1	QuantMS Superior
+TAPBP	QuantMS Superior
+TBC1D10B	QuantMS Superior
+TBC1D23	QuantMS Superior
+TBC1D5	QuantMS Superior
+TBCEL	QuantMS Superior
+TDRP	QuantMS Superior
+TENM2	QuantMS Superior
+TFF1	QuantMS Superior
+TFF3	QuantMS Superior
+TFPI2	QuantMS Superior
+TG	QuantMS Superior
+TM9SF3	QuantMS Superior
+TMBIM1	QuantMS Superior
+TMED4	QuantMS Superior
+TMED8	QuantMS Superior
+TMEM248	QuantMS Superior
+TMOD1	QuantMS Superior
+TMT1A	QuantMS Superior
+TNFAIP8	QuantMS Superior
+TNFRSF11B	QuantMS Superior
+TNFRSF14	QuantMS Superior
+TNFSF12	QuantMS Superior
+TNFSF13	QuantMS Superior
+TNIK	QuantMS Superior
+TNNC2	QuantMS Superior
+TNNI3	QuantMS Superior
+TOM1L2	QuantMS Superior
+TOP1	QuantMS Superior
+TOR1A	QuantMS Superior
+TOR1AIP2	QuantMS Superior
+TOR1B	QuantMS Superior
+TOR3A	QuantMS Superior
+TOR4A	QuantMS Superior
+TPK1	QuantMS Superior
+TPMT	QuantMS Superior
+TPPP3	QuantMS Superior
+TPST1	QuantMS Superior
+TRABD2A	QuantMS Superior
+TRABD2B	QuantMS Superior
+TRIM25	QuantMS Superior
+TRIP10	QuantMS Superior
+TSC22D4	QuantMS Superior
+TSNAX	QuantMS Superior
+TSPAN33	QuantMS Superior
+TSPAN9	QuantMS Superior
+TST	QuantMS Superior
+TTYH3	QuantMS Superior
+TYRP1	QuantMS Superior
+UBAC1	QuantMS Superior
+UBASH3B	QuantMS Superior
+UBE2J1	QuantMS Superior
+UBR4	QuantMS Superior
+UNC5C	QuantMS Superior
+USP47	QuantMS Superior
+UXS1	QuantMS Superior
+VAMP8	QuantMS Superior
+VEGFA	QuantMS Superior
+VEGFD	QuantMS Superior
+VIL1	QuantMS Superior
+VIT	QuantMS Superior
+VPS13C	QuantMS Superior
+VPS18	QuantMS Superior
+VPS25	QuantMS Superior
+VPS26B	QuantMS Superior
+VPS37A	QuantMS Superior
+VWA1	QuantMS Superior
+VWA5A	QuantMS Superior
+VWA7	QuantMS Superior
+VWC2	QuantMS Superior
+WASF2	QuantMS Superior
+WFDC12	QuantMS Superior
+WIPF1	QuantMS Superior
+XXYLT1	QuantMS Superior
+YOD1	QuantMS Superior
+ZG16B	QuantMS Superior
+ZNF185	QuantMS Superior
