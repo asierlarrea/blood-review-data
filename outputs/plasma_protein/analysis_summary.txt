@@ -1,0 +1,31 @@
+PLASMA PROTEIN ANALYSIS SUMMARY (WITH GENE DEDUPLICATION)
+=========================================================
+
+GENE DEDUPLICATION INFORMATION:
+===============================
+Multiple proteins mapping to the same gene have been deduplicated.
+For genes with multiple protein entries, median quantification values are used.
+This ensures accurate gene-level counts and quantification.
+
+SUMMARY STATISTICS (AFTER DEDUPLICATION):
+==========================================
+PeptideAtlas: 4603 unique genes
+HPA MS: 4294 unique genes
+HPA PEA: 1463 unique genes
+HPA Immunoassay: 308 unique genes
+GPMDB: 2266 unique genes
+PAXDB: 7021 unique genes
+
+Total unique genes across sources: 8374
+MS technologies total: 8043 unique genes
+HPA total (all technologies): 4831 unique genes
+============================================================
+
+Analysis completed successfully!
+Generated files:
+• Individual source plot: plasma_proteins_by_source.png
+• Technology classification plot: plasma_proteins_by_technology.png
+• Abundance distribution plot: plasma_proteins_abundance_distributions.png
+• Comprehensive combined plot: plasma_proteins_comprehensive.png
+• Data: outputs/plasma_protein_counts_summary.csv
+• Report: outputs/analysis_summary.txt

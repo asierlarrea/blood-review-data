@@ -294,9 +294,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       panel.grid.major.x = element_line(color = "grey90", size = 0.3)
     ) +
     labs(
-      title = "(C) Distribution of abundance/expression by data sources",
+      title = "(C) Distribution of abundance/detection frequency",
       subtitle = "Ridgeline plots showing actual distribution differences (traditional z-score)",
-      x = "Traditional Z-Score (log abundance/expression)",
+      x = "Traditional Z-Score (log abundance/detection frequency)",
       y = NULL
           )
     
@@ -340,7 +340,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     guides(color = guide_legend(ncol = 1, override.aes = list(size = 6, alpha = 0.9))) +
     labs(
-      title = "(D) Protein abundance/expression correlation with PeptideAtlas",
+      title = "(D) Protein abundance/detection frequency correlation with PeptideAtlas",
       subtitle = "Proteins ordered by PeptideAtlas quantile-normalized observations",
       x = NULL,  # Removed x-axis title
       y = "Quantile-normalized Values"
@@ -532,10 +532,10 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       )
     ) +
     labs(
-      title = "(E) QuantMS protein expression by sample presence",
-      subtitle = "Quantile-normalized expression distribution with highlighted gene categories (10 genes per category)",
+      title = "(E) QuantMS protein abundance by sample presence",
+      subtitle = "Quantile-normalized abundance distribution with highlighted gene categories (10 genes per category)",
       x = "Number of Samples", 
-      y = "Quantile-normalized Expression"
+      y = "Quantile-normalized Abundance"
     )
   
 
@@ -651,8 +651,8 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     labs(
       title = "(F) Complementary platform strengths",
       subtitle = sprintf("Quantile-normalized analysis of %d proteins present in both platforms", coverage_stats$total_proteins),
-      x = "PeptideAtlas Quantile-normalized Observations", 
-      y = "QuantMS Quantile-normalized Expression"
+      x = "PeptideAtlas Quantile-normalized Detection Frequency", 
+      y = "QuantMS Quantile-normalized Abundance"
     )
   
   # === COMBINE PANELS WITH ENHANCED LAYOUT ===

@@ -351,64 +351,65 @@ load_quantms_data <- function(sample_type, force_mapping = FALSE, min_samples = 
     return(NULL)
   }
   
-  # Read and combine all files
-  all_data <- map_dfr(quantms_files, ~{
-    read_csv(.x, show_col_types = FALSE) %>%
-      select(protein_accession = ProteinName, Ibaq = IbaqNorm, SampleID)
+  # Read and combine all files, tagging the source file
+  all_data <- purrr::map_dfr(quantms_files, ~{
+    readr::read_csv(.x, show_col_types = FALSE) %>%
+      dplyr::mutate(file_id = basename(.x)) %>%
+      dplyr::select(protein_accession = ProteinName, Ibaq = IbaqNorm, SampleID, file_id)
   })
   
-  # Map protein accessions to gene symbols on the entire dataset
+  # Map protein accessions to gene symbols
   all_data$gene <- convert_to_gene_symbol(all_data$protein_accession, force_mapping = force_mapping)
   
-  # Filter out proteins that couldn't be mapped
+  # Filter out unmapped or invalid proteins
   mapped_data <- all_data %>%
-    filter(!is.na(gene) & gene != "" & !is.na(Ibaq) & Ibaq > 0) %>%
-    select(gene, Ibaq, SampleID)
+    dplyr::filter(!is.na(gene) & gene != "" & !is.na(Ibaq) & Ibaq > 0) %>%
+    dplyr::select(gene, Ibaq, SampleID, file_id)
   
-  # Filter genes by sample prevalence if min_samples > 0
-  if (min_samples > 0) {
-    gene_sample_counts <- mapped_data %>%
-      group_by(gene) %>%
-      summarise(sample_count = n_distinct(SampleID), .groups = "drop")
-    
-    genes_with_sufficient_samples <- gene_sample_counts %>%
-      filter(sample_count >= min_samples) %>%
-      pull(gene)
-    
-    message(sprintf("  - Genes present in >=%d samples: %d out of %d total genes", 
-                    min_samples, length(genes_with_sufficient_samples), nrow(gene_sample_counts)))
-    
-    # Filter mapped data to include only genes present in >=min_samples samples
-    filtered_data <- mapped_data %>%
-      filter(gene %in% genes_with_sufficient_samples)
-  } else {
-    message("  - No sample filtering applied, keeping all genes")
-    filtered_data <- mapped_data
-  }
+  # --- Combined filtering by sample prevalence and number of files ---
+  gene_sample_counts <- mapped_data %>%
+    dplyr::group_by(gene) %>%
+    dplyr::summarise(sample_count = dplyr::n_distinct(SampleID), .groups = "drop")
   
-  # Now, aggregate by gene
+  gene_file_counts <- mapped_data %>%
+    dplyr::group_by(gene) %>%
+    dplyr::summarise(file_count = dplyr::n_distinct(file_id), .groups = "drop")
+  
+  gene_combined <- dplyr::inner_join(gene_sample_counts, gene_file_counts, by = "gene")
+  
+  genes_to_keep <- gene_combined %>%
+    dplyr::filter(sample_count >= min_samples, file_count >= 1) %>%
+    dplyr::pull(gene)
+  
+  message(sprintf("  - Genes present in >=%d samples and >=1 files: %d genes retained",
+                  min_samples, length(genes_to_keep)))
+  
+  # Keep only genes that meet both filters
+  filtered_data <- mapped_data %>%
+    dplyr::filter(gene %in% genes_to_keep)
+  
+  # Aggregate by gene
   processed_data <- filtered_data %>%
-    group_by(gene) %>%
-    summarise(
+    dplyr::group_by(gene) %>%
+    dplyr::summarise(
       abundance = median(Ibaq, na.rm = TRUE),
-      sample_count = n_distinct(SampleID),
-      protein_count = n(),
+      sample_count = dplyr::n_distinct(SampleID),
+      protein_count = dplyr::n(),
       .groups = "drop"
     )
-    
-  message(sprintf("  - Mapped to %d unique genes.", n_distinct(processed_data$gene)))
+  
+  message(sprintf("  - Mapped to %d unique genes.", dplyr::n_distinct(processed_data$gene)))
   
   processed_data <- processed_data %>%
-    filter(!is.na(abundance) & abundance > 0)
+    dplyr::filter(!is.na(abundance) & abundance > 0)
   
   # Add metadata
   processed_data$source <- "quantms"
   processed_data$technology <- "MS"
   processed_data$abundance_type <- "iBAQ Normalized"
   
-  # Keep the standard columns for compatibility (including protein_count to match other sources)
   final_data <- processed_data %>%
-    select(gene, abundance, protein_count, source, technology, abundance_type)
+    dplyr::select(gene, abundance, protein_count, source, technology, abundance_type)
   
   return(final_data)
-} 
+}

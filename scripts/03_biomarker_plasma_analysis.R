@@ -153,7 +153,7 @@ if (!dir.exists(output_dir)) {
 }
 
 # Read biomarker gene list
-biomarker_file <- "/Users/yperez/work/blood-review-data/data/metadata/biomarkers_list.csv"
+biomarker_file <- "data/metadata/biomarkers_list.csv"
 biomarkers <- read_csv(biomarker_file, show_col_types = FALSE)
 biomarker_genes <- unique(biomarkers$gene_name)
 

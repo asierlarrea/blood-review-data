@@ -595,7 +595,31 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
   }
   
   # Combine all correlation plots using cowplot
-  p_panel_c <- cowplot::plot_grid(plotlist = correlation_plots, ncol = 3, align = 'hv')
+  #p_panel_c <- cowplot::plot_grid(plotlist = correlation_plots, ncol = 3, align = 'hv')
+  
+  
+  # Reorder correlation plots: CD8 T cells → Monocytes → others
+  correlation_plot_order <- names(correlation_plots)
+  
+  # Define manual priorities
+  cd8_first <- grep("^CD8_T_cells", correlation_plot_order, value = TRUE)
+  mono_second <- grep("^Monocytes", correlation_plot_order, value = TRUE)
+  others <- setdiff(correlation_plot_order, c(cd8_first, mono_second))
+  
+  # New desired order
+  ordered_plot_keys <- c(cd8_first, mono_second, others)
+  
+  # Reorder the plots
+  correlation_plots_ordered <- correlation_plots[ordered_plot_keys]
+  
+  # Combine all correlation plots using cowplot with new order
+  p_panel_c <- cowplot::plot_grid(plotlist = correlation_plots_ordered, ncol = 3, align = 'hv')
+  
+  
+  
+  
+  
+  
   
   # Add main title for Panel C
   panel_c_title <- cowplot::ggdraw() + 

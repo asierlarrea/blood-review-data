@@ -39,7 +39,7 @@ Z-Score Log10(n_observations):
 Z-Score Log10(norm_PSMs_per_100K):
   Range: -1.714580 - 3.339481
   Median: -0.130309
-  Mean: -0.000000
+  Mean: 0.000000
   Standard Deviation: 1.000000
 
 RECOMMENDATION:
