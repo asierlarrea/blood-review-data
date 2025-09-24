@@ -1,70 +1,206 @@
+
+> cat("PEPTIDEATLAS QUANTIFICATION METHODS COMPARISON\n")
 PEPTIDEATLAS QUANTIFICATION METHODS COMPARISON
+
+> cat("==============================================\n")
 ==============================================
+
+> cat("Enhanced Analysis with Log and Z-Score Transformations\n\n")
 Enhanced Analysis with Log and Z-Score Transformations
 
+
+> cat("DATA SUMMARY:\n")
 DATA SUMMARY:
+
+> cat("=============\n")
 =============
+
+> cat(sprintf("Total proteins with quantification data: %d\n", nrow(peptideatlas_transformed)))
 Total proteins with quantification data: 4603
 
+> cat("\n")
+
+
+> cat("TRANSFORMATION ANALYSIS:\n")
 TRANSFORMATION ANALYSIS:
+
+> cat("========================\n")
 ========================
+
+> cat("Correlation coefficients by transformation method:\n")
 Correlation coefficients by transformation method:
+
+> for(i in 1:nrow(correlations)) {
++   cat(sprintf("  %s: r = %.4f\n", correlations$transformation[i], correlations$correlation[i]))
++ }
   raw: r = 0.7065
   log: r = 0.9656
   z_score: r = 0.7065
   z_score_log: r = 0.9656
 
+> cat("\n")
+
+
+> cat("QUANTIFICATION STATISTICS (Log-Transformed):\n")
 QUANTIFICATION STATISTICS (Log-Transformed):
+
+> cat("============================================\n")
 ============================================
+
+> cat("Log10(n_observations):\n")
 Log10(n_observations):
+
+> cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$log_n_observations), max(peptideatlas_transformed$log_n_observations)))
   Range: 0.301030 - 6.876223
+
+> cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$log_n_observations)))
   Median: 2.086360
+
+> cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$log_n_observations)))
   Mean: 2.281736
+
+> cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$log_n_observations)))
   Standard Deviation: 1.303730
 
+> cat("\n")
+
+
+> cat("Log10(norm_PSMs_per_100K):\n")
 Log10(norm_PSMs_per_100K):
+
+> cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$log_norm_PSMs_per_100K), max(peptideatlas_transformed$log_norm_PSMs_per_100K)))
   Range: -3.000000 - 3.775404
+
+> cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$log_norm_PSMs_per_100K)))
   Median: -0.876148
+
+> cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$log_norm_PSMs_per_100K)))
   Mean: -0.701458
+
+> cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$log_norm_PSMs_per_100K)))
   Standard Deviation: 1.340586
 
+> cat("\n")
+
+
+> cat("Z-SCORE STATISTICS (on Log-Transformed Data):\n")
 Z-SCORE STATISTICS (on Log-Transformed Data):
+
+> cat("==============================================\n")
 ==============================================
+
+> cat("Z-Score Log10(n_observations):\n")
 Z-Score Log10(n_observations):
+
+> cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$z_log_n_observations), max(peptideatlas_transformed$z_log_n_observations)))
   Range: -1.519260 - 3.524108
+
+> cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$z_log_n_observations)))
   Median: -0.149859
+
+> cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$z_log_n_observations)))
   Mean: -0.000000
+
+> cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$z_log_n_observations)))
   Standard Deviation: 1.000000
 
+> cat("\n")
+
+
+> cat("Z-Score Log10(norm_PSMs_per_100K):\n")
 Z-Score Log10(norm_PSMs_per_100K):
+
+> cat(sprintf("  Range: %.6f - %.6f\n", min(peptideatlas_transformed$z_log_norm_PSMs_per_100K), max(peptideatlas_transformed$z_log_norm_PSMs_per_100K) .... [TRUNCATED] 
   Range: -1.714580 - 3.339481
+
+> cat(sprintf("  Median: %.6f\n", median(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
   Median: -0.130309
-  Mean: -0.000000
+
+> cat(sprintf("  Mean: %.6f\n", mean(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
+  Mean: 0.000000
+
+> cat(sprintf("  Standard Deviation: %.6f\n", sd(peptideatlas_transformed$z_log_norm_PSMs_per_100K)))
   Standard Deviation: 1.000000
 
+> cat("\n")
+
+
+> cat("RECOMMENDATION:\n")
 RECOMMENDATION:
+
+> cat("===============\n")
 ===============
+
+> cat("norm_PSMs_per_100K with log transformation is recommended because:\n")
 norm_PSMs_per_100K with log transformation is recommended because:
+
+> cat("1. Log transformation normalizes the distribution and reduces skewness\n")
 1. Log transformation normalizes the distribution and reduces skewness
+
+> cat("2. Z-score normalization centers and scales the data (mean=0, sd=1)\n")
 2. Z-score normalization centers and scales the data (mean=0, sd=1)
+
+> cat("3. Normalized per 100K PSMs - accounts for run-to-run variation\n")
 3. Normalized per 100K PSMs - accounts for run-to-run variation
+
+> cat("4. Better correlation structure preserved across transformations\n")
 4. Better correlation structure preserved across transformations
+
+> cat("5. Standard metric used in PeptideAtlas publications\n")
 5. Standard metric used in PeptideAtlas publications
+
+> cat("6. Enables better cross-study comparisons and statistical analysis\n")
 6. Enables better cross-study comparisons and statistical analysis
 
+> cat("\n")
+
+
+> cat("TRANSFORMATION NOTES:\n")
 TRANSFORMATION NOTES:
+
+> cat("====================\n")
 ====================
+
+> cat("• Log transformation: Reduces right skewness and stabilizes variance\n")
 • Log transformation: Reduces right skewness and stabilizes variance
+
+> cat("• Z-score normalization: Centers data around 0 with unit variance\n")
 • Z-score normalization: Centers data around 0 with unit variance
+
+> cat("• Combined approach: Log + Z-score provides optimal normalization\n")
 • Combined approach: Log + Z-score provides optimal normalization
+
+> cat("• All transformations preserve correlation structure well\n")
 • All transformations preserve correlation structure well
 
+> cat("\n")
+
+
+> cat("GENERATED FILES:\n")
 GENERATED FILES:
+
+> cat("================\n")
 ================
+
+> cat("• Detailed log correlation: log_correlation_plot.png\n")
 • Detailed log correlation: log_correlation_plot.png
+
+> cat("• Z-score correlation: zscore_correlation_plot.png\n")
 • Z-score correlation: zscore_correlation_plot.png
+
+> cat("• Transformation comparison: transformation_comparison.png\n")
 • Transformation comparison: transformation_comparison.png
+
+> cat("• Comprehensive analysis: comprehensive_plot.png\n")
 • Comprehensive analysis: comprehensive_plot.png
+
+> cat("• Enhanced data: peptideatlas_transformed.csv\n")
 • Enhanced data: peptideatlas_transformed.csv
+
+> cat("• Correlation summary: correlation_summary.csv\n")
 • Correlation summary: correlation_summary.csv
+
+> cat("• Summary report: quantification_analysis_summary.txt\n")
 • Summary report: quantification_analysis_summary.txt
+
+> sink()

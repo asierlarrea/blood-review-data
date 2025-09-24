@@ -1,6 +1,6 @@
 # Cell Type Protein Expression Analysis Report
 
-**Analysis Date:** 2025-09-11
+**Analysis Date:** 2025-09-24
 **Script:** `05_celltype_analysis.R`
 **Description:** Comprehensive analysis of protein expression across blood cell types using PAXDB, GPMDB, and ProteomeXchange databases.
 
@@ -33,48 +33,6 @@
 | PXD040957 | 1 | 6277 | MS-comprehensive |
 | PXD040957 | 1 | 5971 | MS-comprehensive |
 | GPMDB | 2 | 3616 | MS-comprehensive |
-
-## Key Findings
-
-- **Protein expression breadth:** 868-12971 proteins detectable per cell type
-- **Cell type specificity:** Distinct protein expression profiles across blood cell types
-- **Immune cell complexity:** Lymphocytes and monocytes show highest protein diversity
-- **Database complementarity:** Each database contributes unique protein identifications
-- **Total proteome coverage:** 15024 unique proteins across all cell types and databases
-- **Cross-validation opportunities:** Proteins detected across multiple sources show enhanced confidence
-
-## Biological Insights
-
-- **Functional specialization:** Protein profiles reflect known cell type functions
-- **Immune cell complexity:** Lymphocytes and monocytes show highest protein diversity
-- **Metabolic signatures:** Cell-type specific metabolic proteins clearly distinguished
-- **Activation states:** Protein expression ranges suggest different activation levels
-- **Biomarker potential:** Cell-type specific proteins offer diagnostic opportunities
-- **Developmental relationships:** Related cell types show overlapping protein expression patterns
-
-## Database Comparison
-
-### Cell Type Protein Expression Coverage
-
-**PAXDB Analysis:**
-- Consistent depth across different cell types
-- Excellent baseline for cell type proteome characterization
-- Comprehensive coverage across immune cell populations
-
-**GPMDB Analysis:**
-- Complementary coverage with focus on highly expressed proteins
-- Variable coverage across cell types
-- Provides validation for PAXDB findings
-
-**ProteomeXchange Analysis:**
-- Specialized datasets with deep coverage for specific cell types
-- Research-grade data quality with experimental validation
-- Strong coverage for immune cell populations
-
-**Cross-Database Integration:**
-- Combined databases provide comprehensive cell type proteome coverage
-- ~40-60%% overlap between major databases indicates robust detection
-- Unique proteins per database suggest specialized detection capabilities
 
 ## Methodology
 

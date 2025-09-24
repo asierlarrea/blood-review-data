@@ -75,7 +75,7 @@ run_plasma_protein_analysis <- function() {
   message("\n[STEP 4] Creating visualizations...")
   create_analysis_plots(normalized_data, summary_stats_extended)
   
-  message("\n✅ Analysis completed successfully!")
+  message("\n Analysis completed successfully!")
   
   return(list(
     data = normalized_data,
@@ -159,7 +159,7 @@ create_upset_analysis <- function(data) {
   # Remove any remaining NA or empty gene names
   gene_lists <- lapply(gene_lists, function(x) unique(x[!is.na(x) & x != ""]))
   
-  message("✅ UpSet analysis plot created successfully!")
+  message("UpSet analysis plot created successfully!")
   
   return(gene_lists)
 }
@@ -173,7 +173,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   
   # Check inputs
   if (is.null(normalized_data) || is.null(summary_stats)) {
-    message("❌ Error: NULL data provided to comprehensive panel function")
+    message("Error: NULL data provided to comprehensive panel function")
     return(NULL)
   }
   
@@ -231,7 +231,6 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       y = "Number of Proteins"
     )
   
-
   
   # === SECTION 2: OVERLAP ANALYSIS ===
   
@@ -686,7 +685,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
                     width = 30, height = 30, dpi = 450, device = "png")
   
-  message("✅ Enhanced comprehensive panel created successfully!")
+  message("Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)
 }
 
@@ -786,9 +785,9 @@ generate_analysis_report <- function(results) {
 **Analysis Date:** %s  
 **Script Version:** %s
 
-## 🔬 TOTAL UNIQUE GENES DETECTED: %s
+## TOTAL UNIQUE GENES DETECTED: %s
 
-This analysis identified **%s unique genes** across all plasma protein databases, representing the most comprehensive plasma proteome compilation to date.
+This analysis identified **%s unique genes** across all plasma protein databases
 
 ## Summary Statistics
 
@@ -799,11 +798,11 @@ This analysis identified **%s unique genes** across all plasma protein databases
 
 ### Key Findings
 
-- **🎯 Total unique genes across all sources:** **%s**
-- **⚗️ Mass spectrometry technologies combined:** %s unique genes
-- **🥇 Highest individual source:** %s (%s proteins)
-- **📊 Data sources analyzed:** %d databases
-- **🔬 Technologies represented:** %s
+- **Total unique genes across all sources:** **%s**
+- **Mass spectrometry technologies combined:** %s unique genes
+- **Highest individual source:** %s (%s proteins)
+- **Data sources analyzed:** %d databases
+- **Technologies represented:** %s
 
 ### Source-Specific Details
 %s
@@ -863,8 +862,8 @@ tryCatch({
   generate_analysis_report(results)
   
 }, error = function(e) {
-  message(sprintf("❌ Analysis failed: %s", e$message))
+  message(sprintf("Analysis failed: %s", e$message))
   quit(status = 1)
 })
 
-message("\n🎉 Plasma protein analysis completed successfully!") 
+message("Plasma protein analysis completed successfully!") 

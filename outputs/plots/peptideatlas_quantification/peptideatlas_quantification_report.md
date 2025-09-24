@@ -1,6 +1,6 @@
 # PeptideAtlas Quantification Methods Comparison Analysis
 
-**Analysis Date:** 2025-09-11
+**Analysis Date:** 2025-09-24
 **Script:** `02_peptideatlas_quantification_analysis.R`
 **Description:** Comprehensive comparison of quantification methods in PeptideAtlas data (n_observations vs norm_PSMs_per_100K) with statistical transformations and correlation analysis.
 
@@ -16,38 +16,6 @@
 | Correlation (Raw Data) | 0.707 |
 | Correlation (Log-transformed) | 0.966 |
 | Correlation (Z-score normalized) | 0.966 |
-
-## Key Findings
-
-- **Strong positive correlation** between the two quantification methods across all transformations
-- **Log transformation improves correlation** by reducing the impact of extreme values
-- **Gene deduplication** using median aggregation ensures robust quantification estimates
-- **Z-score normalization** provides standardized measures for cross-method comparison
-- **Distribution shapes** become more normal after log transformation, suitable for downstream statistical analyses
-
-## Biological Insights
-
-- **Quantification consistency** suggests both methods capture similar biological signals
-- **High correlation values** indicate that either method can be used reliably for protein abundance estimation
-- **Log-normal distribution** of protein abundances aligns with expected biological patterns
-- **Method robustness** demonstrated through multiple transformation approaches
-- **Cross-validation potential** between different quantification strategies in mass spectrometry data
-
-## Database Comparison
-
-### PeptideAtlas Quantification Methods Analysis
-
-The analysis reveals important characteristics of PeptideAtlas quantification approaches:
-
-**Method Comparison:**
-- Both n_observations and norm_PSMs_per_100K provide consistent protein abundance estimates
-- Strong correlation (>0.85) indicates biological relevance of both metrics
-- Log transformation essential for statistical modeling and cross-database comparisons
-
-**Statistical Properties:**
-- Raw data shows right-skewed distributions typical of proteomics data
-- Log transformation normalizes distributions for statistical analysis
-- Z-score normalization enables cross-method and cross-database comparisons
 
 ## Methodology
 

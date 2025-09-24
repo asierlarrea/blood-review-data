@@ -684,7 +684,7 @@ generate_biomarker_report <- function(output_dir) {
   # Save report
   report_file <- file.path(output_dir, "biomarker_plasma_analysis_report.md")
   writeLines(report_content, report_file)
-  message(sprintf("✅ Comprehensive biomarker report saved to: %s", report_file))
+  message(sprintf("Comprehensive biomarker report saved to: %s", report_file))
 }
 
 # Generate the report

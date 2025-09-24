@@ -148,10 +148,10 @@ create_upset_panel <- function(normalized_data) {
   
   panel_A <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 18),
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
+      plot.title = element_text(size = 34, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 26),
+      axis.title = element_text(size = 32),
+      axis.text = element_text(size = 30),
       plot.margin = margin(20, 20, 30, 20)  # Add bottom margin for spacing
     ) +
     labs(
@@ -194,22 +194,22 @@ create_dot_plot_panel <- function(normalized_data) {
     scale_x_continuous(labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 20),
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
+      plot.title = element_text(size = 34, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 26),
+      axis.title = element_text(size = 30),
+      axis.text = element_text(size = 28),
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       legend.position = "bottom",
-      legend.title = element_text(size = 22, face = "bold"),
-      legend.text = element_text(size = 20),
+      legend.title = element_text(size = 30, face = "bold"),
+      legend.text = element_text(size = 28),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3),
       plot.margin = margin(30, 20, 30, 20)  # Add top and bottom margins for spacing
     ) +
     guides(color = guide_legend(nrow = 1, override.aes = list(size = 6, alpha = 0.9))) +
     labs(
-      title = "(B) Protein abundance/detection frequency correlation with PeptideAtlas",
+      title = "(B) Protein abundance/expression correlation with PeptideAtlas",
       x = NULL,
       y = "Quantile-normalized Values"
     )
@@ -301,8 +301,8 @@ create_quantms_panel <- function(normalized_data) {
         TRUE ~ "Other"
       ),
       gene_category = factor(gene_category, levels = c("High PeptideAtlas (shared)", "Low PeptideAtlas (shared)", 
-                                                      "High quantms (unique)", "Low quantms (unique)",
-                                                      "Plasma literature", "Other"))
+                                                       "High quantms (unique)", "Low quantms (unique)",
+                                                       "Plasma literature", "Other"))
     ) %>%
     filter(!is.na(sample_group), sample_group != "Other")
   
@@ -359,14 +359,14 @@ create_quantms_panel <- function(normalized_data) {
     scale_shape_manual(values = category_shapes, name = "Gene Category") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 20),
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
-      axis.text.x = element_text(size = 20),
+      plot.title = element_text(size = 34, face = "bold", color = "#2c3e50"),
+      plot.subtitle = element_text(size = 28),
+      axis.title = element_text(size = 32),
+      axis.text = element_text(size = 30),
+      axis.text.x = element_text(size = 30),
       legend.position = "bottom",
-      legend.title = element_text(size = 24, face = "bold"),
-      legend.text = element_text(size = 22),
+      legend.title = element_text(size = 34, face = "bold"),
+      legend.text = element_text(size = 32),
       legend.key.size = unit(2.0, "lines"),
       panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3),
@@ -417,9 +417,9 @@ create_biomarker_heatmap <- function(normalized_data, biomarker_genes) {
   
   # Create a matrix of z-scores for biomarkers
   biomarker_matrix <- matrix(NA, 
-                           nrow = length(biomarker_genes), 
-                           ncol = length(zscore_data),
-                           dimnames = list(biomarker_genes, names(zscore_data)))
+                             nrow = length(biomarker_genes), 
+                             ncol = length(zscore_data),
+                             dimnames = list(biomarker_genes, names(zscore_data)))
   
   # Fill the matrix with z-scores
   for (db in names(zscore_data)) {
@@ -471,15 +471,15 @@ create_biomarker_heatmap <- function(normalized_data, biomarker_genes) {
     ) +
     theme_bw() +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 20),
-      axis.text.y = element_text(size = 22, face = "bold"),  # Increased from 18 to 22
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 26),
+      axis.text.y = element_text(size = 28, face = "bold"),  # Increased from 18 to 22
       axis.title = element_blank(),
       panel.grid = element_blank(),
-      plot.title = element_text(size = 28, face = "bold", hjust = 0.5),
-      plot.subtitle = element_text(size = 20, hjust = 0.5),
+      plot.title = element_text(size = 34, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 26, hjust = 0.5),
       legend.position = "right",
-      legend.title = element_text(size = 20, face = "bold"),
-      legend.text = element_text(size = 18),
+      legend.title = element_text(size = 26, face = "bold"),
+      legend.text = element_text(size = 24),
       plot.background = element_rect(fill = "white", color = NA),
       panel.background = element_rect(fill = "white", color = NA),
       legend.key.size = unit(2.0, "cm"),
@@ -531,7 +531,7 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
   # Create UpSet plot using ggupset with single blue color
   panel_plot <- upset_data_wide %>%
     filter(map_chr(databases, paste, collapse = ",") %in% 
-           map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
+             map_chr(intersection_counts$databases, paste, collapse = ",")) %>%
     ggplot(aes(x = databases)) +
     geom_bar(fill = "#4575b4", alpha = 0.85) +
     geom_text(stat = 'count', aes(label = after_stat(count)), vjust = -0.3, size = 8) +
@@ -539,16 +539,16 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 34, face = "bold", color = "#2c3e50"),
       plot.subtitle = element_blank(),
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
-      axis.text.y = element_text(size = 20),
-      axis.text.x = element_text(size = 20, face = "bold"),
+      axis.title = element_text(size = 30),
+      axis.text = element_text(size = 28),
+      axis.text.y = element_text(size = 28),
+      axis.text.x = element_text(size = 28, face = "bold"),
       panel.grid.major.x = element_blank(),
       panel.grid.minor.x = element_blank(),
       panel.grid.major.y = element_line(color = "grey90", size = 0.3),
-      strip.text = element_text(size = 22, face = "bold"),
+      strip.text = element_text(size = 30, face = "bold"),
       strip.background = element_blank()
     ) +
     labs(
@@ -588,8 +588,8 @@ combine_final_panels <- function(panel_A, panel_B, panel_C, panel_D) {
       )
     ) +
     plot_layout(
-      widths = c(1, 0.1, 1.2),  # Reduce Panel D width from 1.8 to 1.4
-      heights = c(1, 1, 1, 1.2)  # Give Panel D 20% more height
+      widths = c(1, 0.02, 0.7),  # Reduce Panel D width from 1.8 to 1.4
+      heights = c(1, 1, 1.5, 2.2 )  # Give Panel D 20% more height
     )
   
   return(final_figure)
@@ -615,8 +615,8 @@ save_final_figure <- function(final_figure) {
   ggsave(
     file.path(output_dir, "final_figure_comprehensive_figure.tiff"),
     final_figure,
-    width = 36,
-    height = 24,
+    width = 32,
+    height = 30,
     dpi = 600,
     bg = "white",
     device = "tiff",

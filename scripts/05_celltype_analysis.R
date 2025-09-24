@@ -404,16 +404,16 @@ p_panel_a <- ggplot(plot_data_summary, aes(y = reorder(celltype_display, total_g
     y = "",
     fill = "Data Source"
   ) +
-  theme_minimal(base_size = 16) +
+  theme_minimal(base_size = 18) +
   theme(
     panel.grid.major.y = element_blank(),
     panel.grid.minor.x = element_blank(),
-    axis.text.y = element_text(size = 12),
-    axis.text.x = element_text(size = 12),
-    axis.title = element_text(size = 14),
-    plot.title = element_text(face = "bold", size = rel(1.2)),
-    legend.title = element_text(size = rel(1.1)),
-    legend.text = element_text(size = rel(1.0))
+    axis.text.y = element_text(size = 16),
+    axis.text.x = element_text(size = 16),
+    axis.title = element_text(size = 18),
+    plot.title = element_text(face = "bold", size = rel(1.4)),
+    legend.title = element_text(size = rel(1.3)),
+    legend.text = element_text(size = rel(1.2))
   )
 
 # Panel B: Z-score distribution boxplot
@@ -456,10 +456,10 @@ p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = 
     x = "Z-score of log10(Intensity)",
     y = ""
   ) +
-  theme_minimal(base_size = 16) +
+  theme_minimal(base_size = 18) +
   theme(
     axis.text.y = element_blank(),
-    axis.title.x = element_text(size = 14),
+    axis.title.x = element_text(size = 16),
     plot.title = element_text(face = "bold", size = rel(1.2)),
     legend.position = "none",
     panel.grid.major.y = element_blank(),
@@ -567,7 +567,7 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
       stat_cor(
         aes(label = after_stat(r.label)),
         label.x.npc = 0.05, label.y.npc = 0.95,
-        hjust = 0, size = 6, color = "white", fontface = "bold"
+        hjust = 0, size = 8, color = "white", fontface = "bold"
       ) +
       labs(
         title = format_celltype_names(celltype),
@@ -577,10 +577,10 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
       ) +
       theme_void() +
       theme(
-        plot.title = element_text(size = 14, hjust = 0.5, margin = margin(b = 5)),
-        plot.subtitle = element_text(size = 12, hjust = 0.5, margin = margin(b = 10), color = "black", face = "bold"),  # Style the correlation subtitle
-        axis.title.x = element_text(size = 12,  hjust = 0.5, margin = margin(t = 5)),
-        axis.title.y = element_text(size = 12, hjust = 0.5, angle = 90, margin = margin(r = 5)),
+        plot.title = element_text(size = 16, hjust = 0.5, margin = margin(b = 5)),
+        plot.subtitle = element_text(size = 14, hjust = 0.5, margin = margin(b = 10), color = "black", face = "bold"),  # Style the correlation subtitle
+        axis.title.x = element_text(size = 14,  hjust = 0.5, margin = margin(t = 5)),
+        axis.title.y = element_text(size = 14, hjust = 0.5, angle = 90, margin = margin(r = 5)),
         legend.position = "none",
         panel.background = element_rect(fill = "white", color = "white"),
         plot.background = element_rect(fill = "white", color = "white"),
@@ -615,12 +615,6 @@ if (length(unique(correlation_data$dataset_pair)) > 0) {
   # Combine all correlation plots using cowplot with new order
   p_panel_c <- cowplot::plot_grid(plotlist = correlation_plots_ordered, ncol = 3, align = 'hv')
   
-  
-  
-  
-  
-  
-  
   # Add main title for Panel C
   panel_c_title <- cowplot::ggdraw() + 
     cowplot::draw_label(
@@ -649,8 +643,8 @@ if (!is.null(p_panel_c)) {
   p_panel_a_with_legend <- p_panel_a + 
     theme(
       legend.position = "right",
-      legend.title = element_text(size = 12, face = "bold"),
-      legend.text = element_text(size = 10)
+      legend.title = element_text(size = 16, face = "bold"),
+      legend.text = element_text(size = 14)
     ) +
     guides(fill = guide_legend(title = "Data Sources"))
 
@@ -758,41 +752,6 @@ generate_celltype_report <- function(all_results, summary_stats, plot_dir) {
   
   report_content <- paste0(report_content, "\n",
     
-    "## Key Findings\n\n",
-    sprintf("- **Protein expression breadth:** %d-%d proteins detectable per cell type\n", min_proteins, max_proteins),
-    "- **Cell type specificity:** Distinct protein expression profiles across blood cell types\n",
-    "- **Immune cell complexity:** Lymphocytes and monocytes show highest protein diversity\n",
-    sprintf("- **Database complementarity:** Each database contributes unique protein identifications\n"),
-    sprintf("- **Total proteome coverage:** %d unique proteins across all cell types and databases\n", total_unique_genes),
-    "- **Cross-validation opportunities:** Proteins detected across multiple sources show enhanced confidence\n\n",
-    
-    "## Biological Insights\n\n",
-    "- **Functional specialization:** Protein profiles reflect known cell type functions\n",
-    "- **Immune cell complexity:** Lymphocytes and monocytes show highest protein diversity\n",
-    "- **Metabolic signatures:** Cell-type specific metabolic proteins clearly distinguished\n",
-    "- **Activation states:** Protein expression ranges suggest different activation levels\n",
-    "- **Biomarker potential:** Cell-type specific proteins offer diagnostic opportunities\n",
-    "- **Developmental relationships:** Related cell types show overlapping protein expression patterns\n\n",
-    
-    "## Database Comparison\n\n",
-    "### Cell Type Protein Expression Coverage\n\n",
-    "**PAXDB Analysis:**\n",
-    "- Consistent depth across different cell types\n",
-    "- Excellent baseline for cell type proteome characterization\n",
-    "- Comprehensive coverage across immune cell populations\n\n",
-    "**GPMDB Analysis:**\n",
-    "- Complementary coverage with focus on highly expressed proteins\n",
-    "- Variable coverage across cell types\n",
-    "- Provides validation for PAXDB findings\n\n",
-    "**ProteomeXchange Analysis:**\n",
-    "- Specialized datasets with deep coverage for specific cell types\n",
-    "- Research-grade data quality with experimental validation\n",
-    "- Strong coverage for immune cell populations\n\n",
-    "**Cross-Database Integration:**\n",
-    sprintf("- Combined databases provide comprehensive cell type proteome coverage\n"),
-    "- ~40-60%% overlap between major databases indicates robust detection\n",
-    "- Unique proteins per database suggest specialized detection capabilities\n\n",
-    
     "## Methodology\n\n",
     "- **Data processing:** Specialized processors for each database format\n",
     "- **Gene mapping:** Conversion of protein IDs to standardized gene symbols\n",
@@ -828,7 +787,7 @@ generate_celltype_report <- function(all_results, summary_stats, plot_dir) {
   dir.create(dirname(report_file), recursive = TRUE, showWarnings = FALSE)
   
   writeLines(report_content, report_file)
-  message(sprintf("✅ Comprehensive cell type analysis report saved to: %s", report_file))
+  message(sprintf("Comprehensive cell type analysis report saved to: %s", report_file))
 }
 
 # Generate the report

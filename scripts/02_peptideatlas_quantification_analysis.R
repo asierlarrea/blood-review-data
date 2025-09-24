@@ -139,10 +139,10 @@ p1_log <- peptideatlas_transformed %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    plot.subtitle = element_text(size = 10),
-    axis.text = element_text(size = 9),
-    axis.title = element_text(size = 10, face = "bold")
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text = element_text(size = 14),
+    axis.title = element_text(size = 16, face = "bold")
   )
 
 # Z-score correlation plot (on log-transformed data)
@@ -158,10 +158,10 @@ p1_zscore <- peptideatlas_transformed %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    plot.subtitle = element_text(size = 10),
-    axis.text = element_text(size = 9),
-    axis.title = element_text(size = 10, face = "bold")
+    plot.title = element_text(size = 14, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.text = element_text(size = 14),
+    axis.title = element_text(size = 16, face = "bold")
   )
 
 # Create distribution comparison plots
@@ -214,10 +214,10 @@ p2_log <- peptideatlas_transformed %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    plot.subtitle = element_text(size = 10),
-    axis.text = element_text(size = 9),
-    axis.title = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
     axis.text.x = element_text(angle = 45, hjust = 1),
     legend.position = "none"
   )
@@ -245,10 +245,10 @@ p2_zscore <- peptideatlas_transformed %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    plot.subtitle = element_text(size = 10),
-    axis.text = element_text(size = 9),
-    axis.title = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
     axis.text.x = element_text(angle = 45, hjust = 1),
     legend.position = "none"
   )
@@ -258,7 +258,7 @@ p3_comparison <- correlations %>%
   ggplot(aes(x = transformation, y = correlation, fill = transformation)) +
   geom_col(alpha = 0.8) +
   geom_text(aes(label = sprintf("r = %.4f", correlation)), 
-            vjust = -0.5, size = 3.5) +
+            vjust = -0.5, size = 5) +
   scale_fill_manual(values = c("raw" = "#FF6B6B", "log" = "#4ECDC4", 
                               "z_score" = "#45B7D1", "z_score_log" = "#96CEB4")) +
   scale_x_discrete(labels = c("Raw", "Log", "Z-Score", "Z-Score(Log)")) +
@@ -270,10 +270,10 @@ p3_comparison <- correlations %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    plot.subtitle = element_text(size = 10),
-    axis.text = element_text(size = 9),
-    axis.title = element_text(size = 10, face = "bold"),
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
     legend.position = "none"
   ) +
   ylim(0, 1)
@@ -292,8 +292,9 @@ comprehensive_plot <- (p1_log | p1_zscore | p3_comparison) /
     tag_levels = list(c('(a)', '(b)', '(c)', '(d)', '(e)', '(f)'))
   ) & 
   theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5)
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    plot.subtitle = element_text(size = 14, hjust = 0.5),
+    plot.tag = element_text(size = 24, face = "bold")  # <-- Bigger panel letters
   )
 
 # Create individual plot for detailed log analysis (original style)
@@ -310,10 +311,10 @@ p_detailed_log <- peptideatlas_transformed %>%
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 14, face = "bold"),
-    plot.subtitle = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    axis.title = element_text(size = 11, face = "bold")
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 14),
+    axis.text = element_text(size = 14),
+    axis.title = element_text(size = 14, face = "bold")
   )
 
 # Save plots with high resolution - both PNG and TIFF versions
@@ -438,32 +439,6 @@ generate_peptideatlas_report <- function(data, correlations, plot_dir, output_di
     sprintf("| Correlation (Z-score normalized) | %.3f |\n", correlations$correlation[4]),
     "\n",
     
-    "## Key Findings\n\n",
-    "- **Strong positive correlation** between the two quantification methods across all transformations\n",
-    "- **Log transformation improves correlation** by reducing the impact of extreme values\n",
-    "- **Gene deduplication** using median aggregation ensures robust quantification estimates\n",
-    "- **Z-score normalization** provides standardized measures for cross-method comparison\n",
-    "- **Distribution shapes** become more normal after log transformation, suitable for downstream statistical analyses\n\n",
-    
-    "## Biological Insights\n\n",
-    "- **Quantification consistency** suggests both methods capture similar biological signals\n",
-    "- **High correlation values** indicate that either method can be used reliably for protein abundance estimation\n",
-    "- **Log-normal distribution** of protein abundances aligns with expected biological patterns\n",
-    "- **Method robustness** demonstrated through multiple transformation approaches\n",
-    "- **Cross-validation potential** between different quantification strategies in mass spectrometry data\n\n",
-    
-    "## Database Comparison\n\n",
-    "### PeptideAtlas Quantification Methods Analysis\n\n",
-    "The analysis reveals important characteristics of PeptideAtlas quantification approaches:\n\n",
-    "**Method Comparison:**\n",
-    "- Both n_observations and norm_PSMs_per_100K provide consistent protein abundance estimates\n",
-    "- Strong correlation (>0.85) indicates biological relevance of both metrics\n",
-    "- Log transformation essential for statistical modeling and cross-database comparisons\n\n",
-    "**Statistical Properties:**\n",
-    "- Raw data shows right-skewed distributions typical of proteomics data\n",
-    "- Log transformation normalizes distributions for statistical analysis\n",
-    "- Z-score normalization enables cross-method and cross-database comparisons\n\n",
-    
     "## Methodology\n\n",
     "- **Data loading:** PeptideAtlas CSV with protein identifiers and quantification metrics\n",
     "- **Gene mapping:** Conversion of biosequence accessions to gene symbols using integrated mapping utilities\n",
@@ -494,7 +469,7 @@ generate_peptideatlas_report <- function(data, correlations, plot_dir, output_di
   # Save report to outputs directory with script content
   report_file <- file.path(output_dir, "peptideatlas_quantification_report.md")
   writeLines(report_content, report_file)
-  message(sprintf("✅ Comprehensive report saved to: %s", report_file))
+  message(sprintf("Comprehensive report saved to: %s", report_file))
 }
 
 # Generate the report
