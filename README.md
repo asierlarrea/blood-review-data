@@ -157,6 +157,17 @@ z_score = qnorm(rank_quantile)
 - **Platelets**: 8,495 proteins
 - Plus: CD4 T cells, monocytes, dendritic cells, erythrocytes
 
+## Availability of Data and Materials
+
+- **PeptideAtlas**: Deutsch EW, Omenn GS, Sun Z, Maes M, Pernemalm M, Palaniappan KK, Letunica N, Vandenbrouck Y, Brun V, Tao SC, et al: Advances and Utility of the Human Plasma Proteome. https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProteins?atlas_build_id=603&organism_id=2&redundancy_constraint=4&presence_level_constraint=1&action=QUERY (2025).
+- **Human Protein Atlas**: Alvez MB, Bergstrom S, Kenrick J, Johansson E, Aberg M, Akyildiz M, Altay O, Skold H, Antonopoulos K, Apostolakis E, et al: A human pan-disease blood atlas of the circulating proteome. https://www.proteinatlas.org/about/download (2025).
+- **PaxDb**: Huang Q, Szklarczyk D, Oehninger J, von Mering C: PaxDb v6.0: reprocessed, LLM-selected, curated protein abundance data across organisms. https://pax-db.org/species/9606 (2025).
+- **GPMDB**: Craig R, Cortens JC, Fenyö D, Beavis RC. Using annotated peptide mass spectrum libraries for protein identification. https://www.thegpm.org/lists/index.html#201507081 (2025).
+- **quantms**: Dai C, Pfeuffer J, Wang H, Zheng P, Kall L, Sachsenberg T, Demichev V, Bai M, Kohlbacher O, Perez-Riverol Y: quantms: a cloud-based pipeline for quantitative proteomics enables the reanalysis of public proteomics data. https://quantms.org/datasets (2025).
+- **Blood Proteoform Atlas**: Melani RD, Gerbasi VR, Anderson LC, Sikora JW, Toby TK, Hutton JE, Butcher DS, Negrao F, Seckler HS, Srzentic K, et al: The Blood Proteoform Atlas: A reference map of proteoforms in human hematopoietic cells. https://blood-proteoform-atlas.org/proteins (2025).
+- **PXD040957**: Canale F, Neumann J, Renesse J et al. Proteomics of immune cells from liver tumors reveals immunotherapy targets. PRIDE. 10.1016/j.xgen.2023.100331 (2023). 
+- **PXD004352**: Rieckmann J, Geiger R, Hornburg D et al. Social network architecture of human immune cells unveiled by quantitative proteomics. PRIDE. 10.1038/ni.3693 (2016). 
+
 ## 🎯 Key Analysis Outcomes
 
 ### **Database Complementarity**
