@@ -6,10 +6,10 @@ Analysis pipeline for integrating six proteomics databases into a unified, gene-
 
 | Compartment | Databases | Unique Genes | Analysis Script |
 |---|---|---|---|
-| Plasma | 6 (PeptideAtlas, PAXDB, HPA MS, HPA PEA, GPMDB, QuantMS) | ~8,600 | `01_plasma_protein_analysis.R` |
+| Plasma | 6 (PeptideAtlas, PAXDB, HPA MS, HPA PEA, GPMDB, QuantMS) | ~9,200 | `01_plasma_protein_analysis.R` |
 | Serum | 3 (GPMDB, PAXDB, HPA Immunoassay) | ~4,100 | `04_serum_protein_analysis.R` |
 | Blood cells | 3 (PAXDB, ProteomeXchange, GPMDB) | >13,000 across 11 cell types | `05_celltype_analysis.R` |
-| Biomarkers | 129 curated markers tested across all DBs | -- | `03_biomarker_plasma_analysis.R` |
+| Biomarkers | 65 curated markers tested across all DBs | -- | `03_biomarker_plasma_analysis.R` |
 
 ## Quick Start
 
@@ -57,14 +57,14 @@ outputs/
 
 | Database | Technology | Proteins | Metric |
 |---|---|---|---|
-| PeptideAtlas | MS | 4,603 | PSMs/100K |
-| PAXDB | MS | 7,021 | ppm |
-| HPA MS | MS | 4,294 | mg/L |
-| HPA PEA | PEA | 1,436 | NPX |
+| PeptideAtlas | MS | 4,584 | PSMs/100K |
+| PAXDB | MS | 7,235 | ppm |
+| HPA MS | MS | 4,285 | mg/L |
+| HPA PEA | PEA | 2,871 | NPX |
 | GPMDB | MS | 2,266 | spectral counts |
 | QuantMS | MS (reanalysis) | 2,799 | iBAQ |
 
-All abundance values are normalized to a common scale using quantile-to-normal transformation for cross-database comparison.
+All abundance values are normalized to a common scale using a quantile-to-normal transformation, producing z-scores for cross-database comparison.
 
 ## Availability of Data and Materials
 
