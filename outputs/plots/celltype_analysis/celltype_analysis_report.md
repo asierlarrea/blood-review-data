@@ -1,8 +1,8 @@
 # Cell Type Protein Expression Analysis Report
 
-**Analysis Date:** 2025-09-24
+**Analysis Date:** 2025-12-10
 **Script:** `05_celltype_analysis.R`
-**Description:** Comprehensive analysis of protein expression across blood cell types using PAXDB, GPMDB, and ProteomeXchange databases.
+**Description:** Comprehensive analysis of protein expression across blood cell types using PAXDB and ProteomeXchange databases.
 
 ---
 
@@ -12,27 +12,26 @@
 
 | Cell Type | Sources | Total Unique Proteins | Database Coverage |
 |-----------|---------|----------------------|-------------------|
-| CD8 T cells | 3 | 12971 | PAXDB, ProteomeXchange_pxd004352, ProteomeXchange_pxd040957_cd8 |
-| NK cells | 2 | 11772 | PAXDB, ProteomeXchange_pxd004352 |
-| B cells | 2 | 11677 | PAXDB, ProteomeXchange_pxd004352 |
-| CD4 T cells | 2 | 11116 | PAXDB, ProteomeXchange_pxd004352 |
-| Monocytes | 3 | 10388 | PAXDB, ProteomeXchange_pxd004352, ProteomeXchange_pxd040957_macrophages |
+| CD8 T cells | 3 | 13120 | PAXDB, ProteomeXchange_pxd004352, ProteomeXchange_pxd040957_cd8 |
+| NK cells | 2 | 11870 | PAXDB, ProteomeXchange_pxd004352 |
+| B cells | 2 | 11773 | PAXDB, ProteomeXchange_pxd004352 |
+| CD4 T cells | 2 | 11161 | PAXDB, ProteomeXchange_pxd004352 |
+| Monocytes | 3 | 10426 | PAXDB, ProteomeXchange_pxd004352, ProteomeXchange_pxd040957_macrophages |
 | Dendritic cells | 1 | 9207 | ProteomeXchange_pxd004352 |
 | Basophils | 1 | 8157 | ProteomeXchange_pxd004352 |
 | Eosinophils | 1 | 7709 | ProteomeXchange_pxd004352 |
 | Neutrophils | 1 | 7286 | ProteomeXchange_pxd004352 |
-| Thrombocytes | 2 | 5555 | GPMDB, ProteomeXchange_pxd004352 |
-| Erythrocytes | 2 | 868 | GPMDB, ProteomeXchange_pxd004352 |
+| Platelets | 1 | 4249 | ProteomeXchange_pxd004352 |
+| Erythrocytes | 1 | 785 | ProteomeXchange_pxd004352 |
 
 ### Database Coverage
 
 | Database | Cell Types | Total Unique Proteins | Technology Coverage |
 |----------|------------|----------------------|--------------------|
-| PAXDB | 5 | 12253 | MS-comprehensive |
+| PAXDB | 5 | 12552 | MS-comprehensive |
 | PXD004352 | 11 | 9597 | MS-comprehensive |
 | PXD040957 | 1 | 6277 | MS-comprehensive |
 | PXD040957 | 1 | 5971 | MS-comprehensive |
-| GPMDB | 2 | 3616 | MS-comprehensive |
 
 ## Methodology
 

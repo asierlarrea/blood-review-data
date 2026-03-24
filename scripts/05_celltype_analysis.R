@@ -317,14 +317,15 @@ paxdb_std <- standardize_results(paxdb_results)
 gpmdb_std <- standardize_results(gpmdb_results)
 px_std <- standardize_results(px_results)
 
-# Combine all results
-all_results <- bind_rows(paxdb_std, gpmdb_std, px_std)
+# Combine all results (excluding GPMDB)
+all_results <- bind_rows(paxdb_std, px_std)  # Removed gpmdb_std
+message("  Note: GPMDB data excluded from analysis")
 
 # Group related cell subtypes
 all_results <- all_results %>%
   mutate(
     celltype = case_when(
-      celltype %in% c("Platelets", "Thrombocyte") ~ "Thrombocytes",
+      celltype %in% c("Platelets", "Thrombocyte") ~ "Platelets",
       celltype %in% c("Erythrocyte", "Erythrocytes") ~ "Erythrocytes",
       celltype %in% c("B_cells", "B.plasma") ~ "B_cells",
       celltype %in% c("CD4_T_cells", "T4.EMRA", "Th1", "Th2", "Th17") ~ "CD4_T_cells",
@@ -389,7 +390,6 @@ p_panel_a <- ggplot(plot_data_summary, aes(y = reorder(celltype_display, total_g
   scale_fill_manual(
     values = c(
       "PAXDB" = "#4E79A7",      # Professional blue
-      "GPMDB" = "#F28E2B",      # Warm orange  
       "PXD004352" = "#fb141875",  # Rich red
       "PXD025174" = "#76B7B2",  # Teal
       "PXD040957" = "#59A14F",  # Green
@@ -399,8 +399,8 @@ p_panel_a <- ggplot(plot_data_summary, aes(y = reorder(celltype_display, total_g
     drop = FALSE
   ) +
   labs(
-    title = "(A) Genes per Cell Type",
-    x = "Number of Genes",
+    title = "(A) Proteins per Cell Type",
+    x = "Number of Proteins",
     y = "",
     fill = "Data Source"
   ) +
@@ -442,7 +442,6 @@ p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = 
   scale_fill_manual(
     values = c(
       "PAXDB" = "#4E79A7",      # Professional blue
-      "GPMDB" = "#F28E2B",      # Warm orange  
       "PXD004352" = "#fb141875",  # Rich red
       "PXD025174" = "#76B7B2",  # Teal
       "PXD040957" = "#59A14F",  # Green
@@ -468,12 +467,14 @@ p_panel_b <- ggplot(z_score_data, aes(y = celltype_display, x = z_score, fill = 
   )
 
 # Data for correlation plots
-# Identify cell types with multiple data sources
+# Identify cell types with multiple data sources (excluding platelets and erythrocytes)
 multi_source_celltypes <- all_results %>%
+  filter(!celltype %in% c("Platelets", "Erythrocytes")) %>%  # Exclude single-source cell types
   group_by(celltype) %>%
   summarise(n_sources = n_distinct(source), .groups = 'drop') %>%
   filter(n_sources > 1) %>%
   pull(celltype)
+message("  Cell types with multiple sources (for Panel C): ", paste(multi_source_celltypes, collapse = ", "))
 
 # Create correlation pairs more robustly
 correlation_pairs <- data.frame()
@@ -712,7 +713,7 @@ generate_celltype_report <- function(all_results, summary_stats, plot_dir) {
     "# Cell Type Protein Expression Analysis Report\n\n",
     "**Analysis Date:** ", Sys.Date(), "\n",
     "**Script:** `05_celltype_analysis.R`\n",
-    "**Description:** Comprehensive analysis of protein expression across blood cell types using PAXDB, GPMDB, and ProteomeXchange databases.\n\n",
+    "**Description:** Comprehensive analysis of protein expression across blood cell types using PAXDB and ProteomeXchange databases.\n\n",
     "---\n\n",
     
     "## Summary Statistics\n\n",

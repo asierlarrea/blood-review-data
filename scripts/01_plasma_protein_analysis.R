@@ -70,6 +70,7 @@ run_plasma_protein_analysis <- function() {
   # Step 3: Generate summary statistics
   message("\n[STEP 3] Generating summary statistics...")
   summary_stats_extended <- generate_and_save_summary(data_list, normalized_data)
+  generate_proteins_presence_summary(normalized_data)
 
   # Step 4: Create visualizations
   message("\n[STEP 4] Creating visualizations...")
@@ -90,9 +91,14 @@ apply_normalization <- function(data) {
   data <- data %>%
     filter(abundance > 0)
   
-  message("  - Applying log10 transformation...")
+  message("  - Applying log10 transformation (where needed)...")
+  # Apply log transformation to all sources except HPA PEA (which uses samples_above_lod, not logarithmic)
   data <- data %>%
-    mutate(log_abundance = log10(abundance + 1))
+    mutate(
+      log_abundance = ifelse(source == "HPA PEA",
+                            abundance,              # Keep linear for HPA PEA (samples_above_lod)
+                            log10(abundance + 1))   # Apply log to all other sources
+    )
   
   message("  - Applying quantile-to-normal normalization...")
   data %>%
@@ -128,6 +134,32 @@ generate_and_save_summary <- function(data_list, normalized_data) {
   write_csv(summary_stats_extended, file.path(output_dir, "plasma_protein_summary.csv"))
   
   return(summary_stats_extended)
+}
+
+#' Generate gene presence summary across plasma databases
+#'
+generate_proteins_presence_summary <- function(normalized_data) {
+  output_dir <- get_output_path("01_plasma_protein_analysis", subdir = "tables")
+  
+  proteins_presence_summary <- normalized_data %>%
+    select(gene, source) %>%
+    distinct() %>%
+    filter(!is.na(gene), gene != "", !is.na(source), source != "") %>%
+    group_by(gene) %>%
+    summarise(
+      databases_count = n_distinct(source),
+      databases_list = paste(sort(unique(tolower(source))), collapse = ", "),
+      .groups = "drop"
+    ) %>%
+    arrange(desc(databases_count), gene)
+  
+  write_delim(
+    proteins_presence_summary,
+    file.path(output_dir, "proteins_presence_summary.txt"),
+    delim = "\t"
+  )
+  
+  return(proteins_presence_summary)
 }
 
 #' Create all analysis plots
@@ -181,60 +213,9 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   message(sprintf("  - Normalized data: %d rows, %d columns", nrow(normalized_data), ncol(normalized_data)))
   message(sprintf("  - Summary stats: %d rows, %d columns", nrow(summary_stats), ncol(summary_stats)))
   
-  # === SECTION 1: COVERAGE ANALYSIS ===
+  # === SECTION 1: OVERLAP ANALYSIS ===
   
-  # Get the exact source names from normalized_data to ensure consistency
-  source_names <- normalized_data %>%
-    select(source) %>%
-    distinct() %>%
-    pull(source)
-  
-  # Create a mapping between summary_stats sources and normalized_data sources
-  source_mapping <- setNames(source_names, 
-                           str_to_lower(str_replace_all(source_names, " ", "_")))
-  
-  # Panel A: Data Coverage by Source (Enhanced)
-  source_data <- summary_stats %>%
-    filter(!source %in% c("Total Across Sources", "MS Technologies Combined")) %>%
-    rename(count = unique_genes) %>%
-    # Map source names to match exactly with panel E
-    mutate(
-      source_lower = str_to_lower(str_replace_all(source, " ", "_")),
-      source = coalesce(source_mapping[source_lower], source)
-    ) %>%
-    select(-source_lower) %>%
-    arrange(desc(count))
-  
-  panel_A <- ggplot(source_data, aes(x = reorder(source, count), y = count, fill = technology)) +
-    geom_col(alpha = 0.85, width = 0.7) +
-    geom_text(aes(label = scales::comma(count)), hjust = -0.1, size = 12.0) +
-    coord_flip() +
-    scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
-    scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
-    theme_blood_proteomics() +
-    theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 18),
-      legend.position = "none",
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
-      axis.text.y = element_text(size = 20, face = "bold"),
-      axis.title.x = element_text(margin = margin(t = 8)),
-      axis.title.y = element_text(margin = margin(r = 8)),
-      panel.grid.major.x = element_line(color = "grey90", size = 0.3),
-      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5)
-    ) +
-    labs(
-      title = "(A) Number of proteins by data source",
-      subtitle = "Unique genes detected across different technologies",
-      x = "Data Source",
-      y = "Number of Proteins"
-    )
-  
-  
-  # === SECTION 2: OVERLAP ANALYSIS ===
-  
-  # Panel B: UpSet Plot for Protein Overlap (Enhanced)
+  # Panel A: UpSet Plot for Protein Overlap (Enhanced) - renamed from Panel B
   upset_data_panel <- normalized_data %>%
     select(gene, source, technology) %>%
     distinct() %>%
@@ -251,55 +232,22 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   tech_colors_panel <- get_plot_colors("technology")
   set_colors_panel <- tech_colors_panel[tech_mapping_panel[names(gene_lists_panel)]]
   
-  panel_B <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
+  panel_A <- create_upset_plot_for_panel(gene_lists_panel, set_colors_panel) +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 28, face = "bold", color = "black"),
       plot.subtitle = element_text(size = 18),
       axis.title = element_text(size = 22),
       axis.text = element_text(size = 20)
     ) +
     labs(
-      title = "(B) Intersection between different data sources",
-      subtitle = "Overlap analysis of protein coverage",
+      title = "(A) Intersection between different data sources",
       x = "Data Source Combinations",
       y = "Number of Proteins"
     )
   
-  # Panel C: Abundance Distribution (Enhanced) - Using traditional z-score for distribution shapes
-  # Create data with traditional z-score normalization to show actual distribution differences
-  panel_c_data <- normalized_data %>%
-    group_by(source) %>%
-    mutate(
-      # Traditional z-score normalization to preserve distribution shapes
-      z_score_traditional = (log_abundance - mean(log_abundance, na.rm = TRUE)) / sd(log_abundance, na.rm = TRUE)
-    ) %>%
-    ungroup()
+  # === SECTION 2: CROSS-DATABASE ANALYSIS ===
   
-  panel_C <- ggplot(panel_c_data, aes(x = z_score_traditional, y = reorder(source, z_score_traditional, median), fill = technology)) +
-    ggridges::geom_density_ridges(alpha = 0.8, scale = 0.9, bandwidth = 0.3, color = "white", size = 0.5) +
-    stat_summary(fun = median, geom = "point", shape = 20, size = 3, color = "red", alpha = 0.8, 
-                 position = position_nudge(y = 0)) +
-    scale_fill_manual(values = get_plot_colors("technology"), guide = "none") +
-    scale_x_continuous(limits = c(-5, 5), breaks = seq(-4, 4, 2)) +
-    theme_blood_proteomics() +
-    theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 18),
-      axis.title = element_text(size = 22),
-      axis.text = element_text(size = 20),
-      axis.text.y = element_text(size = 22, face = "bold"),
-      legend.position = "none",
-      panel.border = element_rect(color = "grey80", fill = NA, size = 0.5),
-      panel.grid.major.x = element_line(color = "grey90", size = 0.3)
-    ) +
-    labs(
-      title = "(C) Distribution of abundance/detection frequency",
-      subtitle = "Ridgeline plots showing actual distribution differences (traditional z-score)",
-      x = "Traditional Z-Score (log abundance/detection frequency)",
-      y = NULL
-          )
-    
-  # Panel D: Cross-Database Dot Plot (Enhanced)
+  # Panel B: Cross-Database Dot Plot (Enhanced) - renamed from Panel D
   peptideatlas_data <- normalized_data %>%
     filter(source == "PeptideAtlas") %>%
     arrange(z_score) %>%
@@ -319,13 +267,13 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   db_colors <- get_plot_colors("databases")
   db_colors["PeptideAtlas"] <- "#1a1a1a"  # Darker reference color
   
-  panel_D <- ggplot(dot_plot_data, aes(x = order, y = z_score, color = source)) +
+  panel_B <- ggplot(dot_plot_data, aes(x = order, y = z_score, color = source)) +
     geom_point(alpha = 0.7, size = 1.8) +
     scale_color_manual(values = db_colors, name = "Data Source") +
     scale_x_continuous(labels = scales::comma) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 28, face = "bold", color = "black"),
       plot.subtitle = element_text(size = 20),  # Added styling for subtitle
       axis.title = element_text(size = 22),
       axis.text = element_text(size = 20),
@@ -339,16 +287,15 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     guides(color = guide_legend(ncol = 1, override.aes = list(size = 6, alpha = 0.9))) +
     labs(
-      title = "(D) Protein abundance/detection frequency correlation with PeptideAtlas",
-      subtitle = "Proteins ordered by PeptideAtlas quantile-normalized observations",
+      title = "(B) Protein abundance/detection frequency correlation with PeptideAtlas",
       x = NULL,  # Removed x-axis title
       y = "Quantile-normalized Values"
     )
   
   # === SECTION 3: QUANTMS SAMPLE DISTRIBUTION ANALYSIS ===
   
-  # Panel E: QuantMS Sample Count Distribution (New)
-  message("  - Creating Panel E: QuantMS sample distribution...")
+  # Panel C: QuantMS Sample Count Distribution - renamed from Panel E
+  message("  - Creating Panel C: QuantMS sample distribution...")
   
   # Get the QuantMS data with quantile-normalized z-scores
   quantms_sample_data <- normalized_data %>%
@@ -467,21 +414,19 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
   )
   
   # Create violin plot with highlighted gene categories
-  panel_E <- ggplot(quantms_sample_data, aes(x = sample_group, y = z_score)) +
+
+  panel_C <- ggplot(quantms_sample_data, aes(x = sample_group, y = z_score)) +
     geom_violin(alpha = 0.6, scale = "width", trim = TRUE, width = 0.7, fill = "lightgrey", color = "grey60") +
-    # Background points for all other genes
     geom_jitter(data = filter(quantms_sample_data, gene_category == "Other"),
                 alpha = 0.3, size = 2.5, width = 0.15, color = "grey50") +
-    # Highlighted points for special gene categories
     geom_jitter(data = filter(quantms_sample_data, gene_category != "Other"),
                 aes(color = gene_category, shape = gene_category), 
                 alpha = 0.9, size = 4.0, width = 0.15, seed = 42,
                 show.legend = c(color = FALSE, shape = TRUE)) +
-    # Add gene labels with dashed lines for highlighted genes
     ggrepel::geom_label_repel(
       data = filter(quantms_sample_data, gene_category != "Other"),
       aes(label = gene, color = gene_category),
-      size = 7,
+      size = 5,
       alpha = 0.9,
       fontface = "bold",
       fill = "white",
@@ -503,12 +448,12 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     scale_shape_manual(values = category_shapes, name = "Gene Category") +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 20),
+      plot.title = element_text(size = 28, face = "bold", color = "black"),
       axis.title = element_text(size = 24, face = "bold"),
-      axis.text = element_text(size = 22),
+      axis.text = element_text(size = 22, face = "plain"),
       axis.text.x = element_text(size = 22, face = "bold"),
-      legend.position = "right",
+      axis.text.y = element_text(size = 22, face = "plain"),
+      legend.position = "bottom",
       legend.title = element_text(size = 24, face = "bold"),
       legend.text = element_text(size = 22),
       legend.key.size = unit(2.0, "lines"),
@@ -517,6 +462,7 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     ) +
     guides(
       shape = guide_legend(
+        nrow = 2,
         override.aes = list(
           size = 6, 
           alpha = 1, 
@@ -531,138 +477,129 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
       )
     ) +
     labs(
-      title = "(E) QuantMS protein abundance by sample presence",
-      subtitle = "Quantile-normalized abundance distribution with highlighted gene categories (10 genes per category)",
+      title = "(C) QuantMS protein abundance by sample presence",
       x = "Number of Samples", 
       y = "Quantile-normalized Abundance"
     )
   
-
-  
-  # === SECTION 4: COMPLEMENTARY PLATFORMS ANALYSIS ===
-  
-  # Panel F: Complementary Platform Strengths
-  message("  - Creating Panel F: Complementary platforms analysis...")
-  
-  # Create complementary analysis using current quantile-normalized data
-  # Extract PeptideAtlas and QuantMS data with quantile-normalized z-scores
-  peptideatlas_data_f <- normalized_data %>%
-    filter(source == "PeptideAtlas") %>%
-    select(gene, z_score) %>%
-    rename(z_score_PeptideAtlas = z_score)
-  
-  quantms_data_f <- normalized_data %>%
-    filter(source == "quantms") %>%
-    select(gene, z_score) %>%
-    rename(z_score_QuantMS = z_score)
-  
-  # Create complementary analysis data using current quantile-normalized z-scores
-  complementary_data <- inner_join(peptideatlas_data_f, quantms_data_f, by = "gene") %>%
-    mutate(
-      # Calculate platform advantages
-      peptideatlas_advantage = z_score_PeptideAtlas - z_score_QuantMS,
-      quantms_advantage = z_score_QuantMS - z_score_PeptideAtlas,
-      # Determine platform strength
-      platform_strength = case_when(
-        abs(peptideatlas_advantage) < 0.5 ~ "Both Platforms Equivalent",
-        peptideatlas_advantage > 0.5 ~ "PeptideAtlas Superior", 
-        quantms_advantage > 0.5 ~ "QuantMS Superior",
-        TRUE ~ "Both Platforms Equivalent"
-      ),
-      # Calculate combined evidence and detection categories
-      combined_evidence = sqrt(z_score_PeptideAtlas^2 + z_score_QuantMS^2),
-      detection_category = case_when(
-        z_score_PeptideAtlas > 1 & z_score_QuantMS > 1 ~ "High in Both",
-        z_score_PeptideAtlas > 1 & z_score_QuantMS <= 1 ~ "High in PeptideAtlas Only",
-        z_score_PeptideAtlas <= 1 & z_score_QuantMS > 1 ~ "High in QuantMS Only",
-        TRUE ~ "Low in Both"
-      )
-    )
-  
-  # If complementary analysis file exists, load it for comparison but use current data
-  complementary_file <- file.path("outputs/tables/01_plasma_protein_analysis/all_proteins_complementary_analysis.csv")
-  
-  # Calculate statistics for plot annotations
-  coverage_stats <- complementary_data %>%
-    summarise(
-      total_proteins = n(),
-      both_high = sum(detection_category == "High in Both"),
-      pa_only_high = sum(detection_category == "High in PeptideAtlas Only"),
-      qms_only_high = sum(detection_category == "High in QuantMS Only")
-    )
-  
-  # Create the complementary platforms plot
-  panel_F <- ggplot(complementary_data, aes(x = z_score_PeptideAtlas, y = z_score_QuantMS)) +
-    # Background quadrants
-    annotate("rect", xmin = -Inf, xmax = 1, ymin = -Inf, ymax = 1, 
-             fill = "lightgray", alpha = 0.2) +
-    annotate("rect", xmin = 1, xmax = Inf, ymin = 1, ymax = Inf, 
-             fill = "gold", alpha = 0.2) +
-    annotate("rect", xmin = 1, xmax = Inf, ymin = -Inf, ymax = 1, 
-             fill = "lightblue", alpha = 0.2) +
-    annotate("rect", xmin = -Inf, xmax = 1, ymin = 1, ymax = Inf, 
-             fill = "lightcoral", alpha = 0.2) +
-    
-    # Points colored by platform strength
-    geom_point(aes(color = platform_strength, size = combined_evidence), alpha = 0.7) +
-    
-    # Reference lines
-    geom_hline(yintercept = 1, linetype = "dashed", color = "gray50") +
-    geom_vline(xintercept = 1, linetype = "dashed", color = "gray50") +
-    geom_abline(intercept = 0, slope = 1, linetype = "dotted", color = "black", alpha = 0.5) +
-    
-    # Dynamic quadrant labels with actual counts
-    annotate("text", x = max(complementary_data$z_score_PeptideAtlas) * 0.85, 
-             y = max(complementary_data$z_score_QuantMS) * 0.85, 
-             label = paste0("Both High\n(n=", coverage_stats$both_high, ")"), 
-             size = 8, fontface = "bold", color = "darkgoldenrod") +
-    annotate("text", x = max(complementary_data$z_score_PeptideAtlas) * 0.85, 
-             y = min(complementary_data$z_score_QuantMS) * 0.85, 
-             label = paste0("PeptideAtlas\nSuperior\n(n=", coverage_stats$pa_only_high, ")"), 
-             size = 8, fontface = "bold", color = "blue") +
-    annotate("text", x = min(complementary_data$z_score_PeptideAtlas) * 0.5, 
-             y = max(complementary_data$z_score_QuantMS) * 0.85, 
-             label = paste0("QuantMS\nSuperior\n(n=", coverage_stats$qms_only_high, ")"), 
-             size = 8, fontface = "bold", color = "red") +
-    
-    scale_color_manual(values = c("PeptideAtlas Superior" = "#4575b4", 
-                                 "QuantMS Superior" = "#d73027",
-                                 "Both Platforms Equivalent" = "#35978f"),
-                      name = "Platform Strength") +
-    scale_size_continuous(range = c(0.8, 3), name = "Combined\nEvidence") +
-    
-    theme_blood_proteomics() +
+  # ---- Add this after the plot definition ----
+  panel_C <- panel_C +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
-      plot.subtitle = element_text(size = 20),
-      axis.title = element_text(size = 24, face = "bold"),
-      axis.text = element_text(size = 22),
+      axis.text.y = element_text(face = "plain", size = 22, color = "black")
+    )
+  
+  
+  # === SECTION 4: BIOMARKER HEATMAP (from script 03) ===
+  
+  # Panel D: Biomarker Detection Profile (from biomarker analysis Panel A)
+  message("  - Creating Panel D: Biomarker heatmap...")
+  
+  # Load biomarker gene list
+  biomarker_file <- "data/metadata/biomarkers_list.csv"
+  biomarkers <- read_csv(biomarker_file, show_col_types = FALSE)
+  biomarker_genes <- unique(biomarkers$gene_name)
+  
+  # Get unique sources
+  unique_sources <- unique(normalized_data$source)
+  
+  # Collect z-scores from all databases
+  zscore_data <- list()
+  for (source_name in unique_sources) {
+    source_data <- normalized_data %>% filter(source == source_name)
+    if (nrow(source_data) > 0) {
+      zscore_data[[source_name]] <- source_data %>%
+        select(gene, z_score)
+    }
+  }
+  
+  # Create a matrix of z-scores for biomarkers
+  biomarker_matrix <- matrix(NA, 
+                           nrow = length(biomarker_genes), 
+                           ncol = length(zscore_data),
+                           dimnames = list(biomarker_genes, names(zscore_data)))
+  
+  # Fill the matrix with z-scores
+  for (db in names(zscore_data)) {
+    db_data <- zscore_data[[db]]
+    biomarker_matrix[, db] <- db_data$z_score[match(biomarker_genes, db_data$gene)]
+  }
+  
+  # Calculate detection frequency for each biomarker
+  detection_freq <- rowSums(!is.na(biomarker_matrix)) / ncol(biomarker_matrix) * 100
+  
+  # Calculate mean z-score (when detected)
+  mean_zscore <- rowMeans(biomarker_matrix, na.rm = TRUE)
+  
+  # Create data frame for plotting - include "Detection Frequency" as a Database level
+  database_levels <- c(names(zscore_data), "Detection\nFrequency")
+  
+  plot_data <- as.data.frame(biomarker_matrix) %>%
+    tibble::rownames_to_column("Biomarker") %>%
+    tidyr::pivot_longer(-Biomarker, names_to = "Database", values_to = "Z_score") %>%
+    mutate(
+      Database = factor(Database, levels = database_levels),
+      Biomarker = factor(Biomarker, levels = biomarker_genes[order(mean_zscore, decreasing = TRUE)]),
+      Detection = ifelse(is.na(Z_score), "Not detected", "Detected"),
+      Z_score = ifelse(is.na(Z_score), 0, Z_score),  # Replace NA with 0 for visualization
+      Z_score_capped = pmin(pmax(Z_score, -3), 3)    # Cap z-scores for better visualization
+    )
+  
+  # Create the profile matrix plot
+  panel_D <- ggplot(plot_data, aes(x = Database, y = Biomarker)) +
+    # Add tiles colored by z-score (only for actual databases, not Detection Frequency)
+    geom_tile(data = filter(plot_data, Database != "Detection\nFrequency"),
+              aes(fill = Z_score_capped), color = "white", linewidth = 0.25, width = 0.65, height = 0.85, alpha = 1.0) +
+    # Add detection indicators
+    geom_point(data = filter(plot_data, Detection == "Not detected", Database != "Detection\nFrequency"),
+               color = "grey80", size = 0.75) +
+    # Customize colors
+    scale_fill_gradient2(
+      low = "#2166AC", 
+      mid = "#E8E8E8",
+      high = "#B2182B",
+      midpoint = 0,
+      limits = c(-3, 3),
+      name = "Z-score",
+      guide = guide_colorbar(title.position = "top", title.hjust = 0.5)
+    ) +
+    # Add detection frequency as text in the "Detection\nFrequency" column
+    geom_text(
+      data = unique(plot_data[c("Biomarker")]) %>%
+        mutate(
+          Database = "Detection\nFrequency",
+          label = sprintf("%.0f%%", detection_freq[as.character(Biomarker)])
+        ),
+      aes(label = label),
+      hjust = 0.5,
+      size = 7
+    ) +
+    theme_bw() +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 18),
+      axis.text.y = element_text(size = 16, face = "bold"),
+      axis.title = element_blank(),
+      panel.grid = element_blank(),
+      plot.title = element_text(size = 28, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 20, hjust = 0.5),
       legend.position = "right",
       legend.title = element_text(size = 22, face = "bold"),
       legend.text = element_text(size = 20),
-      legend.key.size = unit(1.5, "lines"),
-      panel.grid.major = element_line(color = "grey90", linewidth = 0.3)
-    ) +
-    guides(
-      color = guide_legend(override.aes = list(size = 6, alpha = 1)),
-      size = guide_legend(override.aes = list(alpha = 1))
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      legend.key.size = unit(1.5, "cm"),
+      panel.spacing = unit(1, "lines"),
+      plot.margin = margin(20, 10, 20, 20)  # Reduced right margin (top, right, bottom, left)
     ) +
     labs(
-      title = "(F) Complementary platform strengths",
-      subtitle = sprintf("Quantile-normalized analysis of %d proteins present in both platforms", coverage_stats$total_proteins),
-      x = "PeptideAtlas Quantile-normalized Detection Frequency", 
-      y = "QuantMS Quantile-normalized Abundance"
+      title = "(D) Biomarker Detection Profile Across Databases"
     )
   
-  # === COMBINE PANELS WITH ENHANCED LAYOUT ===
+  # === COMBINE PANELS WITH NEW LAYOUT ===
   
-  # Row 1: Coverage and Overlap (A-B)
-  # Row 2: Distribution and Cross-Database Analysis (C-D) 
-  # Row 3: QuantMS Sample Analysis and Complementary Platforms (E-F)
-  comprehensive_panel <- (panel_A | panel_B) / 
-                         (panel_C | panel_D) /
-                         (panel_E | panel_F) +
-                         plot_layout(heights = c(1.0, 1.0, 1.0)) &
+  # Left column: A, B, C (stacked vertically)
+  # Right side: D (biomarker heatmap)
+  comprehensive_panel <- (panel_A / panel_B / panel_C) | panel_D +
+                         plot_layout(widths = c(1, 1)) &
                          theme(legend.position = "right")
   
   # Add overall title and enhanced annotations
@@ -677,13 +614,13 @@ create_comprehensive_panel <- function(normalized_data, summary_stats, plot_dir)
     )
   
   # Save with enhanced specifications - both TIFF and PNG versions
-  # Save TIFF version (increased height for 3-row layout, high quality but manageable DPI)
+  # Save TIFF version (adjusted for new 2-column layout, wider for panel D)
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 30, dpi = 450, device = "tiff")
+                    width = 30, height = 20, dpi = 450, device = "tiff")
   
   # Save PNG version (high resolution for better rendering)
   save_plot_standard(comprehensive_panel, "00_comprehensive_plasma_analysis_panel", plot_dir,
-                    width = 30, height = 30, dpi = 450, device = "png")
+                    width = 30, height = 20, dpi = 450, device = "png")
   
   message("Enhanced comprehensive panel created successfully!")
   return(comprehensive_panel)
@@ -735,7 +672,7 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
     scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
     theme_blood_proteomics() +
     theme(
-      plot.title = element_text(size = 28, face = "bold", color = "#2c3e50"),
+      plot.title = element_text(size = 28, face = "bold", color = "black"),
       plot.subtitle = element_blank(),
       axis.title = element_text(size = 22),
       axis.text = element_text(size = 20),
@@ -748,7 +685,7 @@ create_upset_plot_for_panel <- function(gene_lists, set_colors) {
       strip.background = element_blank()
     ) +
     labs(
-      title = "(C) Intersection between different data sources",
+      title = "(A) Intersection between different data sources",
       x = "Data Source Combinations",
       y = "Number of Proteins"
     )

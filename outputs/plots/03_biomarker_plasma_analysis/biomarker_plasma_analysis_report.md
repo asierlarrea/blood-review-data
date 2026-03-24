@@ -1,6 +1,6 @@
 # Biomarker Plasma Analysis Report
 
-**Analysis Date:** 2025-09-24
+**Analysis Date:** 2025-12-08
 **Script:** `03_biomarker_plasma_analysis.R`
 **Description:** Analysis of biomarker protein expression across plasma databases with waterfall plots and abundance distribution analysis.
 
@@ -10,11 +10,11 @@
 
 | Database | Total Proteins | Biomarkers Detected | Biomarker Coverage (%) | Technology |
 |----------|----------------|--------------------|-----------------------|------------|
-| PeptideAtlas | 4603 | 60 | 1.3% | MS |
-| HPA MS | 4294 | 59 | 1.4% | MS |
-| HPA PEA | 1436 | 37 | 2.6% | PEA |
+| PeptideAtlas | 4583 | 61 | 1.3% | MS |
+| HPA MS | 0 | 0 | NaN% | MS |
+| HPA PEA | 0 | 0 | NaN% | PEA |
 | GPMDB | 2266 | 43 | 1.9% | MS |
-| PAXDB | 7021 | 60 | 0.9% | MS |
+| PAXDB | 7235 | 61 | 0.8% | MS |
 | quantms | 2799 | 39 | 1.4% | MS |
 
 ## Key Findings

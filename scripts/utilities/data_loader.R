@@ -68,7 +68,18 @@ load_data_source <- function(source_name, force_mapping = FALSE) {
   
   # Rename quantification column for consistency
   if (config$quant_column != "abundance") {
+    # Check if the column exists
+    if (!config$quant_column %in% colnames(raw_data)) {
+      stop(sprintf("Column '%s' not found in %s. Available columns: %s", 
+                   config$quant_column, config$name, 
+                   paste(colnames(raw_data), collapse = ", ")))
+    }
+    # Use explicit column access that works with special characters
     raw_data$abundance <- raw_data[[config$quant_column]]
+    # Convert to numeric if needed (handles scientific notation)
+    if (!is.numeric(raw_data$abundance)) {
+      raw_data$abundance <- as.numeric(raw_data$abundance)
+    }
   }
   
   # Filter out invalid data
@@ -126,8 +137,14 @@ load_multiple_sources <- function(source_names = NULL, force_mapping = FALSE) {
   # Load all sources
   data_list <- lapply(source_names, function(source) {
     tryCatch({
-      load_data_source(source, force_mapping)
+      result <- load_data_source(source, force_mapping)
+      if (is.null(result) || nrow(result) == 0) {
+        warning(sprintf("Failed to load %s: No data returned", source))
+        return(NULL)
+      }
+      return(result)
     }, error = function(e) {
+      message(sprintf("ERROR loading %s: %s", source, e$message))
       warning(sprintf("Failed to load %s: %s", source, e$message))
       return(NULL)
     })

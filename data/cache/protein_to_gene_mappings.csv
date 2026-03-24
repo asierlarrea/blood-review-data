@@ -30465,29 +30465,29 @@ A5YKK6,CNOT1,UniProt_API,CCR4-NOT transcription complex subunit 1,2025-12-07,suc
 ENSP00000498441,FGA,Ensembl_API,fibrinogen alpha chain [Source:HGNC Symbol;Acc:HGNC:3661],2025-12-07,success
 ENSP00000494175,HBB,Ensembl_API,hemoglobin subunit beta [Source:HGNC Symbol;Acc:HGNC:4827],2025-12-07,success
 ENSP00000493985,KNG1,Ensembl_API,kininogen 1 [Source:HGNC Symbol;Acc:HGNC:6383],2025-12-07,success
-ENSP00000496470,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000440066,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000452662,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000480035,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000475107,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000496470,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000440066,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000452662,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000480035,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000475107,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000494708,HBD,Ensembl_API,hemoglobin subunit delta [Source:HGNC Symbol;Acc:HGNC:4829],2025-12-07,success
-ENSP00000478893,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000478893,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000451172,SERPINA4,Ensembl_API,serpin family A member 4 [Source:HGNC Symbol;Acc:HGNC:8948],2025-12-07,success
 ENSP00000444271,C1R,Ensembl_API,complement C1r [Source:HGNC Symbol;Acc:HGNC:1246],2025-12-07,success
-ENSP00000479032,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000482678,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000479032,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000482678,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000497910,B2M,Ensembl_API,beta-2-microglobulin [Source:HGNC Symbol;Acc:HGNC:914],2025-12-07,success
 ENSP00000468253,CFD,Ensembl_API,complement factor D [Source:HGNC Symbol;Acc:HGNC:2771],2025-12-07,success
 ENSP00000488437,PRSS2,Ensembl_API,serine protease 2 [Source:HGNC Symbol;Acc:HGNC:9483],2025-12-07,success
 ENSP00000494750,ACTB,Ensembl_API,actin beta [Source:HGNC Symbol;Acc:HGNC:132],2025-12-07,success
 ENSP00000498227,SELL,Ensembl_API,selectin L [Source:HGNC Symbol;Acc:HGNC:10720],2025-12-07,success
-ENSP00000483567,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000493607,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000491969,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000452747,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000483585,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000483567,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000493607,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000491969,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000452747,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000483585,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000425915,SELENOP,Ensembl_API,selenoprotein P [Source:HGNC Symbol;Acc:HGNC:10751],2025-12-07,success
-ENSP00000500193,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000500193,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000497550,PI16,Ensembl_API,peptidase inhibitor 16 [Source:HGNC Symbol;Acc:HGNC:21245],2025-12-07,success
 ENSP00000494125,TPM4,Ensembl_API,tropomyosin 4 [Source:HGNC Symbol;Acc:HGNC:12013],2025-12-07,success
 ENSP00000497767,ALDOB,Ensembl_API,"aldolase, fructose-bisphosphate B [Source:HGNC Symbol;Acc:HGNC:417]",2025-12-07,success
@@ -30496,7 +30496,7 @@ ENSP00000498684,FHL1,Ensembl_API,four and a half LIM domains 1 [Source:HGNC Symb
 ENSP00000498577,TPM3,Ensembl_API,tropomyosin 3 [Source:HGNC Symbol;Acc:HGNC:12012],2025-12-07,success
 ENSP00000496166,ALDOA,Ensembl_API,"aldolase, fructose-bisphosphate A [Source:HGNC Symbol;Acc:HGNC:414]",2025-12-07,success
 ENSP00000495530,ENO1,Ensembl_API,enolase 1 [Source:HGNC Symbol;Acc:HGNC:3350],2025-12-07,success
-ENSP00000485952,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000485952,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498879,CD59,Ensembl_API,CD59 molecule (CD59 blood group) [Source:HGNC Symbol;Acc:HGNC:1689],2025-12-07,success
 ENSP00000478771,UBB,Ensembl_API,ubiquitin B [Source:HGNC Symbol;Acc:HGNC:12463],2025-12-07,success
 ENSP00000484998,PSMC6,Ensembl_API,"proteasome 26S subunit, ATPase 6 [Source:HGNC Symbol;Acc:HGNC:9553]",2025-12-07,success
@@ -30505,33 +30505,33 @@ ENSP00000496494,TPM2,Ensembl_API,tropomyosin 2 [Source:HGNC Symbol;Acc:HGNC:1201
 ENSP00000451206,NPC2,Ensembl_API,NPC intracellular cholesterol transporter 2 [Source:HGNC Symbol;Acc:HGNC:14537],2025-12-07,success
 ENSP00000500990,SNCA,Ensembl_API,synuclein alpha [Source:HGNC Symbol;Acc:HGNC:11138],2025-12-07,success
 ENSP00000486361,DBI,Ensembl_API,"diazepam binding inhibitor, acyl-CoA binding protein [Source:HGNC Symbol;Acc:HGNC:2690]",2025-12-07,success
-ENSP00000499797,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499797,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000433760,BANF1,Ensembl_API,barrier to autointegration nuclear assembly factor 1 [Source:HGNC Symbol;Acc:HGNC:17397],2025-12-07,success
 ENSP00000359131,EXTL2,Ensembl_API,exostosin like glycosyltransferase 2 [Source:HGNC Symbol;Acc:HGNC:3516],2025-12-07,success
 ENSP00000478763,SIRPA,Ensembl_API,signal regulatory protein alpha [Source:HGNC Symbol;Acc:HGNC:9662],2025-12-07,success
-ENSP00000499683,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499683,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000284856,TMSB4Y,Ensembl_API,thymosin beta 4 Y-linked [Source:HGNC Symbol;Acc:HGNC:11882],2025-12-07,success
-ENSP00000489910,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000499717,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000493701,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000489910,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000499717,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000493701,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000258969,CHAD,Ensembl_API,chondroadherin [Source:HGNC Symbol;Acc:HGNC:1909],2025-12-07,success
 ENSP00000437125,HSPA8,Ensembl_API,heat shock protein family A (Hsp70) member 8 [Source:HGNC Symbol;Acc:HGNC:5241],2025-12-07,success
-ENSP00000499422,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499422,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000442920,SOD2,Ensembl_API,superoxide dismutase 2 [Source:HGNC Symbol;Acc:HGNC:11180],2025-12-07,success
-ENSP00000499289,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499289,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000463939,ARHGDIA,Ensembl_API,Rho GDP dissociation inhibitor alpha [Source:HGNC Symbol;Acc:HGNC:678],2025-12-07,success
 ENSP00000464359,MYL12A,Ensembl_API,myosin light chain 12A [Source:HGNC Symbol;Acc:HGNC:16701],2025-12-07,success
 ENSP00000497642,LPL,Ensembl_API,lipoprotein lipase [Source:HGNC Symbol;Acc:HGNC:6677],2025-12-07,success
 ENSP00000439020,TUBA1A,Ensembl_API,tubulin alpha 1a [Source:HGNC Symbol;Acc:HGNC:20766],2025-12-07,success
-ENSP00000489236,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000489236,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000380676,CDHR5,Ensembl_API,cadherin related family member 5 [Source:HGNC Symbol;Acc:HGNC:7521],2025-12-07,success
 ENSP00000491316,ST3GAL5,Ensembl_API,"ST3 beta-galactoside alpha-2,3-sialyltransferase 5 [Source:HGNC Symbol;Acc:HGNC:10872]",2025-12-07,success
 ENSP00000495909,SPTB,Ensembl_API,"spectrin beta, erythrocytic [Source:HGNC Symbol;Acc:HGNC:11274]",2025-12-07,success
 ENSP00000443475,TUBA1C,Ensembl_API,tubulin alpha 1c [Source:HGNC Symbol;Acc:HGNC:20768],2025-12-07,success
-ENSP00000485129,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000485129,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000495750,GSS,Ensembl_API,glutathione synthetase [Source:HGNC Symbol;Acc:HGNC:4624],2025-12-07,success
-ENSP00000489311,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000498807,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000489311,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000498807,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000489317,H2BC6,Ensembl_API,H2B clustered histone 6 [Source:HGNC Symbol;Acc:HGNC:4753],2025-12-07,success
 ENSP00000376678,TAGLN,Ensembl_API,transgelin [Source:HGNC Symbol;Acc:HGNC:11553],2025-12-07,success
 ENSP00000495214,SPTA1,Ensembl_API,"spectrin alpha, erythrocytic 1 [Source:HGNC Symbol;Acc:HGNC:11272]",2025-12-07,success
@@ -30541,40 +30541,40 @@ ENSP00000467537,PTPRS,Ensembl_API,protein tyrosine phosphatase receptor type S [
 ENSP00000493623,FYB1,Ensembl_API,FYN binding protein 1 [Source:HGNC Symbol;Acc:HGNC:4036],2025-12-07,success
 ENSP00000375618,LILRA2,Ensembl_API,leukocyte immunoglobulin like receptor A2 [Source:HGNC Symbol;Acc:HGNC:6603],2025-12-07,success
 ENSP00000495273,RPS7,Ensembl_API,ribosomal protein S7 [Source:HGNC Symbol;Acc:HGNC:10440],2025-12-07,success
-ENSP00000499582,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499582,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498853,NIF3L1,Ensembl_API,NGG1 interacting factor 3 like 1 [Source:HGNC Symbol;Acc:HGNC:13390],2025-12-07,success
 ENSP00000410798,FCGRT,Ensembl_API,Fc gamma receptor and transporter [Source:HGNC Symbol;Acc:HGNC:3621],2025-12-07,success
 ENSP00000481571,PRR4,Ensembl_API,proline rich 4 [Source:HGNC Symbol;Acc:HGNC:18020],2025-12-07,success
 ENSP00000488838,PON2,Ensembl_API,paraoxonase 2 [Source:HGNC Symbol;Acc:HGNC:9205],2025-12-07,success
-ENSP00000438024,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000438024,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000431240,RPLP2,Ensembl_API,ribosomal protein lateral stalk subunit P2 [Source:HGNC Symbol;Acc:HGNC:10377],2025-12-07,success
-ENSP00000491341,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000491341,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000423354,MEGF10,Ensembl_API,multiple EGF like domains 10 [Source:HGNC Symbol;Acc:HGNC:29634],2025-12-07,success
-ENSP00000496982,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000496982,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000496414,RDX,Ensembl_API,radixin [Source:HGNC Symbol;Acc:HGNC:9944],2025-12-07,success
 ENSP00000461947,CD226,Ensembl_API,CD226 molecule [Source:HGNC Symbol;Acc:HGNC:16961],2025-12-07,success
 ENSP00000456436,CNN2,Ensembl_API,calponin 2 [Source:HGNC Symbol;Acc:HGNC:2156],2025-12-07,success
 ENSP00000495192,H2BK1,Ensembl_API,H2B.K variant histone 1 [Source:HGNC Symbol;Acc:HGNC:53833],2025-12-07,success
 ENSP00000433112,DKK3,Ensembl_API,dickkopf WNT signaling pathway inhibitor 3 [Source:HGNC Symbol;Acc:HGNC:2893],2025-12-07,success
 ENSP00000499406,MYL3,Ensembl_API,myosin light chain 3 [Source:HGNC Symbol;Acc:HGNC:7584],2025-12-07,success
-ENSP00000498584,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498584,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000455114,HEXA,Ensembl_API,hexosaminidase subunit alpha [Source:HGNC Symbol;Acc:HGNC:4878],2025-12-07,success
 ENSP00000497221,ITM2B,Ensembl_API,integral membrane protein 2B [Source:HGNC Symbol;Acc:HGNC:6174],2025-12-07,success
 ENSP00000464849,CAPNS1,Ensembl_API,calpain small subunit 1 [Source:HGNC Symbol;Acc:HGNC:1481],2025-12-07,success
 ENSP00000424630,ADH4,Ensembl_API,"alcohol dehydrogenase 4 (class II), pi polypeptide [Source:HGNC Symbol;Acc:HGNC:252]",2025-12-07,success
-ENSP00000497225,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497225,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000489282,H3C6,Ensembl_API,H3 clustered histone 6 [Source:HGNC Symbol;Acc:HGNC:4769],2025-12-07,success
-ENSP00000497733,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000481313,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497733,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000481313,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000489642,C3ORF85,Ensembl_API,chromosome 3 open reading frame 85 [Source:HGNC Symbol;Acc:HGNC:53432],2025-12-07,success
 ENSP00000499129,PDIA4,Ensembl_API,protein disulfide isomerase family A member 4 [Source:HGNC Symbol;Acc:HGNC:30167],2025-12-07,success
 ENSP00000263268,MREG,Ensembl_API,melanoregulin [Source:HGNC Symbol;Acc:HGNC:25478],2025-12-07,success
-ENSP00000469926,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000469926,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000494040,DDX3X,Ensembl_API,DEAD-box helicase 3 X-linked [Source:HGNC Symbol;Acc:HGNC:2745],2025-12-07,success
-ENSP00000476412,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000476412,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000431548,TMEM25,Ensembl_API,transmembrane protein 25 [Source:HGNC Symbol;Acc:HGNC:25890],2025-12-07,success
-ENSP00000470615,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000491073,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000470615,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000491073,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000495247,MANBA,Ensembl_API,mannosidase beta [Source:HGNC Symbol;Acc:HGNC:6831],2025-12-07,success
 ENSP00000261798,CSNK1A1,Ensembl_API,casein kinase 1 alpha 1 [Source:HGNC Symbol;Acc:HGNC:2451],2025-12-07,success
 ENSP00000415743,CD36,Ensembl_API,CD36 molecule (CD36 blood group) [Source:HGNC Symbol;Acc:HGNC:1663],2025-12-07,success
@@ -30585,7 +30585,7 @@ ENSP00000399376,PRNP,Ensembl_API,prion protein (Kanno blood group) [Source:HGNC 
 ENSP00000425031,HNRNPAB,Ensembl_API,heterogeneous nuclear ribonucleoprotein A/B [Source:HGNC Symbol;Acc:HGNC:5034],2025-12-07,success
 ENSP00000306285,TPD52L1,Ensembl_API,TPD52 like 1 [Source:HGNC Symbol;Acc:HGNC:12006],2025-12-07,success
 ENSP00000434717,IL18BP,Ensembl_API,interleukin 18 binding protein [Source:HGNC Symbol;Acc:HGNC:5987],2025-12-07,success
-ENSP00000498395,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498395,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000494373,MTAP,Ensembl_API,methylthioadenosine phosphorylase [Source:HGNC Symbol;Acc:HGNC:7413],2025-12-07,success
 ENSP00000498587,NOTCH1,Ensembl_API,notch receptor 1 [Source:HGNC Symbol;Acc:HGNC:7881],2025-12-07,success
 ENSP00000411719,MPST,Ensembl_API,mercaptopyruvate sulfurtransferase [Source:HGNC Symbol;Acc:HGNC:7223],2025-12-07,success
@@ -30594,7 +30594,7 @@ ENSP00000497574,GCLC,Ensembl_API,glutamate-cysteine ligase catalytic subunit [So
 ENSP00000485117,PSG7,Ensembl_API,pregnancy specific beta-1-glycoprotein 7 [Source:HGNC Symbol;Acc:HGNC:9524],2025-12-07,success
 ENSP00000218758,ACP5,Ensembl_API,"acid phosphatase 5, tartrate resistant [Source:HGNC Symbol;Acc:HGNC:124]",2025-12-07,success
 ENSP00000413507,SEPTIN7,Ensembl_API,septin 7 [Source:HGNC Symbol;Acc:HGNC:1717],2025-12-07,success
-ENSP00000499387,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499387,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000357118,L3MBTL3,Ensembl_API,L3MBTL histone methyl-lysine binding protein 3 [Source:HGNC Symbol;Acc:HGNC:23035],2025-12-07,success
 ENSP00000487719,TUBA4B,Ensembl_API,tubulin alpha 4b [Source:HGNC Symbol;Acc:HGNC:18637],2025-12-07,success
 ENSP00000490225,UBE2L5,Ensembl_API,ubiquitin conjugating enzyme E2 L5 [Source:HGNC Symbol;Acc:HGNC:13477],2025-12-07,success
@@ -30602,7 +30602,7 @@ ENSP00000498875,ZC3H11B,Ensembl_API,zinc finger CCCH-type containing 11B [Source
 ENSP00000432973,PTPRK,Ensembl_API,protein tyrosine phosphatase receptor type K [Source:HGNC Symbol;Acc:HGNC:9674],2025-12-07,success
 ENSP00000493805,HNRNPA1L3,Ensembl_API,heterogeneous nuclear ribonucleoprotein A1 like 3 [Source:HGNC Symbol;Acc:HGNC:48778],2025-12-07,success
 ENSP00000431822,FAU,Ensembl_API,FAU ubiquitin like and ribosomal protein S30 fusion [Source:HGNC Symbol;Acc:HGNC:3597],2025-12-07,success
-ENSP00000499140,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499140,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000357265,SEMA4A,Ensembl_API,semaphorin 4A [Source:HGNC Symbol;Acc:HGNC:10729],2025-12-07,success
 ENSP00000354929,NOTCH2NLA,Ensembl_API,notch 2 N-terminal like A [Source:HGNC Symbol;Acc:HGNC:31862],2025-12-07,success
 ENSP00000462298,NOTCH2NLC,Ensembl_API,notch 2 N-terminal like C [Source:HGNC Symbol;Acc:HGNC:53924],2025-12-07,success
@@ -30614,11 +30614,11 @@ ENSP00000491215,HNRNPU,Ensembl_API,heterogeneous nuclear ribonucleoprotein U [So
 ENSP00000497691,APLP2,Ensembl_API,amyloid beta precursor like protein 2 [Source:HGNC Symbol;Acc:HGNC:598],2025-12-07,success
 ENSP00000497402,RCC1,Ensembl_API,regulator of chromosome condensation 1 [Source:HGNC Symbol;Acc:HGNC:1913],2025-12-07,success
 ENSP00000493716,EFNB2,Ensembl_API,ephrin B2 [Source:HGNC Symbol;Acc:HGNC:3227],2025-12-07,success
-ENSP00000483989,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000483989,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000472124,NOTCH2NLB,Ensembl_API,notch 2 N-terminal like B [Source:HGNC Symbol;Acc:HGNC:53923],2025-12-07,success
-ENSP00000436422,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000436422,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000499935,AK2,Ensembl_API,adenylate kinase 2 [Source:HGNC Symbol;Acc:HGNC:362],2025-12-07,success
-ENSP00000473238,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000473238,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000428184,SDCBP,Ensembl_API,syndecan binding protein [Source:HGNC Symbol;Acc:HGNC:10662],2025-12-07,success
 ENSP00000283905,SPMIP4,Ensembl_API,sperm microtubule inner protein 4 [Source:HGNC Symbol;Acc:HGNC:21722],2025-12-07,success
 ENSP00000389351,RPSA,Ensembl_API,ribosomal protein SA [Source:HGNC Symbol;Acc:HGNC:6502],2025-12-07,success
@@ -30652,7 +30652,7 @@ ENSP00000477648,LYNX1,Ensembl_API,Ly6/neurotoxin 1 [Source:HGNC Symbol;Acc:HGNC:
 ENSP00000378534,MEPE,Ensembl_API,matrix extracellular phosphoglycoprotein [Source:HGNC Symbol;Acc:HGNC:13361],2025-12-07,success
 ENSP00000498662,LRRC4B,Ensembl_API,leucine rich repeat containing 4B [Source:HGNC Symbol;Acc:HGNC:25042],2025-12-07,success
 ENSP00000499501,H3-7,Ensembl_API,H3.7 histone (putative) [Source:HGNC Symbol;Acc:HGNC:32060],2025-12-07,success
-ENSP00000482810,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000482810,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000456974,NPW,Ensembl_API,neuropeptide W [Source:HGNC Symbol;Acc:HGNC:30509],2025-12-07,success
 ENSP00000493594,MYH14,Ensembl_API,myosin heavy chain 14 [Source:HGNC Symbol;Acc:HGNC:23212],2025-12-07,success
 ENSP00000466010,RPS15,Ensembl_API,ribosomal protein S15 [Source:HGNC Symbol;Acc:HGNC:10388],2025-12-07,success
@@ -30672,7 +30672,7 @@ ENSP00000418572,VAMP2,Ensembl_API,vesicle associated membrane protein 2 [Source:
 ENSP00000444425,ADGRD1,Ensembl_API,adhesion G protein-coupled receptor D1 [Source:HGNC Symbol;Acc:HGNC:19893],2025-12-07,success
 ENSP00000465103,MXRA7,Ensembl_API,matrix remodeling associated 7 [Source:HGNC Symbol;Acc:HGNC:7541],2025-12-07,success
 ENSP00000501245,CD1D,Ensembl_API,CD1d molecule [Source:HGNC Symbol;Acc:HGNC:1637],2025-12-07,success
-ENSP00000493780,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000493780,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000500329,C16ORF82,Ensembl_API,chromosome 16 open reading frame 82 [Source:HGNC Symbol;Acc:HGNC:30755],2025-12-07,success
 ENSP00000497249,CRYBB1,Ensembl_API,crystallin beta B1 [Source:HGNC Symbol;Acc:HGNC:2397],2025-12-07,success
 ENSP00000421710,GNGT2,Ensembl_API,G protein subunit gamma transducin 2 [Source:HGNC Symbol;Acc:HGNC:4412],2025-12-07,success
@@ -30690,10 +30690,10 @@ ENSP00000431076,DNPEP,Ensembl_API,aspartyl aminopeptidase [Source:HGNC Symbol;Ac
 ENSP00000440826,EVI5,Ensembl_API,ecotropic viral integration site 5 [Source:HGNC Symbol;Acc:HGNC:3501],2025-12-07,success
 ENSP00000497260,GNAI1,Ensembl_API,G protein subunit alpha i1 [Source:HGNC Symbol;Acc:HGNC:4384],2025-12-07,success
 ENSP00000224721,CDH23,Ensembl_API,cadherin related 23 [Source:HGNC Symbol;Acc:HGNC:13733],2025-12-07,success
-ENSP00000480535,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000480535,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000333947,CHST15,Ensembl_API,carbohydrate sulfotransferase 15 [Source:HGNC Symbol;Acc:HGNC:18137],2025-12-07,success
 ENSP00000312617,NFYC,Ensembl_API,nuclear transcription factor Y subunit gamma [Source:HGNC Symbol;Acc:HGNC:7806],2025-12-07,success
-ENSP00000498991,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498991,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498466,FAS,Ensembl_API,Fas cell surface death receptor [Source:HGNC Symbol;Acc:HGNC:11920],2025-12-07,success
 ENSP00000498358,FECH,Ensembl_API,ferrochelatase [Source:HGNC Symbol;Acc:HGNC:3647],2025-12-07,success
 ENSP00000497413,BBS10,Ensembl_API,Bardet-Biedl syndrome 10 [Source:HGNC Symbol;Acc:HGNC:26291],2025-12-07,success
@@ -30704,7 +30704,7 @@ ENSP00000371336,TNNI2,Ensembl_API,"troponin I2, fast skeletal type [Source:HGNC 
 ENSP00000450480,ATP10A,Ensembl_API,ATPase phospholipid transporting 10A (putative) [Source:HGNC Symbol;Acc:HGNC:13542],2025-12-07,success
 ENSP00000499067,EIF3L,Ensembl_API,eukaryotic translation initiation factor 3 subunit L [Source:HGNC Symbol;Acc:HGNC:18138],2025-12-07,success
 ENSP00000494664,HK1,Ensembl_API,hexokinase 1 [Source:HGNC Symbol;Acc:HGNC:4922],2025-12-07,success
-ENSP00000497443,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497443,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000300245,AKTIP,Ensembl_API,AKT interacting protein [Source:HGNC Symbol;Acc:HGNC:16710],2025-12-07,success
 ENSP00000498852,SPN,Ensembl_API,sialophorin [Source:HGNC Symbol;Acc:HGNC:11249],2025-12-07,success
 ENSP00000493023,OR10K1,Ensembl_API,olfactory receptor family 10 subfamily K member 1 [Source:HGNC Symbol;Acc:HGNC:14693],2025-12-07,success
@@ -30718,7 +30718,7 @@ ENSP00000498402,SUMF2,Ensembl_API,sulfatase modifying factor 2 [Source:HGNC Symb
 ENSP00000499021,FAM161B,Ensembl_API,FAM161 centrosomal protein B [Source:HGNC Symbol;Acc:HGNC:19854],2025-12-07,success
 ENSP00000495463,ASAH2B,Ensembl_API,N-acylsphingosine amidohydrolase 2B [Source:HGNC Symbol;Acc:HGNC:23456],2025-12-07,success
 ENSP00000493302,PNPO,Ensembl_API,pyridoxamine 5'-phosphate oxidase [Source:HGNC Symbol;Acc:HGNC:30260],2025-12-07,success
-ENSP00000498772,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498772,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000403039,HP1BP3,Ensembl_API,heterochromatin protein 1 binding protein 3 [Source:HGNC Symbol;Acc:HGNC:24973],2025-12-07,success
 ENSP00000492634,INAFM2,Ensembl_API,InaF motif containing 2 [Source:HGNC Symbol;Acc:HGNC:35165],2025-12-07,success
 ENSP00000496959,ITGAM,Ensembl_API,integrin subunit alpha M [Source:HGNC Symbol;Acc:HGNC:6149],2025-12-07,success
@@ -30744,18 +30744,18 @@ ENSP00000466025,CIRBP,Ensembl_API,cold inducible RNA binding protein [Source:HGN
 ENSP00000417277,NBPF6,Ensembl_API,NBPF member 6 [Source:HGNC Symbol;Acc:HGNC:31988],2025-12-07,success
 ENSP00000487444,SPTAN1,Ensembl_API,"spectrin alpha, non-erythrocytic 1 [Source:HGNC Symbol;Acc:HGNC:11273]",2025-12-07,success
 ENSP00000492441,RPS10-NUDT3,Ensembl_API,RPS10-NUDT3 readthrough [Source:HGNC Symbol;Acc:HGNC:49181],2025-12-07,success
-ENSP00000499232,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499232,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000493153,PPT1,Ensembl_API,palmitoyl-protein thioesterase 1 [Source:HGNC Symbol;Acc:HGNC:9325],2025-12-07,success
 ENSP00000498766,DSPP,Ensembl_API,dentin sialophosphoprotein [Source:HGNC Symbol;Acc:HGNC:3054],2025-12-07,success
 ENSP00000343479,NBR1,Ensembl_API,NBR1 autophagy cargo receptor [Source:HGNC Symbol;Acc:HGNC:6746],2025-12-07,success
 ENSP00000246529,LRFN3,Ensembl_API,leucine rich repeat and fibronectin type III domain containing 3 [Source:HGNC Symbol;Acc:HGNC:28370],2025-12-07,success
 ENSP00000497326,CPOX,Ensembl_API,coproporphyrinogen oxidase [Source:HGNC Symbol;Acc:HGNC:2321],2025-12-07,success
 ENSP00000464121,ADAP2,Ensembl_API,ArfGAP with dual PH domains 2 [Source:HGNC Symbol;Acc:HGNC:16487],2025-12-07,success
-ENSP00000485527,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000485527,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000499044,RPS27,Ensembl_API,ribosomal protein S27 [Source:HGNC Symbol;Acc:HGNC:10416],2025-12-07,success
 ENSP00000392767,S100A13,Ensembl_API,S100 calcium binding protein A13 [Source:HGNC Symbol;Acc:HGNC:10490],2025-12-07,success
 ENSP00000500094,ATAD3B,Ensembl_API,ATPase family AAA domain containing 3B [Source:HGNC Symbol;Acc:HGNC:24007],2025-12-07,success
-ENSP00000491657,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000491657,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000495274,AP3D1,Ensembl_API,adaptor related protein complex 3 subunit delta 1 [Source:HGNC Symbol;Acc:HGNC:568],2025-12-07,success
 ENSP00000476480,NT5C3A,Ensembl_API,"5'-nucleotidase, cytosolic IIIA [Source:HGNC Symbol;Acc:HGNC:17820]",2025-12-07,success
 ENSP00000359765,ADGRL2,Ensembl_API,adhesion G protein-coupled receptor L2 [Source:HGNC Symbol;Acc:HGNC:18582],2025-12-07,success
@@ -30773,27 +30773,27 @@ ENSP00000394163,DAP,Ensembl_API,death associated protein [Source:HGNC Symbol;Acc
 ENSP00000495845,DTD1,Ensembl_API,D-aminoacyl-tRNA deacylase 1 [Source:HGNC Symbol;Acc:HGNC:16219],2025-12-07,success
 ENSP00000497759,FOXC2,Ensembl_API,forkhead box C2 [Source:HGNC Symbol;Acc:HGNC:3801],2025-12-07,success
 ENSP00000364870,HSPB7,Ensembl_API,heat shock protein family B (small) member 7 [Source:HGNC Symbol;Acc:HGNC:5249],2025-12-07,success
-ENSP00000444076,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000444076,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000486357,PPIP5K2,Ensembl_API,diphosphoinositol pentakisphosphate kinase 2 [Source:HGNC Symbol;Acc:HGNC:29035],2025-12-07,success
 ENSP00000499020,ESYT2,Ensembl_API,extended synaptotagmin 2 [Source:HGNC Symbol;Acc:HGNC:22211],2025-12-07,success
 ENSP00000496268,SGCE,Ensembl_API,sarcoglycan epsilon [Source:HGNC Symbol;Acc:HGNC:10808],2025-12-07,success
 ENSP00000489551,NRXN3,Ensembl_API,neurexin 3 [Source:HGNC Symbol;Acc:HGNC:8010],2025-12-07,success
-ENSP00000477713,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000477713,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000499185,ENC1,Ensembl_API,ectodermal-neural cortex 1 [Source:HGNC Symbol;Acc:HGNC:3345],2025-12-07,success
 ENSP00000398368,LIFR,Ensembl_API,LIF receptor subunit alpha [Source:HGNC Symbol;Acc:HGNC:6597],2025-12-07,success
-ENSP00000479202,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000479202,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000345193,SHANK2,Ensembl_API,SH3 and multiple ankyrin repeat domains 2 [Source:HGNC Symbol;Acc:HGNC:14295],2025-12-07,success
 ENSP00000386892,FHL2,Ensembl_API,four and a half LIM domains 2 [Source:HGNC Symbol;Acc:HGNC:3703],2025-12-07,success
-ENSP00000497716,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000497169,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497716,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000497169,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000479719,CYFIP2,Ensembl_API,cytoplasmic FMR1 interacting protein 2 [Source:HGNC Symbol;Acc:HGNC:13760],2025-12-07,success
 ENSP00000494538,CTCF,Ensembl_API,CCCTC-binding factor [Source:HGNC Symbol;Acc:HGNC:13723],2025-12-07,success
 ENSP00000496597,PFKM,Ensembl_API,"phosphofructokinase, muscle [Source:HGNC Symbol;Acc:HGNC:8877]",2025-12-07,success
-ENSP00000499734,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499734,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000494087,XG,Ensembl_API,Xg glycoprotein (Xg blood group) [Source:HGNC Symbol;Acc:HGNC:12806],2025-12-07,success
 ENSP00000440542,CHD4,Ensembl_API,chromodomain helicase DNA binding protein 4 [Source:HGNC Symbol;Acc:HGNC:1919],2025-12-07,success
 ENSP00000462998,MIEN1,Ensembl_API,migration and invasion enhancer 1 [Source:HGNC Symbol;Acc:HGNC:28230],2025-12-07,success
-ENSP00000492220,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000492220,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000405453,MSR1,Ensembl_API,macrophage scavenger receptor 1 [Source:HGNC Symbol;Acc:HGNC:7376],2025-12-07,success
 ENSP00000483185,AP2B1,Ensembl_API,adaptor related protein complex 2 subunit beta 1 [Source:HGNC Symbol;Acc:HGNC:563],2025-12-07,success
 ENSP00000489597,PTPN11,Ensembl_API,protein tyrosine phosphatase non-receptor type 11 [Source:HGNC Symbol;Acc:HGNC:9644],2025-12-07,success
@@ -30807,14 +30807,14 @@ ENSP00000500386,CAMK2A,Ensembl_API,calcium/calmodulin dependent protein kinase I
 ENSP00000379212,PODN,Ensembl_API,podocan [Source:HGNC Symbol;Acc:HGNC:23174],2025-12-07,success
 ENSP00000499593,TNNT2,Ensembl_API,"troponin T2, cardiac type [Source:HGNC Symbol;Acc:HGNC:11949]",2025-12-07,success
 ENSP00000391739,PISD,Ensembl_API,phosphatidylserine decarboxylase [Source:HGNC Symbol;Acc:HGNC:8999],2025-12-07,success
-ENSP00000501317,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000501317,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000499466,PIN4,Ensembl_API,"peptidylprolyl cis/trans isomerase, NIMA-interacting 4 [Source:HGNC Symbol;Acc:HGNC:8992]",2025-12-07,success
 ENSP00000495413,TRIM66,Ensembl_API,tripartite motif containing 66 [Source:HGNC Symbol;Acc:HGNC:29005],2025-12-07,success
 ENSP00000375733,PGBD5,Ensembl_API,piggyBac transposable element derived 5 [Source:HGNC Symbol;Acc:HGNC:19405],2025-12-07,success
 ENSP00000498994,PC,Ensembl_API,pyruvate carboxylase [Source:HGNC Symbol;Acc:HGNC:8636],2025-12-07,success
 ENSP00000348162,ZNF507,Ensembl_API,zinc finger protein 507 [Source:HGNC Symbol;Acc:HGNC:23783],2025-12-07,success
 ENSP00000444586,LOXHD1,Ensembl_API,lipoxygenase homology PLAT domains 1 [Source:HGNC Symbol;Acc:HGNC:26521],2025-12-07,success
-ENSP00000490953,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000490953,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000486252,RPS4Y2,Ensembl_API,ribosomal protein S4 Y-linked 2 [Source:HGNC Symbol;Acc:HGNC:18501],2025-12-07,success
 ENSP00000386880,COPS7B,Ensembl_API,COP9 signalosome subunit 7B [Source:HGNC Symbol;Acc:HGNC:16760],2025-12-07,success
 ENSP00000446039,COPS7A,Ensembl_API,COP9 signalosome subunit 7A [Source:HGNC Symbol;Acc:HGNC:16758],2025-12-07,success
@@ -30828,12 +30828,12 @@ ENSP00000464391,TSHZ1,Ensembl_API,teashirt zinc finger homeobox 1 [Source:HGNC S
 ENSP00000469035,COPE,Ensembl_API,COPI coat complex subunit epsilon [Source:HGNC Symbol;Acc:HGNC:2234],2025-12-07,success
 ENSP00000416037,TMPRSS4,Ensembl_API,transmembrane serine protease 4 [Source:HGNC Symbol;Acc:HGNC:11878],2025-12-07,success
 ENSP00000496832,ISG15,Ensembl_API,ISG15 ubiquitin like modifier [Source:HGNC Symbol;Acc:HGNC:4053],2025-12-07,success
-ENSP00000493691,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000493691,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000322408,KDM5D,Ensembl_API,lysine demethylase 5D [Source:HGNC Symbol;Acc:HGNC:11115],2025-12-07,success
 ENSP00000355574,COA6,Ensembl_API,cytochrome c oxidase assembly factor 6 [Source:HGNC Symbol;Acc:HGNC:18025],2025-12-07,success
 ENSP00000497569,DARS2,Ensembl_API,"aspartyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:25538]",2025-12-07,success
 ENSP00000420641,SSR3,Ensembl_API,signal sequence receptor subunit 3 [Source:HGNC Symbol;Acc:HGNC:11325],2025-12-07,success
-ENSP00000483397,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000483397,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498260,ACSL6,Ensembl_API,acyl-CoA synthetase long chain family member 6 [Source:HGNC Symbol;Acc:HGNC:16496],2025-12-07,success
 ENSP00000449396,SMARCC2,Ensembl_API,SWI/SNF related BAF chromatin remodeling complex subunit C2 [Source:HGNC Symbol;Acc:HGNC:11105],2025-12-07,success
 ENSP00000482773,IDH3B,Ensembl_API,isocitrate dehydrogenase (NAD(+)) 3 non-catalytic subunit beta [Source:HGNC Symbol;Acc:HGNC:5385],2025-12-07,success
@@ -30841,9 +30841,9 @@ ENSP00000366783,HECTD4,Ensembl_API,HECT domain E3 ubiquitin protein ligase 4 [So
 ENSP00000487800,TMEM132E,Ensembl_API,transmembrane protein 132E [Source:HGNC Symbol;Acc:HGNC:26991],2025-12-07,success
 ENSP00000497587,NDUFV1,Ensembl_API,NADH:ubiquinone oxidoreductase core subunit V1 [Source:HGNC Symbol;Acc:HGNC:7716],2025-12-07,success
 ENSP00000436423,GNLY,Ensembl_API,granulysin [Source:HGNC Symbol;Acc:HGNC:4414],2025-12-07,success
-ENSP00000408410,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000408410,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000242848,ZC3H13,Ensembl_API,zinc finger CCCH-type containing 13 [Source:HGNC Symbol;Acc:HGNC:20368],2025-12-07,success
-ENSP00000483640,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000483640,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000470246,RAB4B,Ensembl_API,"RAB4B, member RAS oncogene family [Source:HGNC Symbol;Acc:HGNC:9782]",2025-12-07,success
 ENSP00000403362,AP2M1,Ensembl_API,adaptor related protein complex 2 subunit mu 1 [Source:HGNC Symbol;Acc:HGNC:564],2025-12-07,success
 ENSP00000265997,CPEB3,Ensembl_API,cytoplasmic polyadenylation element binding protein 3 [Source:HGNC Symbol;Acc:HGNC:21746],2025-12-07,success
@@ -30862,7 +30862,7 @@ ENSP00000489859,STRIT1,Ensembl_API,small transmembrane regulator of ion transpor
 ENSP00000492906,SCYGR4,Ensembl_API,small cysteine and glycine repeat containing 4 [Source:HGNC Symbol;Acc:HGNC:34223],2025-12-07,success
 ENSP00000428746,CRYBG2,Ensembl_API,crystallin beta-gamma domain containing 2 [Source:HGNC Symbol;Acc:HGNC:17295],2025-12-07,success
 ENSP00000501150,PIK3CB,Ensembl_API,"phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit beta [Source:HGNC Symbol;Acc:HGNC:8976]",2025-12-07,success
-ENSP00000357714,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000357714,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000273347,NXPE3,Ensembl_API,neurexophilin and PC-esterase domain family member 3 [Source:HGNC Symbol;Acc:HGNC:28238],2025-12-07,success
 ENSP00000497406,SETBP1,Ensembl_API,SET binding protein 1 [Source:HGNC Symbol;Acc:HGNC:15573],2025-12-07,success
 ENSP00000498603,WDR26,Ensembl_API,WD repeat domain 26 [Source:HGNC Symbol;Acc:HGNC:21208],2025-12-07,success
@@ -30876,7 +30876,7 @@ ENSP00000414095,CUL2,Ensembl_API,cullin 2 [Source:HGNC Symbol;Acc:HGNC:2552],202
 ENSP00000401888,RAF1,Ensembl_API,"Raf-1 proto-oncogene, serine/threonine kinase [Source:HGNC Symbol;Acc:HGNC:9829]",2025-12-07,success
 ENSP00000442756,FXYD6,Ensembl_API,FXYD domain containing ion transport regulator 6 [Source:HGNC Symbol;Acc:HGNC:4030],2025-12-07,success
 ENSP00000445492,ST8SIA5,Ensembl_API,"ST8 alpha-N-acetyl-neuraminide alpha-2,8-sialyltransferase 5 [Source:HGNC Symbol;Acc:HGNC:17827]",2025-12-07,success
-ENSP00000490163,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000490163,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498362,PQBP1,Ensembl_API,polyglutamine binding protein 1 [Source:HGNC Symbol;Acc:HGNC:9330],2025-12-07,success
 ENSP00000493555,TEX15,Ensembl_API,"testis expressed 15, meiosis and synapsis associated [Source:HGNC Symbol;Acc:HGNC:11738]",2025-12-07,success
 ENSP00000418582,FHIT,Ensembl_API,fragile histidine triad diadenosine triphosphatase [Source:HGNC Symbol;Acc:HGNC:3701],2025-12-07,success
@@ -30886,10 +30886,10 @@ ENSP00000469242,SPTBN4,Ensembl_API,"spectrin beta, non-erythrocytic 4 [Source:HG
 ENSP00000356576,HIVEP2,Ensembl_API,HIVEP zinc finger 2 [Source:HGNC Symbol;Acc:HGNC:4921],2025-12-07,success
 ENSP00000286955,FUT6,Ensembl_API,fucosyltransferase 6 [Source:HGNC Symbol;Acc:HGNC:4017],2025-12-07,success
 ENSP00000440905,LNPK,Ensembl_API,"lunapark, ER junction formation factor [Source:HGNC Symbol;Acc:HGNC:21610]",2025-12-07,success
-ENSP00000497510,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497510,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000488481,PLIN4,Ensembl_API,perilipin 4 [Source:HGNC Symbol;Acc:HGNC:29393],2025-12-07,success
 ENSP00000414178,MTMR1,Ensembl_API,myotubularin related protein 1 [Source:HGNC Symbol;Acc:HGNC:7449],2025-12-07,success
-ENSP00000501111,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000501111,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000376154,CCDC57,Ensembl_API,coiled-coil domain containing 57 [Source:HGNC Symbol;Acc:HGNC:27564],2025-12-07,success
 ENSP00000498060,RAMACL,Ensembl_API,RNA guanine-7 methyltransferase activating subunit like [Source:HGNC Symbol;Acc:HGNC:21234],2025-12-07,success
 ENSP00000417171,ATP6V1G3,Ensembl_API,ATPase H+ transporting V1 subunit G3 [Source:HGNC Symbol;Acc:HGNC:18265],2025-12-07,success
@@ -30901,16 +30901,16 @@ ENSP00000490297,PPP1R2B,Ensembl_API,PPP1R2 family member B [Source:HGNC Symbol;A
 ENSP00000497069,IGF1R,Ensembl_API,insulin like growth factor 1 receptor [Source:HGNC Symbol;Acc:HGNC:5465],2025-12-07,success
 ENSP00000468723,MICOS13,Ensembl_API,mitochondrial contact site and cristae organizing system subunit 13 [Source:HGNC Symbol;Acc:HGNC:33702],2025-12-07,success
 ENSP00000495128,SRP72,Ensembl_API,signal recognition particle 72 [Source:HGNC Symbol;Acc:HGNC:11303],2025-12-07,success
-ENSP00000482916,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000482916,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498653,DEK,Ensembl_API,DEK proto-oncogene [Source:HGNC Symbol;Acc:HGNC:2768],2025-12-07,success
 ENSP00000385207,GAL3ST1,Ensembl_API,galactose-3-O-sulfotransferase 1 [Source:HGNC Symbol;Acc:HGNC:24240],2025-12-07,success
 ENSP00000334374,SLITRK2,Ensembl_API,SLIT and NTRK like family member 2 [Source:HGNC Symbol;Acc:HGNC:13449],2025-12-07,success
 ENSP00000490038,RAB6D,Ensembl_API,"RAB6D, member RAS oncogene family [Source:HGNC Symbol;Acc:HGNC:30272]",2025-12-07,success
 ENSP00000433208,PTH,Ensembl_API,parathyroid hormone [Source:HGNC Symbol;Acc:HGNC:9606],2025-12-07,success
-ENSP00000492798,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000485484,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000492798,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000485484,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498771,SMIM11,Ensembl_API,small integral membrane protein 11 [Source:HGNC Symbol;Acc:HGNC:1293],2025-12-07,success
-ENSP00000491651,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000491651,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000259456,HEMGN,Ensembl_API,hemogen [Source:HGNC Symbol;Acc:HGNC:17509],2025-12-07,success
 ENSP00000482543,NDUFA6,Ensembl_API,NADH:ubiquinone oxidoreductase subunit A6 [Source:HGNC Symbol;Acc:HGNC:7690],2025-12-07,success
 ENSP00000495507,SLITRK6,Ensembl_API,SLIT and NTRK like family member 6 [Source:HGNC Symbol;Acc:HGNC:23503],2025-12-07,success
@@ -30927,14 +30927,14 @@ ENSP00000494360,SUCLA2,Ensembl_API,succinate-CoA ligase ADP-forming subunit beta
 ENSP00000327604,TRIM49,Ensembl_API,tripartite motif containing 49 [Source:HGNC Symbol;Acc:HGNC:13431],2025-12-07,success
 ENSP00000388299,TRIM49C,Ensembl_API,tripartite motif containing 49C [Source:HGNC Symbol;Acc:HGNC:38877],2025-12-07,success
 ENSP00000497609,INO80,Ensembl_API,INO80 complex ATPase subunit [Source:HGNC Symbol;Acc:HGNC:26956],2025-12-07,success
-ENSP00000053469,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000053469,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000493232,MICU1,Ensembl_API,mitochondrial calcium uptake 1 [Source:HGNC Symbol;Acc:HGNC:1530],2025-12-07,success
 ENSP00000396330,HLA-DQB2,Ensembl_API,"major histocompatibility complex, class II, DQ beta 2 [Source:HGNC Symbol;Acc:HGNC:4945]",2025-12-07,success
 ENSP00000481457,TRIM49B,Ensembl_API,tripartite motif containing 49B [Source:HGNC Symbol;Acc:HGNC:42955],2025-12-07,success
 ENSP00000436864,CELF1,Ensembl_API,CUGBP Elav-like family member 1 [Source:HGNC Symbol;Acc:HGNC:2549],2025-12-07,success
 ENSP00000341117,SDSL,Ensembl_API,serine dehydratase like [Source:HGNC Symbol;Acc:HGNC:30404],2025-12-07,success
 ENSP00000498386,KYAT1,Ensembl_API,kynurenine aminotransferase 1 [Source:NCBI gene (formerly Entrezgene);Acc:883],2025-12-07,success
-ENSP00000399208,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000399208,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000496315,TBCEL-TECTA,Ensembl_API,TBCEL-TECTA readthrough [Source:HGNC Symbol;Acc:HGNC:54857],2025-12-07,success
 ENSP00000358294,CD160,Ensembl_API,CD160 molecule [Source:HGNC Symbol;Acc:HGNC:17013],2025-12-07,success
 ENSP00000486901,MICAL1,Ensembl_API,"microtubule associated monooxygenase, calponin and LIM domain containing 1 [Source:HGNC Symbol;Acc:HGNC:20619]",2025-12-07,success
@@ -30955,7 +30955,7 @@ ENSP00000496793,COL9A3,Ensembl_API,collagen type IX alpha 3 chain [Source:HGNC S
 ENSP00000355486,COX20,Ensembl_API,cytochrome c oxidase assembly factor COX20 [Source:HGNC Symbol;Acc:HGNC:26970],2025-12-07,success
 ENSP00000497294,LHB,Ensembl_API,luteinizing hormone subunit beta [Source:HGNC Symbol;Acc:HGNC:6584],2025-12-07,success
 ENSP00000497008,MMAA,Ensembl_API,metabolism of cobalamin associated A [Source:HGNC Symbol;Acc:HGNC:18871],2025-12-07,success
-ENSP00000498855,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498855,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000497185,TRIM16,Ensembl_API,tripartite motif containing 16 [Source:HGNC Symbol;Acc:HGNC:17241],2025-12-07,success
 ENSP00000494678,TBC1D24,Ensembl_API,TBC1 domain family member 24 [Source:HGNC Symbol;Acc:HGNC:29203],2025-12-07,success
 ENSP00000491537,FDFT1,Ensembl_API,farnesyl-diphosphate farnesyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:3629],2025-12-07,success
@@ -30963,7 +30963,7 @@ ENSP00000497274,ABCC2,Ensembl_API,ATP binding cassette subfamily C member 2 [Sou
 ENSP00000359655,EYS,Ensembl_API,eyes shut homolog [Source:HGNC Symbol;Acc:HGNC:21555],2025-12-07,success
 ENSP00000486109,TRPC4,Ensembl_API,transient receptor potential cation channel subfamily C member 4 [Source:HGNC Symbol;Acc:HGNC:12336],2025-12-07,success
 ENSP00000494609,ABCC4,Ensembl_API,ATP binding cassette subfamily C member 4 (PEL blood group) [Source:HGNC Symbol;Acc:HGNC:55],2025-12-07,success
-ENSP00000428055,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000428055,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000496044,POLR1C,Ensembl_API,RNA polymerase I and III subunit C [Source:HGNC Symbol;Acc:HGNC:20194],2025-12-07,success
 ENSP00000493901,GIPC3,Ensembl_API,GIPC PDZ domain containing family member 3 [Source:HGNC Symbol;Acc:HGNC:18183],2025-12-07,success
 ENSP00000497280,AGK,Ensembl_API,acylglycerol kinase [Source:HGNC Symbol;Acc:HGNC:21869],2025-12-07,success
@@ -30972,14 +30972,14 @@ ENSP00000489674,HSPA12A,Ensembl_API,heat shock protein family A (Hsp70) member 1
 ENSP00000366757,LMO7,Ensembl_API,LIM domain 7 [Source:HGNC Symbol;Acc:HGNC:6646],2025-12-07,success
 ENSP00000366091,MOG,Ensembl_API,myelin oligodendrocyte glycoprotein [Source:HGNC Symbol;Acc:HGNC:7197],2025-12-07,success
 ENSP00000498872,SNX6,Ensembl_API,sorting nexin 6 [Source:HGNC Symbol;Acc:HGNC:14970],2025-12-07,success
-ENSP00000498936,NA,Ensembl_API,,2025-12-07,not_found
-ENSP00000498330,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498936,NA,Ensembl_API,NA,2025-12-07,not_found
+ENSP00000498330,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000497160,EIF2B5,Ensembl_API,eukaryotic translation initiation factor 2B subunit epsilon [Source:HGNC Symbol;Acc:HGNC:3261],2025-12-07,success
 ENSP00000475986,ACYP2,Ensembl_API,acylphosphatase 2 [Source:HGNC Symbol;Acc:HGNC:180],2025-12-07,success
-ENSP00000491596,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000491596,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000342637,PDE4B,Ensembl_API,phosphodiesterase 4B [Source:HGNC Symbol;Acc:HGNC:8781],2025-12-07,success
 ENSP00000285848,OXA1L,Ensembl_API,OXA1L mitochondrial inner membrane insertase [Source:HGNC Symbol;Acc:HGNC:8526],2025-12-07,success
-ENSP00000498251,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000498251,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000353846,DCLK1,Ensembl_API,doublecortin like kinase 1 [Source:HGNC Symbol;Acc:HGNC:2700],2025-12-07,success
 ENSP00000430282,ATP6V1C1,Ensembl_API,ATPase H+ transporting V1 subunit C1 [Source:HGNC Symbol;Acc:HGNC:856],2025-12-07,success
 ENSP00000403343,AAMP,Ensembl_API,angio associated migratory cell protein [Source:HGNC Symbol;Acc:HGNC:18],2025-12-07,success
@@ -30989,13 +30989,13 @@ ENSP00000494831,SNRPN,Ensembl_API,small nuclear ribonucleoprotein polypeptide N 
 ENSP00000489687,GK3,Ensembl_API,glycerol kinase 3 [Source:HGNC Symbol;Acc:HGNC:4292],2025-12-07,success
 ENSP00000419545,GIMAP4,Ensembl_API,"GTPase, IMAP family member 4 [Source:HGNC Symbol;Acc:HGNC:21872]",2025-12-07,success
 ENSP00000395738,TRMT2A,Ensembl_API,tRNA methyltransferase 2 homolog A [Source:HGNC Symbol;Acc:HGNC:24974],2025-12-07,success
-ENSP00000499058,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000499058,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000495112,NMNAT3,Ensembl_API,nicotinamide nucleotide adenylyltransferase 3 [Source:HGNC Symbol;Acc:HGNC:20989],2025-12-07,success
 ENSP00000431983,MUC15,Ensembl_API,"mucin 15, cell surface associated [Source:HGNC Symbol;Acc:HGNC:14956]",2025-12-07,success
 ENSP00000476386,DCP1A,Ensembl_API,decapping mRNA 1A [Source:HGNC Symbol;Acc:HGNC:18714],2025-12-07,success
 ENSP00000489123,SCYL2,Ensembl_API,SCY1 like pseudokinase 2 [Source:HGNC Symbol;Acc:HGNC:19286],2025-12-07,success
 ENSP00000427874,TENM2,Ensembl_API,teneurin transmembrane protein 2 [Source:HGNC Symbol;Acc:HGNC:29943],2025-12-07,success
-ENSP00000423325,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000423325,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000498939,CYP3A4,Ensembl_API,cytochrome P450 family 3 subfamily A member 4 [Source:HGNC Symbol;Acc:HGNC:2637],2025-12-07,success
 ENSP00000433666,FGD4,Ensembl_API,"FYVE, RhoGEF and PH domain containing 4 [Source:HGNC Symbol;Acc:HGNC:19125]",2025-12-07,success
 ENSP00000326128,LARP4B,Ensembl_API,La ribonucleoprotein 4B [Source:HGNC Symbol;Acc:HGNC:28987],2025-12-07,success
@@ -31008,15 +31008,15 @@ ENSP00000499092,GPRC5C,Ensembl_API,G protein-coupled receptor class C group 5 me
 ENSP00000263150,WDR37,Ensembl_API,WD repeat domain 37 [Source:HGNC Symbol;Acc:HGNC:31406],2025-12-07,success
 ENSP00000445757,NELFA,Ensembl_API,negative elongation factor complex member A [Source:HGNC Symbol;Acc:HGNC:12768],2025-12-07,success
 ENSP00000407087,NIPAL2,Ensembl_API,NIPA like domain containing 2 [Source:HGNC Symbol;Acc:HGNC:25854],2025-12-07,success
-ENSP00000340373,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000340373,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000420449,MGAM2,Ensembl_API,maltase-glucoamylase 2 (putative) [Source:HGNC Symbol;Acc:HGNC:28101],2025-12-07,success
 ENSP00000492384,IGBP1C,Ensembl_API,IGBP1 family member C [Source:HGNC Symbol;Acc:HGNC:43611],2025-12-07,success
 ENSP00000495563,VPS45,Ensembl_API,vacuolar protein sorting 45 homolog [Source:HGNC Symbol;Acc:HGNC:14579],2025-12-07,success
 ENSP00000498065,CA5A,Ensembl_API,carbonic anhydrase 5A [Source:HGNC Symbol;Acc:HGNC:1377],2025-12-07,success
 ENSP00000465685,AP1M2,Ensembl_API,adaptor related protein complex 1 subunit mu 2 [Source:HGNC Symbol;Acc:HGNC:558],2025-12-07,success
-ENSP00000481380,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000481380,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000415464,LARP4,Ensembl_API,La ribonucleoprotein 4 [Source:HGNC Symbol;Acc:HGNC:24320],2025-12-07,success
-ENSP00000497305,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497305,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000410242,IGF2BP2,Ensembl_API,insulin like growth factor 2 mRNA binding protein 2 [Source:HGNC Symbol;Acc:HGNC:28867],2025-12-07,success
 ENSP00000402510,MTRR,Ensembl_API,5-methyltetrahydrofolate-homocysteine methyltransferase reductase [Source:HGNC Symbol;Acc:HGNC:7473],2025-12-07,success
 ENSP00000416338,MFN2,Ensembl_API,mitofusin 2 [Source:HGNC Symbol;Acc:HGNC:16877],2025-12-07,success
@@ -31024,7 +31024,7 @@ ENSP00000417402,PUS7,Ensembl_API,pseudouridine synthase 7 [Source:HGNC Symbol;Ac
 ENSP00000490119,RALGAPA1,Ensembl_API,Ral GTPase activating protein catalytic subunit alpha 1 [Source:HGNC Symbol;Acc:HGNC:17770],2025-12-07,success
 ENSP00000494965,HARS2,Ensembl_API,"histidyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:4817]",2025-12-07,success
 ENSP00000482647,ARHGEF18,Ensembl_API,Rho/Rac guanine nucleotide exchange factor 18 [Source:HGNC Symbol;Acc:HGNC:17090],2025-12-07,success
-ENSP00000497669,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000497669,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000501254,ALDH3B2,Ensembl_API,aldehyde dehydrogenase 3 family member B2 [Source:HGNC Symbol;Acc:HGNC:411],2025-12-07,success
 ENSP00000486285,FARP1,Ensembl_API,"FERM, ARH/RhoGEF and pleckstrin domain protein 1 [Source:HGNC Symbol;Acc:HGNC:3591]",2025-12-07,success
 ENSP00000445277,PTX4,Ensembl_API,pentraxin 4 [Source:HGNC Symbol;Acc:HGNC:14171],2025-12-07,success
@@ -31032,7 +31032,7 @@ ENSP00000475724,CSNK1G1,Ensembl_API,casein kinase 1 gamma 1 [Source:HGNC Symbol;
 ENSP00000497737,EDC3,Ensembl_API,enhancer of mRNA decapping 3 [Source:HGNC Symbol;Acc:HGNC:26114],2025-12-07,success
 ENSP00000498867,LARS2,Ensembl_API,"leucyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:17095]",2025-12-07,success
 ENSP00000383067,TPTEP2-CSNK1E,Ensembl_API,TPTEP2-CSNK1E readthrough [Source:HGNC Symbol;Acc:HGNC:53829],2025-12-07,success
-ENSP00000482486,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000482486,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000426786,GUCY1B1,Ensembl_API,guanylate cyclase 1 soluble subunit beta 1 [Source:HGNC Symbol;Acc:HGNC:4687],2025-12-07,success
 ENSP00000375821,PPP1R12B,Ensembl_API,protein phosphatase 1 regulatory subunit 12B [Source:HGNC Symbol;Acc:HGNC:7619],2025-12-07,success
 ENSP00000496394,TRIOBP,Ensembl_API,TRIO and F-actin binding protein [Source:HGNC Symbol;Acc:HGNC:17009],2025-12-07,success
@@ -31045,13 +31045,13 @@ ENSP00000428112,ERLIN2,Ensembl_API,ER lipid raft associated 2 [Source:HGNC Symbo
 ENSP00000465630,EVPL,Ensembl_API,envoplakin [Source:HGNC Symbol;Acc:HGNC:3503],2025-12-07,success
 ENSP00000495556,TBL1X,Ensembl_API,transducin beta like 1 X-linked [Source:HGNC Symbol;Acc:HGNC:11585],2025-12-07,success
 ENSP00000356233,KDM5B,Ensembl_API,lysine demethylase 5B [Source:HGNC Symbol;Acc:HGNC:18039],2025-12-07,success
-ENSP00000405456,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000405456,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000481733,MED29,Ensembl_API,mediator complex subunit 29 [Source:HGNC Symbol;Acc:HGNC:23074],2025-12-07,success
 ENSP00000473623,UBE2E3,Ensembl_API,ubiquitin conjugating enzyme E2 E3 [Source:HGNC Symbol;Acc:HGNC:12479],2025-12-07,success
 ENSP00000442553,PODNL1,Ensembl_API,podocan like 1 [Source:HGNC Symbol;Acc:HGNC:26275],2025-12-07,success
 ENSP00000473469,DENND4C,Ensembl_API,DENN domain containing 4C [Source:HGNC Symbol;Acc:HGNC:26079],2025-12-07,success
 ENSP00000428714,DENND3,Ensembl_API,DENN domain containing 3 [Source:HGNC Symbol;Acc:HGNC:29134],2025-12-07,success
-ENSP00000401076,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000401076,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000491014,MIA2,Ensembl_API,MIA SH3 domain ER export factor 2 [Source:HGNC Symbol;Acc:HGNC:18432],2025-12-07,success
 ENSP00000497053,H3Y2,Ensembl_API,H3.Y histone 2 [Source:HGNC Symbol;Acc:HGNC:43734],2025-12-07,success
 ENSP00000354314,HAO2,Ensembl_API,hydroxyacid oxidase 2 [Source:HGNC Symbol;Acc:HGNC:4810],2025-12-07,success
@@ -31072,7 +31072,7 @@ ENSP00000498803,KRI1,Ensembl_API,KRI1 homolog [Source:HGNC Symbol;Acc:HGNC:25769
 ENSP00000498499,CTC1,Ensembl_API,CST telomere replication complex component 1 [Source:HGNC Symbol;Acc:HGNC:26169],2025-12-07,success
 ENSP00000485238,FER1L5,Ensembl_API,fer-1 like family member 5 [Source:HGNC Symbol;Acc:HGNC:19044],2025-12-07,success
 ENSP00000385823,MTA3,Ensembl_API,metastasis associated 1 family member 3 [Source:HGNC Symbol;Acc:HGNC:23784],2025-12-07,success
-ENSP00000487717,NA,Ensembl_API,,2025-12-07,not_found
+ENSP00000487717,NA,Ensembl_API,NA,2025-12-07,not_found
 ENSP00000370483,NLGN4X,Ensembl_API,neuroligin 4 X-linked [Source:HGNC Symbol;Acc:HGNC:14287],2025-12-07,success
 ENSP00000410746,DOCK4,Ensembl_API,dedicator of cytokinesis 4 [Source:HGNC Symbol;Acc:HGNC:19192],2025-12-07,success
 ENSP00000493560,VPS13C,Ensembl_API,vacuolar protein sorting 13 homolog C [Source:HGNC Symbol;Acc:HGNC:23594],2025-12-07,success
@@ -31129,48 +31129,48 @@ Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,su
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 Q8IWJ2,GCC2,UniProt_API,GRIP and coiled-coil domain-containing protein 2,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 Q8IWJ2,GCC2,UniProt_API,GRIP and coiled-coil domain-containing protein 2,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 Q8IWJ2,GCC2,UniProt_API,GRIP and coiled-coil domain-containing protein 2,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q6T4R5,NHS,UniProt_API,Actin remodeling regulator NHS,2025-12-07,success
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q6T4R5,NHS,UniProt_API,Actin remodeling regulator NHS,2025-12-07,success
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q6T4R5,NHS,UniProt_API,Actin remodeling regulator NHS,2025-12-07,success
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q6T4R5,NHS,UniProt_API,Actin remodeling regulator NHS,2025-12-07,success
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
@@ -31179,32 +31179,22 @@ Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,su
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 Q9Y662,HS3ST3B1,UniProt_API,Heparan sulfate glucosamine 3-O-sulfotransferase 3B1,2025-12-07,success
 Q5XG92,CES4A,UniProt_API,Carboxylesterase 4A,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
-Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
-A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
-O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
-O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
-A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
-Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
-Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q9Y662,HS3ST3B1,UniProt_API,Heparan sulfate glucosamine 3-O-sulfotransferase 3B1,2025-12-07,success
-Q5XG92,CES4A,UniProt_API,Carboxylesterase 4A,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
@@ -31214,7 +31204,17 @@ Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 Q9Y662,HS3ST3B1,UniProt_API,Heparan sulfate glucosamine 3-O-sulfotransferase 3B1,2025-12-07,success
 Q5XG92,CES4A,UniProt_API,Carboxylesterase 4A,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
+Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
+A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
+O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
+O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
+A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
+Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,2025-12-07,success
+Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
+Q9Y662,HS3ST3B1,UniProt_API,Heparan sulfate glucosamine 3-O-sulfotransferase 3B1,2025-12-07,success
+Q5XG92,CES4A,UniProt_API,Carboxylesterase 4A,2025-12-07,success
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
@@ -31224,7 +31224,7 @@ Q8N0Z9,VSIG10,UniProt_API,V-set and immunoglobulin domain-containing protein 10,
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
 Q9Y662,HS3ST3B1,UniProt_API,Heparan sulfate glucosamine 3-O-sulfotransferase 3B1,2025-12-07,success
 Q5XG92,CES4A,UniProt_API,Carboxylesterase 4A,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 Q8IZF4,ADGRG5,UniProt_API,Adhesion G-protein coupled receptor G5,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
@@ -31233,7 +31233,7 @@ A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
 O15041,SEMA3E,UniProt_API,Semaphorin-3E,2025-12-07,success
 A7XYQ1,SOBP,UniProt_API,Sine oculis-binding protein homolog,2025-12-07,success
 Q86VL8,SLC47A2,UniProt_API,Multidrug and toxin extrusion protein 2,2025-12-07,success
-Q6IE36,NA,UniProt_API,,2025-12-07,not_found
+Q6IE36,NA,UniProt_API,NA,2025-12-07,not_found
 O43196,MSH5,UniProt_API,MutS protein homolog 5,2025-12-07,success
 Q8IWJ2,GCC2,UniProt_API,GRIP and coiled-coil domain-containing protein 2,2025-12-07,success
 A4D0S4,LAMB4,UniProt_API,Laminin subunit beta-4,2025-12-07,success
@@ -33148,46 +33148,46 @@ Q96QV6,H2AC1,UniProt_API,Histone H2A type 1-A,2025-12-07,success
 Q9BRX8,PRXL2A,UniProt_API,Peroxiredoxin-like 2A,2025-12-07,success
 Q68E01,INTS3,UniProt_API,Integrator complex subunit 3,2025-12-07,success
 O75962,TRIO,UniProt_API,Triple functional domain protein,2025-12-07,success
-P0DOX7,NA,UniProt_API,,2025-12-07,not_found
+P0DOX7,NA,UniProt_API,NA,2025-12-07,not_found
 Q5TA45,INTS11,UniProt_API,Integrator complex subunit 11,2025-12-07,success
 Q9UPT6,MAPK8IP3,UniProt_API,C-Jun-amino-terminal kinase-interacting protein 3,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX8,NA,UniProt_API,,2025-12-07,not_found
-P0DOX7,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX8,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX7,NA,UniProt_API,NA,2025-12-07,not_found
 P0DP02,IGHV3-30-3,UniProt_API,Immunoglobulin heavy variable 3-30-3,2025-12-07,success
-P0DOX3,NA,UniProt_API,,2025-12-07,not_found
+P0DOX3,NA,UniProt_API,NA,2025-12-07,not_found
 O14976,GAK,UniProt_API,Cyclin-G-associated kinase,2025-12-07,success
 Q6GYQ0,RALGAPA1,UniProt_API,Ral GTPase-activating protein subunit alpha-1,2025-12-07,success
 Q01668,CACNA1D,UniProt_API,Voltage-dependent L-type calcium channel subunit alpha-1D,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX7,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX7,NA,UniProt_API,NA,2025-12-07,not_found
 P0DP02,IGHV3-30-3,UniProt_API,Immunoglobulin heavy variable 3-30-3,2025-12-07,success
-P0DOX2,NA,UniProt_API,,2025-12-07,not_found
-P0DOX8,NA,UniProt_API,,2025-12-07,not_found
-P0DOX3,NA,UniProt_API,,2025-12-07,not_found
+P0DOX2,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX8,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX3,NA,UniProt_API,NA,2025-12-07,not_found
 Q13439,GOLGA4,UniProt_API,Golgin subfamily A member 4,2025-12-07,success
 A4UGR9,XIRP2,UniProt_API,Xin actin-binding repeat-containing protein 2,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX2,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX2,NA,UniProt_API,NA,2025-12-07,not_found
 P0DP02,IGHV3-30-3,UniProt_API,Immunoglobulin heavy variable 3-30-3,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
 Q8IZF3,ADGRF4,UniProt_API,Adhesion G protein-coupled receptor F4,2025-12-07,success
 P05181,CYP2E1,UniProt_API,Cytochrome P450 2E1,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
 Q9UM54,MYO6,UniProt_API,Unconventional myosin-VI,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
 Q9UKN7,MYO15A,UniProt_API,Unconventional myosin-XV,2025-12-07,success
 P47736,RAP1GAP,UniProt_API,Rap1 GTPase-activating protein 1,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX7,NA,UniProt_API,,2025-12-07,not_found
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX7,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
 Q8NAT1,POMGNT2,UniProt_API,"Protein O-linked-mannose beta-1,4-N-acetylglucosaminyltransferase 2",2025-12-07,success
 Q07890,SOS2,UniProt_API,Son of sevenless homolog 2,2025-12-07,success
-P0DOX5,NA,UniProt_API,,2025-12-07,not_found
+P0DOX5,NA,UniProt_API,NA,2025-12-07,not_found
 P0DML2,CSH1,UniProt_API,Chorionic somatomammotropin hormone 1,2025-12-07,success
 P62987,UBA52,UniProt_API,Ubiquitin-ribosomal protein eL40 fusion protein,2025-12-07,success
 Q8TAD7,OCC1,UniProt_API,Overexpressed in colon carcinoma 1 protein,2025-12-07,success
@@ -35353,7 +35353,7 @@ Q9NPI6,DCP1A,UniProt_API,mRNA-decapping enzyme 1A,2025-12-07,success
 Q9NPI6,DCP1A,UniProt_API,mRNA-decapping enzyme 1A,2025-12-07,success
 Q9NPI6,DCP1A,UniProt_API,mRNA-decapping enzyme 1A,2025-12-07,success
 P63241,EIF5A,UniProt_API,Eukaryotic translation initiation factor 5A-1,2025-12-07,success
-P0DOX6,NA,UniProt_API,,2025-12-07,not_found
+P0DOX6,NA,UniProt_API,NA,2025-12-07,not_found
 P0DP06,IGHV4-30-4,UniProt_API,Immunoglobulin heavy variable 4-30-4,2025-12-07,success
 P68363,TUBA1B,UniProt_API,Tubulin alpha-1B chain,2025-12-07,success
 Q9BTM1,H2AJ,UniProt_API,Histone H2A.J,2025-12-07,success
@@ -35365,7 +35365,7 @@ P83881,RPL36A,UniProt_API,Large ribosomal subunit protein eL42,2025-12-07,succes
 P47813,EIF1AX,UniProt_API,"Eukaryotic translation initiation factor 1A, X-chromosomal",2025-12-07,success
 P47914,RPL29,UniProt_API,Large ribosomal subunit protein eL29,2025-12-07,success
 P42677,RPS27,UniProt_API,Small ribosomal subunit protein eS27,2025-12-07,success
-P0DOX4,NA,UniProt_API,,2025-12-07,not_found
+P0DOX4,NA,UniProt_API,NA,2025-12-07,not_found
 P62491,RAB11A,UniProt_API,Ras-related protein Rab-11A,2025-12-07,success
 P49207,RPL34,UniProt_API,Large ribosomal subunit protein eL34,2025-12-07,success
 Q9NP97,DYNLRB1,UniProt_API,Dynein light chain roadblock-type 1,2025-12-07,success
@@ -43245,3 +43245,704 @@ P0C7M8,CLEC2L,UniProt_API,C-type lectin domain family 2 member L,2025-12-07,succ
 Q96K49,TMEM87B,UniProt_API,Transmembrane protein 87B,2025-12-07,success
 O60669,SLC16A7,UniProt_API,Monocarboxylate transporter 2,2025-12-07,success
 Q8WUY3,PRUNE2,UniProt_API,Protein prune homolog 2,2025-12-07,success
+ENSP00000434511,SELENOH,Ensembl_API,selenoprotein H [Source:HGNC Symbol;Acc:HGNC:18251],2025-12-10,success
+ENSP00000466022,CEBPG,Ensembl_API,CCAAT enhancer binding protein gamma [Source:HGNC Symbol;Acc:HGNC:1837],2025-12-10,success
+ENSP00000451506,TCL1A,Ensembl_API,TCL1 family AKT coactivator A [Source:HGNC Symbol;Acc:HGNC:11648],2025-12-10,success
+ENSP00000491117,TMA7B,Ensembl_API,translation machinery associated 7 homolog B [Source:HGNC Symbol;Acc:HGNC:53893],2025-12-10,success
+ENSP00000449386,SART3,Ensembl_API,"spliceosome associated factor 3, U4/U6 recycling protein [Source:HGNC Symbol;Acc:HGNC:16860]",2025-12-10,success
+ENSP00000497104,SH3BP1,Ensembl_API,SH3 domain binding protein 1 [Source:HGNC Symbol;Acc:HGNC:10824],2025-12-10,success
+ENSP00000456019,SQOR,Ensembl_API,sulfide quinone oxidoreductase [Source:HGNC Symbol;Acc:HGNC:20390],2025-12-10,success
+ENSP00000393388,SNRPG,Ensembl_API,small nuclear ribonucleoprotein polypeptide G [Source:HGNC Symbol;Acc:HGNC:11163],2025-12-10,success
+ENSP00000465765,ELOF1,Ensembl_API,elongation factor 1 [Source:HGNC Symbol;Acc:HGNC:28691],2025-12-10,success
+ENSP00000266000,DAXX,Ensembl_API,death domain associated protein [Source:HGNC Symbol;Acc:HGNC:2681],2025-12-10,success
+ENSP00000342351,NRF1,Ensembl_API,nuclear respiratory factor 1 [Source:HGNC Symbol;Acc:HGNC:7996],2025-12-10,success
+ENSP00000259698,RIPOR2,Ensembl_API,RHO family interacting cell polarization regulator 2 [Source:HGNC Symbol;Acc:HGNC:13872],2025-12-10,success
+ENSP00000407336,NDUFB3,Ensembl_API,NADH:ubiquinone oxidoreductase subunit B3 [Source:HGNC Symbol;Acc:HGNC:7698],2025-12-10,success
+ENSP00000497474,COX7B,Ensembl_API,cytochrome c oxidase subunit 7B [Source:HGNC Symbol;Acc:HGNC:2291],2025-12-10,success
+ENSP00000313419,CD19,Ensembl_API,CD19 molecule [Source:HGNC Symbol;Acc:HGNC:1633],2025-12-10,success
+ENSP00000381492,LAT2,Ensembl_API,linker for activation of T cells family member 2 [Source:HGNC Symbol;Acc:HGNC:12749],2025-12-10,success
+ENSP00000496848,HLA-DOB,Ensembl_API,"major histocompatibility complex, class II, DO beta [Source:HGNC Symbol;Acc:HGNC:4937]",2025-12-10,success
+ENSP00000466845,GCDH,Ensembl_API,glutaryl-CoA dehydrogenase [Source:HGNC Symbol;Acc:HGNC:4189],2025-12-10,success
+ENSP00000485698,MTRES1,Ensembl_API,mitochondrial transcription rescue factor 1 [Source:HGNC Symbol;Acc:HGNC:17971],2025-12-10,success
+ENSP00000467600,SYNGR2,Ensembl_API,synaptogyrin 2 [Source:HGNC Symbol;Acc:HGNC:11499],2025-12-10,success
+ENSP00000451583,DMAC2L,Ensembl_API,distal membrane arm assembly component 2 like [Source:HGNC Symbol;Acc:HGNC:18799],2025-12-10,success
+ENSP00000498596,STING1,Ensembl_API,stimulator of interferon response cGAMP interactor 1 [Source:HGNC Symbol;Acc:HGNC:27962],2025-12-10,success
+ENSP00000498104,BCL10,Ensembl_API,BCL10 immune signaling adaptor [Source:HGNC Symbol;Acc:HGNC:989],2025-12-10,success
+ENSP00000470176,AP2S1,Ensembl_API,adaptor related protein complex 2 subunit sigma 1 [Source:HGNC Symbol;Acc:HGNC:565],2025-12-10,success
+ENSP00000456851,BLOC1S6,Ensembl_API,biogenesis of lysosomal organelles complex 1 subunit 6 [Source:HGNC Symbol;Acc:HGNC:8549],2025-12-10,success
+ENSP00000387180,PTRH2,Ensembl_API,peptidyl-tRNA hydrolase 2 [Source:HGNC Symbol;Acc:HGNC:24265],2025-12-10,success
+ENSP00000497690,LMBRD1,Ensembl_API,LMBR1 domain containing 1 [Source:HGNC Symbol;Acc:HGNC:23038],2025-12-10,success
+ENSP00000491830,ZC3H11A,Ensembl_API,zinc finger CCCH-type containing 11A [Source:HGNC Symbol;Acc:HGNC:29093],2025-12-10,success
+ENSP00000421926,UIMC1,Ensembl_API,ubiquitin interaction motif containing 1 [Source:HGNC Symbol;Acc:HGNC:30298],2025-12-10,success
+ENSP00000259633,CD72,Ensembl_API,CD72 molecule [Source:HGNC Symbol;Acc:HGNC:1696],2025-12-10,success
+ENSP00000367900,CDK11A,Ensembl_API,cyclin dependent kinase 11A [Source:HGNC Symbol;Acc:HGNC:1730],2025-12-10,success
+ENSP00000497382,CD53,Ensembl_API,CD53 molecule [Source:HGNC Symbol;Acc:HGNC:1686],2025-12-10,success
+ENSP00000461879,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000400333,SNX27,Ensembl_API,sorting nexin 27 [Source:HGNC Symbol;Acc:HGNC:20073],2025-12-10,success
+ENSP00000376249,CCDC50,Ensembl_API,coiled-coil domain containing 50 [Source:HGNC Symbol;Acc:HGNC:18111],2025-12-10,success
+ENSP00000370557,MIS12,Ensembl_API,MIS12 kinetochore complex component [Source:HGNC Symbol;Acc:HGNC:24967],2025-12-10,success
+ENSP00000496942,JAGN1,Ensembl_API,jagunal homolog 1 [Source:HGNC Symbol;Acc:HGNC:26926],2025-12-10,success
+ENSP00000499655,ARHGEF18,Ensembl_API,Rho/Rac guanine nucleotide exchange factor 18 [Source:HGNC Symbol;Acc:HGNC:17090],2025-12-10,success
+ENSP00000434056,EIF1AD,Ensembl_API,eukaryotic translation initiation factor 1A domain containing [Source:HGNC Symbol;Acc:HGNC:28147],2025-12-10,success
+ENSP00000252268,DPF2,Ensembl_API,double PHD fingers 2 [Source:HGNC Symbol;Acc:HGNC:9964],2025-12-10,success
+ENSP00000486540,CNOT9,Ensembl_API,CCR4-NOT transcription complex subunit 9 [Source:HGNC Symbol;Acc:HGNC:10445],2025-12-10,success
+ENSP00000466664,SLC44A2,Ensembl_API,solute carrier family 44 member 2 (CTL2 blood group) [Source:HGNC Symbol;Acc:HGNC:17292],2025-12-10,success
+ENSP00000455145,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000496699,CHAMP1,Ensembl_API,chromosome alignment maintaining phosphoprotein 1 [Source:HGNC Symbol;Acc:HGNC:20311],2025-12-10,success
+ENSP00000498864,PDK3,Ensembl_API,pyruvate dehydrogenase kinase 3 [Source:HGNC Symbol;Acc:HGNC:8811],2025-12-10,success
+ENSP00000497004,MRPL28,Ensembl_API,mitochondrial ribosomal protein L28 [Source:HGNC Symbol;Acc:HGNC:14484],2025-12-10,success
+ENSP00000462172,KIAA0040,Ensembl_API,KIAA0040 [Source:HGNC Symbol;Acc:HGNC:28950],2025-12-10,success
+ENSP00000429323,EIF2B4,Ensembl_API,eukaryotic translation initiation factor 2B subunit delta [Source:HGNC Symbol;Acc:HGNC:3260],2025-12-10,success
+ENSP00000469194,EMP3,Ensembl_API,epithelial membrane protein 3 (MAM blood group) [Source:HGNC Symbol;Acc:HGNC:3335],2025-12-10,success
+ENSP00000463982,YTHDC1,Ensembl_API,YTH N6-methyladenosine RNA binding protein C1 [Source:HGNC Symbol;Acc:HGNC:30626],2025-12-10,success
+ENSP00000500695,AP1S2,Ensembl_API,adaptor related protein complex 1 subunit sigma 2 [Source:HGNC Symbol;Acc:HGNC:560],2025-12-10,success
+ENSP00000486725,PPIL2,Ensembl_API,peptidylprolyl isomerase like 2 [Source:HGNC Symbol;Acc:HGNC:9261],2025-12-10,success
+ENSP00000282605,JADE2,Ensembl_API,jade family PHD finger 2 [Source:HGNC Symbol;Acc:HGNC:22984],2025-12-10,success
+ENSP00000497594,UBE3A,Ensembl_API,ubiquitin protein ligase E3A [Source:HGNC Symbol;Acc:HGNC:12496],2025-12-10,success
+ENSP00000466111,RNMT,Ensembl_API,RNA guanine-7 methyltransferase [Source:HGNC Symbol;Acc:HGNC:10075],2025-12-10,success
+ENSP00000498321,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000496695,ATXN3,Ensembl_API,ataxin 3 [Source:HGNC Symbol;Acc:HGNC:7106],2025-12-10,success
+ENSP00000434513,EML3,Ensembl_API,EMAP like 3 [Source:HGNC Symbol;Acc:HGNC:26666],2025-12-10,success
+ENSP00000361264,RAPGEF1,Ensembl_API,Rap guanine nucleotide exchange factor 1 [Source:HGNC Symbol;Acc:HGNC:4568],2025-12-10,success
+ENSP00000418037,IRF5,Ensembl_API,interferon regulatory factor 5 [Source:HGNC Symbol;Acc:HGNC:6120],2025-12-10,success
+ENSP00000492425,NUDT4B,Ensembl_API,nudix hydrolase 4B [Source:HGNC Symbol;Acc:HGNC:18012],2025-12-10,success
+ENSP00000326052,COX14,Ensembl_API,cytochrome c oxidase assembly factor COX14 [Source:HGNC Symbol;Acc:HGNC:28216],2025-12-10,success
+ENSP00000443900,LYRM4,Ensembl_API,LYR motif containing 4 [Source:HGNC Symbol;Acc:HGNC:21365],2025-12-10,success
+ENSP00000482568,ORAI1,Ensembl_API,ORAI calcium release-activated calcium modulator 1 [Source:HGNC Symbol;Acc:HGNC:25896],2025-12-10,success
+ENSP00000384899,GATAD2A,Ensembl_API,GATA zinc finger domain containing 2A [Source:HGNC Symbol;Acc:HGNC:29989],2025-12-10,success
+ENSP00000487041,COBLL1,Ensembl_API,cordon-bleu WH2 repeat protein like 1 [Source:HGNC Symbol;Acc:HGNC:23571],2025-12-10,success
+ENSP00000491067,NECAP1,Ensembl_API,NECAP endocytosis associated 1 [Source:HGNC Symbol;Acc:HGNC:24539],2025-12-10,success
+ENSP00000378702,BRD2,Ensembl_API,bromodomain containing 2 [Source:HGNC Symbol;Acc:HGNC:1103],2025-12-10,success
+ENSP00000483888,NDUFB1,Ensembl_API,NADH:ubiquinone oxidoreductase subunit B1 [Source:HGNC Symbol;Acc:HGNC:7695],2025-12-10,success
+ENSP00000442224,C12ORF43,Ensembl_API,chromosome 12 open reading frame 43 [Source:HGNC Symbol;Acc:HGNC:25719],2025-12-10,success
+ENSP00000399751,LRCH3,Ensembl_API,leucine rich repeats and calponin homology domain containing 3 [Source:HGNC Symbol;Acc:HGNC:28637],2025-12-10,success
+ENSP00000473980,MRPL37,Ensembl_API,mitochondrial ribosomal protein L37 [Source:HGNC Symbol;Acc:HGNC:14034],2025-12-10,success
+ENSP00000265827,ZNF800,Ensembl_API,zinc finger protein 800 [Source:HGNC Symbol;Acc:HGNC:27267],2025-12-10,success
+ENSP00000434776,PARP10,Ensembl_API,poly(ADP-ribose) polymerase family member 10 [Source:HGNC Symbol;Acc:HGNC:25895],2025-12-10,success
+ENSP00000498715,INTS14,Ensembl_API,integrator complex subunit 14 [Source:HGNC Symbol;Acc:HGNC:25372],2025-12-10,success
+ENSP00000497585,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000498888,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000371003,ZMYND11,Ensembl_API,zinc finger MYND-type containing 11 [Source:HGNC Symbol;Acc:HGNC:16966],2025-12-10,success
+ENSP00000259075,TANK,Ensembl_API,TRAF family member associated NFKB activator [Source:HGNC Symbol;Acc:HGNC:11562],2025-12-10,success
+ENSP00000438071,PAAF1,Ensembl_API,proteasomal ATPase associated factor 1 [Source:HGNC Symbol;Acc:HGNC:25687],2025-12-10,success
+ENSP00000472914,SUGP2,Ensembl_API,SURP and G-patch domain containing 2 [Source:HGNC Symbol;Acc:HGNC:18641],2025-12-10,success
+ENSP00000350278,SLC30A7,Ensembl_API,solute carrier family 30 member 7 [Source:HGNC Symbol;Acc:HGNC:19306],2025-12-10,success
+ENSP00000419413,ARMC8,Ensembl_API,armadillo repeat containing 8 [Source:HGNC Symbol;Acc:HGNC:24999],2025-12-10,success
+ENSP00000495063,CCDC82,Ensembl_API,coiled-coil domain containing 82 [Source:HGNC Symbol;Acc:HGNC:26282],2025-12-10,success
+ENSP00000498782,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000497997,MALT1,Ensembl_API,MALT1 paracaspase [Source:HGNC Symbol;Acc:HGNC:6819],2025-12-10,success
+ENSP00000486676,TREX1,Ensembl_API,three prime repair exonuclease 1 [Source:HGNC Symbol;Acc:HGNC:12269],2025-12-10,success
+ENSP00000389383,STK11IP,Ensembl_API,serine/threonine kinase 11 interacting protein [Source:HGNC Symbol;Acc:HGNC:19184],2025-12-10,success
+ENSP00000497948,SKIC3,Ensembl_API,SKI3 subunit of superkiller complex [Source:HGNC Symbol;Acc:HGNC:23639],2025-12-10,success
+ENSP00000338186,EED,Ensembl_API,embryonic ectoderm development [Source:HGNC Symbol;Acc:HGNC:3188],2025-12-10,success
+ENSP00000320567,MRPS33,Ensembl_API,mitochondrial ribosomal protein S33 [Source:HGNC Symbol;Acc:HGNC:16634],2025-12-10,success
+ENSP00000250263,ERI1,Ensembl_API,exoribonuclease 1 [Source:HGNC Symbol;Acc:HGNC:23994],2025-12-10,success
+ENSP00000501135,URM1,Ensembl_API,ubiquitin related modifier 1 [Source:HGNC Symbol;Acc:HGNC:28378],2025-12-10,success
+ENSP00000389095,CYTH1,Ensembl_API,cytohesin 1 [Source:HGNC Symbol;Acc:HGNC:9501],2025-12-10,success
+ENSP00000499786,ITCH,Ensembl_API,itchy E3 ubiquitin protein ligase [Source:HGNC Symbol;Acc:HGNC:13890],2025-12-10,success
+ENSP00000496168,BCL11A,Ensembl_API,BCL11 transcription factor A [Source:HGNC Symbol;Acc:HGNC:13221],2025-12-10,success
+ENSP00000397269,FAM136A,Ensembl_API,family with sequence similarity 136 member A [Source:HGNC Symbol;Acc:HGNC:25911],2025-12-10,success
+ENSP00000383433,ZDHHC20,Ensembl_API,zinc finger DHHC-type palmitoyltransferase 20 [Source:HGNC Symbol;Acc:HGNC:20749],2025-12-10,success
+ENSP00000417559,NMD3,Ensembl_API,NMD3 ribosome export adaptor [Source:HGNC Symbol;Acc:HGNC:24250],2025-12-10,success
+ENSP00000265713,KAT6A,Ensembl_API,lysine acetyltransferase 6A [Source:HGNC Symbol;Acc:HGNC:13013],2025-12-10,success
+ENSP00000493768,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000347845,TASOR,Ensembl_API,transcription activation suppressor [Source:HGNC Symbol;Acc:HGNC:30314],2025-12-10,success
+ENSP00000424495,ZNF346,Ensembl_API,zinc finger protein 346 [Source:HGNC Symbol;Acc:HGNC:16403],2025-12-10,success
+ENSP00000488802,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000291572,AGPAT3,Ensembl_API,1-acylglycerol-3-phosphate O-acyltransferase 3 [Source:HGNC Symbol;Acc:HGNC:326],2025-12-10,success
+ENSP00000496842,PNISR,Ensembl_API,PNN interacting serine and arginine rich protein [Source:HGNC Symbol;Acc:HGNC:21222],2025-12-10,success
+ENSP00000263440,ALG6,Ensembl_API,"ALG6 alpha-1,3-glucosyltransferase [Source:HGNC Symbol;Acc:HGNC:23157]",2025-12-10,success
+ENSP00000390647,MTRFR,Ensembl_API,mitochondrial translation release factor in rescue [Source:HGNC Symbol;Acc:HGNC:26784],2025-12-10,success
+ENSP00000430110,HMBOX1,Ensembl_API,homeobox containing 1 [Source:HGNC Symbol;Acc:HGNC:26137],2025-12-10,success
+ENSP00000486623,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000450584,ETFRF1,Ensembl_API,electron transfer flavoprotein regulatory factor 1 [Source:HGNC Symbol;Acc:HGNC:27052],2025-12-10,success
+ENSP00000461784,GOSR2,Ensembl_API,golgi SNAP receptor complex member 2 [Source:HGNC Symbol;Acc:HGNC:4431],2025-12-10,success
+ENSP00000494480,TRANK1,Ensembl_API,tetratricopeptide repeat and ankyrin repeat containing 1 [Source:HGNC Symbol;Acc:HGNC:29011],2025-12-10,success
+ENSP00000487164,VPS8,Ensembl_API,VPS8 subunit of CORVET complex [Source:HGNC Symbol;Acc:HGNC:29122],2025-12-10,success
+ENSP00000380763,MORC2,Ensembl_API,MORC family CW-type zinc finger 2 [Source:HGNC Symbol;Acc:HGNC:23573],2025-12-10,success
+ENSP00000498750,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000494352,KDSR,Ensembl_API,3-ketodihydrosphingosine reductase [Source:HGNC Symbol;Acc:HGNC:4021],2025-12-10,success
+ENSP00000499211,CARD8,Ensembl_API,caspase recruitment domain family member 8 [Source:HGNC Symbol;Acc:HGNC:17057],2025-12-10,success
+ENSP00000358904,ZNF512B,Ensembl_API,zinc finger protein 512B [Source:HGNC Symbol;Acc:HGNC:29212],2025-12-10,success
+ENSP00000371859,BAZ1A,Ensembl_API,bromodomain adjacent to zinc finger domain 1A [Source:HGNC Symbol;Acc:HGNC:960],2025-12-10,success
+ENSP00000495612,MEA1,Ensembl_API,male-enhanced antigen 1 [Source:HGNC Symbol;Acc:HGNC:6986],2025-12-10,success
+ENSP00000412708,RMND1,Ensembl_API,required for meiotic nuclear division 1 homolog [Source:HGNC Symbol;Acc:HGNC:21176],2025-12-10,success
+ENSP00000450870,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000385725,POLR2F,Ensembl_API,"RNA polymerase II, I and III subunit F [Source:HGNC Symbol;Acc:HGNC:9193]",2025-12-10,success
+ENSP00000494067,TMF1,Ensembl_API,TATA element modulatory factor 1 [Source:HGNC Symbol;Acc:HGNC:11870],2025-12-10,success
+ENSP00000479071,ZFAND6,Ensembl_API,zinc finger AN1-type containing 6 [Source:HGNC Symbol;Acc:HGNC:30164],2025-12-10,success
+ENSP00000498476,MAP1LC3B,Ensembl_API,microtubule associated protein 1 light chain 3 beta [Source:HGNC Symbol;Acc:HGNC:13352],2025-12-10,success
+ENSP00000402849,IFRD2,Ensembl_API,interferon related developmental regulator 2 [Source:HGNC Symbol;Acc:HGNC:5457],2025-12-10,success
+ENSP00000426504,ZNF131,Ensembl_API,zinc finger protein 131 [Source:HGNC Symbol;Acc:HGNC:12915],2025-12-10,success
+ENSP00000498268,DCAKD,Ensembl_API,dephospho-CoA kinase domain containing [Source:HGNC Symbol;Acc:HGNC:26238],2025-12-10,success
+ENSP00000370980,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000392262,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000456218,EARS2,Ensembl_API,"glutamyl-tRNA synthetase 2, mitochondrial [Source:HGNC Symbol;Acc:HGNC:29419]",2025-12-10,success
+ENSP00000457870,MLST8,Ensembl_API,"MTOR associated protein, LST8 homolog [Source:HGNC Symbol;Acc:HGNC:24825]",2025-12-10,success
+ENSP00000490935,IFIT2,Ensembl_API,interferon induced protein with tetratricopeptide repeats 2 [Source:HGNC Symbol;Acc:HGNC:5409],2025-12-10,success
+ENSP00000458021,PMF1-BGLAP,Ensembl_API,PMF1-BGLAP readthrough [Source:HGNC Symbol;Acc:HGNC:42953],2025-12-10,success
+ENSP00000354091,GNL3L,Ensembl_API,G protein nucleolar 3 like [Source:HGNC Symbol;Acc:HGNC:25553],2025-12-10,success
+ENSP00000468592,BCAS3,Ensembl_API,BCAS3 microtubule associated cell migration factor [Source:HGNC Symbol;Acc:HGNC:14347],2025-12-10,success
+ENSP00000453095,MEF2A,Ensembl_API,myocyte enhancer factor 2A [Source:HGNC Symbol;Acc:HGNC:6993],2025-12-10,success
+ENSP00000378198,TBCK,Ensembl_API,TBC1 domain containing kinase [Source:HGNC Symbol;Acc:HGNC:28261],2025-12-10,success
+ENSP00000484736,TMEM120A,Ensembl_API,transmembrane protein 120A [Source:HGNC Symbol;Acc:HGNC:21697],2025-12-10,success
+ENSP00000469534,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000498881,ERCC5,Ensembl_API,"ERCC excision repair 5, endonuclease [Source:HGNC Symbol;Acc:HGNC:3437]",2025-12-10,success
+ENSP00000391803,MITF,Ensembl_API,melanocyte inducing transcription factor [Source:HGNC Symbol;Acc:HGNC:7105],2025-12-10,success
+ENSP00000501088,CFAP298-TCP10L,Ensembl_API,CFAP298-TCP10L readthrough [Source:HGNC Symbol;Acc:HGNC:54636],2025-12-10,success
+ENSP00000377735,CLDND1,Ensembl_API,claudin domain containing 1 [Source:HGNC Symbol;Acc:HGNC:1322],2025-12-10,success
+ENSP00000427004,GFM2,Ensembl_API,GTP dependent ribosome recycling factor mitochondrial 2 [Source:HGNC Symbol;Acc:HGNC:29682],2025-12-10,success
+ENSP00000440100,MED24,Ensembl_API,mediator complex subunit 24 [Source:HGNC Symbol;Acc:HGNC:22963],2025-12-10,success
+ENSP00000497815,AP5Z1,Ensembl_API,adaptor related protein complex 5 subunit zeta 1 [Source:HGNC Symbol;Acc:HGNC:22197],2025-12-10,success
+ENSP00000418232,NISCH,Ensembl_API,nischarin [Source:HGNC Symbol;Acc:HGNC:18006],2025-12-10,success
+ENSP00000459019,PLSCR3,Ensembl_API,phospholipid scramblase 3 [Source:HGNC Symbol;Acc:HGNC:16495],2025-12-10,success
+ENSP00000387393,KANSL1,Ensembl_API,KAT8 regulatory NSL complex subunit 1 [Source:HGNC Symbol;Acc:HGNC:24565],2025-12-10,success
+ENSP00000439800,ZMYND8,Ensembl_API,zinc finger MYND-type containing 8 [Source:HGNC Symbol;Acc:HGNC:9397],2025-12-10,success
+ENSP00000473665,SBNO1,Ensembl_API,strawberry notch homolog 1 [Source:HGNC Symbol;Acc:HGNC:22973],2025-12-10,success
+ENSP00000393098,LPAR5,Ensembl_API,lysophosphatidic acid receptor 5 [Source:HGNC Symbol;Acc:HGNC:13307],2025-12-10,success
+ENSP00000324956,RNF14,Ensembl_API,ring finger protein 14 [Source:HGNC Symbol;Acc:HGNC:10058],2025-12-10,success
+ENSP00000499251,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000455308,ZNF598,Ensembl_API,"zinc finger protein 598, E3 ubiquitin ligase [Source:HGNC Symbol;Acc:HGNC:28079]",2025-12-10,success
+ENSP00000493218,MFSD8,Ensembl_API,major facilitator superfamily domain containing 8 [Source:HGNC Symbol;Acc:HGNC:28486],2025-12-10,success
+ENSP00000410042,BRD1,Ensembl_API,bromodomain containing 1 [Source:HGNC Symbol;Acc:HGNC:1102],2025-12-10,success
+ENSP00000359386,VMA21,Ensembl_API,vacuolar ATPase assembly factor VMA21 [Source:HGNC Symbol;Acc:HGNC:22082],2025-12-10,success
+ENSP00000489442,EXOC6B,Ensembl_API,exocyst complex component 6B [Source:HGNC Symbol;Acc:HGNC:17085],2025-12-10,success
+ENSP00000498671,MRTFA,Ensembl_API,myocardin related transcription factor A [Source:HGNC Symbol;Acc:HGNC:14334],2025-12-10,success
+ENSP00000484175,MFSD1,Ensembl_API,major facilitator superfamily domain containing 1 [Source:HGNC Symbol;Acc:HGNC:25874],2025-12-10,success
+ENSP00000498524,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000500582,AKT3,Ensembl_API,AKT serine/threonine kinase 3 [Source:HGNC Symbol;Acc:HGNC:393],2025-12-10,success
+ENSP00000450969,ZBTB33,Ensembl_API,zinc finger and BTB domain containing 33 [Source:HGNC Symbol;Acc:HGNC:16682],2025-12-10,success
+ENSP00000491742,BIVM-ERCC5,Ensembl_API,BIVM-ERCC5 readthrough [Source:HGNC Symbol;Acc:HGNC:43690],2025-12-10,success
+ENSP00000492001,PFKFB3,Ensembl_API,"6-phosphofructo-2-kinase/fructose-2,6-biphosphatase 3 [Source:HGNC Symbol;Acc:HGNC:8874]",2025-12-10,success
+ENSP00000490767,ING5,Ensembl_API,inhibitor of growth family member 5 [Source:HGNC Symbol;Acc:HGNC:19421],2025-12-10,success
+ENSP00000501053,ADCY7,Ensembl_API,adenylate cyclase 7 [Source:HGNC Symbol;Acc:HGNC:238],2025-12-10,success
+ENSP00000493357,CYTH2,Ensembl_API,cytohesin 2 [Source:HGNC Symbol;Acc:HGNC:9502],2025-12-10,success
+ENSP00000472445,POLD1,Ensembl_API,"DNA polymerase delta 1, catalytic subunit [Source:HGNC Symbol;Acc:HGNC:9175]",2025-12-10,success
+ENSP00000345268,ZDHHC3,Ensembl_API,zinc finger DHHC-type palmitoyltransferase 3 [Source:HGNC Symbol;Acc:HGNC:18470],2025-12-10,success
+ENSP00000493184,FOXO6,Ensembl_API,forkhead box O6 [Source:HGNC Symbol;Acc:HGNC:24814],2025-12-10,success
+ENSP00000386419,MZT2B,Ensembl_API,mitotic spindle organizing protein 2B [Source:HGNC Symbol;Acc:HGNC:25886],2025-12-10,success
+ENSP00000460437,PCTP,Ensembl_API,phosphatidylcholine transfer protein [Source:HGNC Symbol;Acc:HGNC:8752],2025-12-10,success
+ENSP00000500633,ETNK1,Ensembl_API,ethanolamine kinase 1 [Source:HGNC Symbol;Acc:HGNC:24649],2025-12-10,success
+ENSP00000481859,PAN2,Ensembl_API,poly(A) specific ribonuclease subunit PAN2 [Source:HGNC Symbol;Acc:HGNC:20074],2025-12-10,success
+ENSP00000498136,CCDC186,Ensembl_API,coiled-coil domain containing 186 [Source:HGNC Symbol;Acc:HGNC:24349],2025-12-10,success
+ENSP00000497271,IFIH1,Ensembl_API,interferon induced with helicase C domain 1 [Source:HGNC Symbol;Acc:HGNC:18873],2025-12-10,success
+ENSP00000493999,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000384675,SOS1,Ensembl_API,SOS Ras/Rac guanine nucleotide exchange factor 1 [Source:HGNC Symbol;Acc:HGNC:11187],2025-12-10,success
+ENSP00000495240,CHD8,Ensembl_API,chromodomain helicase DNA binding protein 8 [Source:HGNC Symbol;Acc:HGNC:20153],2025-12-10,success
+ENSP00000390535,PRKD1,Ensembl_API,protein kinase D1 [Source:HGNC Symbol;Acc:HGNC:9407],2025-12-10,success
+ENSP00000498737,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000274400,GTF2H2,Ensembl_API,general transcription factor IIH subunit 2 [Source:HGNC Symbol;Acc:HGNC:4656],2025-12-10,success
+ENSP00000456908,CTU2,Ensembl_API,cytosolic thiouridylase subunit 2 [Source:HGNC Symbol;Acc:HGNC:28005],2025-12-10,success
+ENSP00000351255,STAT4,Ensembl_API,signal transducer and activator of transcription 4 [Source:HGNC Symbol;Acc:HGNC:11365],2025-12-10,success
+ENSP00000497422,EIF4E1B,Ensembl_API,eukaryotic translation initiation factor 4E family member 1B [Source:HGNC Symbol;Acc:HGNC:33179],2025-12-10,success
+ENSP00000498382,DEPDC5,Ensembl_API,"DEP domain containing 5, GATOR1 subcomplex subunit [Source:HGNC Symbol;Acc:HGNC:18423]",2025-12-10,success
+ENSP00000360992,STAMBPL1,Ensembl_API,STAM binding protein like 1 [Source:HGNC Symbol;Acc:HGNC:24105],2025-12-10,success
+ENSP00000498126,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000489776,TEX51,Ensembl_API,testis expressed 51 [Source:HGNC Symbol;Acc:HGNC:52387],2025-12-10,success
+ENSP00000155093,ZFY,Ensembl_API,zinc finger protein Y-linked [Source:HGNC Symbol;Acc:HGNC:12870],2025-12-10,success
+ENSP00000387229,RABL2A,Ensembl_API,"RAB, member of RAS oncogene family like 2A [Source:HGNC Symbol;Acc:HGNC:9799]",2025-12-10,success
+ENSP00000392782,CLGN,Ensembl_API,calmegin [Source:HGNC Symbol;Acc:HGNC:2060],2025-12-10,success
+ENSP00000498791,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000342023,FBXO38,Ensembl_API,F-box protein 38 [Source:HGNC Symbol;Acc:HGNC:28844],2025-12-10,success
+ENSP00000303515,DUS1L,Ensembl_API,dihydrouridine synthase 1 like [Source:HGNC Symbol;Acc:HGNC:30086],2025-12-10,success
+ENSP00000485228,ZSCAN26,Ensembl_API,zinc finger and SCAN domain containing 26 [Source:HGNC Symbol;Acc:HGNC:12978],2025-12-10,success
+ENSP00000403663,AP4M1,Ensembl_API,adaptor related protein complex 4 subunit mu 1 [Source:HGNC Symbol;Acc:HGNC:574],2025-12-10,success
+ENSP00000368486,ZFX,Ensembl_API,zinc finger protein X-linked [Source:HGNC Symbol;Acc:HGNC:12869],2025-12-10,success
+ENSP00000460683,CTDNEP1,Ensembl_API,CTD nuclear envelope phosphatase 1 [Source:HGNC Symbol;Acc:HGNC:19085],2025-12-10,success
+ENSP00000495710,ACBD6,Ensembl_API,acyl-CoA binding domain containing 6 [Source:HGNC Symbol;Acc:HGNC:23339],2025-12-10,success
+ENSP00000500986,DDHD1,Ensembl_API,DDHD domain containing 1 [Source:HGNC Symbol;Acc:HGNC:19714],2025-12-10,success
+ENSP00000450799,KHNYN,Ensembl_API,KH and NYN domain containing [Source:HGNC Symbol;Acc:HGNC:20166],2025-12-10,success
+ENSP00000493161,TMEM271,Ensembl_API,transmembrane protein 271 [Source:HGNC Symbol;Acc:HGNC:53639],2025-12-10,success
+ENSP00000496241,SLC33A1,Ensembl_API,solute carrier family 33 member 1 [Source:HGNC Symbol;Acc:HGNC:95],2025-12-10,success
+ENSP00000496813,GET1,Ensembl_API,guided entry of tail-anchored proteins factor 1 [Source:HGNC Symbol;Acc:HGNC:12790],2025-12-10,success
+ENSP00000363558,ZNF485,Ensembl_API,zinc finger protein 485 [Source:HGNC Symbol;Acc:HGNC:23440],2025-12-10,success
+ENSP00000490577,C11ORF97,Ensembl_API,chromosome 11 open reading frame 97 [Source:HGNC Symbol;Acc:HGNC:49544],2025-12-10,success
+ENSP00000324056,ZNF48,Ensembl_API,zinc finger protein 48 [Source:HGNC Symbol;Acc:HGNC:13114],2025-12-10,success
+ENSP00000499467,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000376582,RIC8B,Ensembl_API,RIC8 guanine nucleotide exchange factor B [Source:HGNC Symbol;Acc:HGNC:25555],2025-12-10,success
+ENSP00000486146,SMIM7,Ensembl_API,small integral membrane protein 7 [Source:HGNC Symbol;Acc:HGNC:28419],2025-12-10,success
+ENSP00000395294,CD70,Ensembl_API,CD70 molecule [Source:HGNC Symbol;Acc:HGNC:11937],2025-12-10,success
+ENSP00000339527,FOXO3,Ensembl_API,forkhead box O3 [Source:HGNC Symbol;Acc:HGNC:3821],2025-12-10,success
+ENSP00000461830,CEP20,Ensembl_API,centrosomal protein 20 [Source:HGNC Symbol;Acc:HGNC:26435],2025-12-10,success
+ENSP00000499846,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000491427,INTS6L,Ensembl_API,integrator complex subunit 6 like [Source:HGNC Symbol;Acc:HGNC:27334],2025-12-10,success
+ENSP00000501026,DUS4L-BCAP29,Ensembl_API,DUS4L-BCAP29 readthrough [Source:HGNC Symbol;Acc:HGNC:54422],2025-12-10,success
+ENSP00000366182,ELK1,Ensembl_API,ETS transcription factor ELK1 [Source:HGNC Symbol;Acc:HGNC:3321],2025-12-10,success
+ENSP00000493121,SRGAP2B,Ensembl_API,SLIT-ROBO Rho GTPase activating protein 2B [Source:HGNC Symbol;Acc:HGNC:35237],2025-12-10,success
+ENSP00000448419,IKZF4,Ensembl_API,IKAROS family zinc finger 4 [Source:HGNC Symbol;Acc:HGNC:13179],2025-12-10,success
+ENSP00000464635,AMZ2,Ensembl_API,archaelysin family metallopeptidase 2 [Source:HGNC Symbol;Acc:HGNC:28041],2025-12-10,success
+ENSP00000499037,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000419881,RAD51B,Ensembl_API,RAD51 paralog B [Source:HGNC Symbol;Acc:HGNC:9822],2025-12-10,success
+ENSP00000486574,UBAP1,Ensembl_API,ubiquitin associated protein 1 [Source:HGNC Symbol;Acc:HGNC:12461],2025-12-10,success
+ENSP00000390513,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000442060,MAFF,Ensembl_API,MAF bZIP transcription factor F [Source:HGNC Symbol;Acc:HGNC:6780],2025-12-10,success
+ENSP00000386096,MYO18B,Ensembl_API,myosin XVIIIB [Source:HGNC Symbol;Acc:HGNC:18150],2025-12-10,success
+ENSP00000457715,ZNF865,Ensembl_API,zinc finger protein 865 [Source:HGNC Symbol;Acc:HGNC:38705],2025-12-10,success
+ENSP00000474253,SETD1B,Ensembl_API,"SET domain containing 1B, histone lysine methyltransferase [Source:HGNC Symbol;Acc:HGNC:29187]",2025-12-10,success
+ENSP00000478887,MYC,Ensembl_API,"MYC proto-oncogene, bHLH transcription factor [Source:HGNC Symbol;Acc:HGNC:7553]",2025-12-10,success
+ENSP00000495795,SPG7,Ensembl_API,"SPG7 matrix AAA peptidase subunit, paraplegin [Source:HGNC Symbol;Acc:HGNC:11237]",2025-12-10,success
+ENSP00000411256,GABARAPL1,Ensembl_API,GABA type A receptor associated protein like 1 [Source:HGNC Symbol;Acc:HGNC:4068],2025-12-10,success
+ENSP00000424798,MTX3,Ensembl_API,metaxin 3 [Source:HGNC Symbol;Acc:HGNC:24812],2025-12-10,success
+ENSP00000365049,ACBD5,Ensembl_API,acyl-CoA binding domain containing 5 [Source:HGNC Symbol;Acc:HGNC:23338],2025-12-10,success
+ENSP00000370624,MIER3,Ensembl_API,MIER family member 3 [Source:HGNC Symbol;Acc:HGNC:26678],2025-12-10,success
+ENSP00000440850,PARPBP,Ensembl_API,PARP1 binding protein [Source:HGNC Symbol;Acc:HGNC:26074],2025-12-10,success
+ENSP00000493820,OR5D3P,Ensembl_API,olfactory receptor family 5 subfamily D member 3 pseudogene [Source:HGNC Symbol;Acc:HGNC:8336],2025-12-10,success
+ENSP00000500333,SLC25A52,Ensembl_API,solute carrier family 25 member 52 [Source:HGNC Symbol;Acc:HGNC:23324],2025-12-10,success
+ENSP00000343081,PUS7L,Ensembl_API,pseudouridine synthase 7 like [Source:HGNC Symbol;Acc:HGNC:25276],2025-12-10,success
+ENSP00000385110,MIEF1,Ensembl_API,mitochondrial elongation factor 1 [Source:HGNC Symbol;Acc:HGNC:25979],2025-12-10,success
+ENSP00000386503,CCDC141,Ensembl_API,coiled-coil domain containing 141 [Source:HGNC Symbol;Acc:HGNC:26821],2025-12-10,success
+ENSP00000494896,TECTB,Ensembl_API,tectorin beta [Source:HGNC Symbol;Acc:HGNC:11721],2025-12-10,success
+ENSP00000487174,ZEB2,Ensembl_API,zinc finger E-box binding homeobox 2 [Source:HGNC Symbol;Acc:HGNC:14881],2025-12-10,success
+ENSP00000498656,PWWP3A,Ensembl_API,"PWWP domain containing 3A, DNA repair factor [Source:HGNC Symbol;Acc:HGNC:29641]",2025-12-10,success
+ENSP00000498700,BICD1,Ensembl_API,BICD cargo adaptor 1 [Source:HGNC Symbol;Acc:HGNC:1049],2025-12-10,success
+ENSP00000497880,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000367644,ANKEF1,Ensembl_API,ankyrin repeat and EF-hand domain containing 1 [Source:HGNC Symbol;Acc:HGNC:15803],2025-12-10,success
+ENSP00000426848,ZFYVE16,Ensembl_API,zinc finger FYVE-type containing 16 [Source:HGNC Symbol;Acc:HGNC:20756],2025-12-10,success
+ENSP00000489748,MPC1L,Ensembl_API,mitochondrial pyruvate carrier 1 like [Source:HGNC Symbol;Acc:HGNC:44205],2025-12-10,success
+ENSP00000497527,INPP5F,Ensembl_API,inositol polyphosphate-5-phosphatase F [Source:HGNC Symbol;Acc:HGNC:17054],2025-12-10,success
+ENSP00000495202,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000491227,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000363161,TMEM268,Ensembl_API,transmembrane protein 268 [Source:HGNC Symbol;Acc:HGNC:24513],2025-12-10,success
+ENSP00000495949,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000354039,UBAP2,Ensembl_API,ubiquitin associated protein 2 [Source:HGNC Symbol;Acc:HGNC:14185],2025-12-10,success
+ENSP00000496496,TRMU,Ensembl_API,tRNA mitochondrial 2-thiouridylase [Source:HGNC Symbol;Acc:HGNC:25481],2025-12-10,success
+ENSP00000381531,CSNK1D,Ensembl_API,casein kinase 1 delta [Source:HGNC Symbol;Acc:HGNC:2452],2025-12-10,success
+ENSP00000497977,GET1-SH3BGR,Ensembl_API,GET1-SH3BGR readthrough [Source:HGNC Symbol;Acc:HGNC:54635],2025-12-10,success
+ENSP00000463254,CCDC178,Ensembl_API,coiled-coil domain containing 178 [Source:HGNC Symbol;Acc:HGNC:29588],2025-12-10,success
+ENSP00000376500,TRAF3,Ensembl_API,TNF receptor associated factor 3 [Source:HGNC Symbol;Acc:HGNC:12033],2025-12-10,success
+ENSP00000401596,GPBP1,Ensembl_API,GC-rich promoter binding protein 1 [Source:HGNC Symbol;Acc:HGNC:29520],2025-12-10,success
+ENSP00000444889,DENND5B,Ensembl_API,DENN domain containing 5B [Source:HGNC Symbol;Acc:HGNC:28338],2025-12-10,success
+ENSP00000322361,ZNF236,Ensembl_API,zinc finger protein 236 [Source:HGNC Symbol;Acc:HGNC:13028],2025-12-10,success
+ENSP00000490940,ARHGEF9,Ensembl_API,Cdc42 guanine nucleotide exchange factor 9 [Source:HGNC Symbol;Acc:HGNC:14561],2025-12-10,success
+ENSP00000495726,IQSEC2,Ensembl_API,IQ motif and Sec7 domain ArfGEF 2 [Source:HGNC Symbol;Acc:HGNC:29059],2025-12-10,success
+ENSP00000425130,UVSSA,Ensembl_API,UV stimulated scaffold protein A [Source:HGNC Symbol;Acc:HGNC:29304],2025-12-10,success
+ENSP00000501277,LDB1,Ensembl_API,LIM domain binding 1 [Source:HGNC Symbol;Acc:HGNC:6532],2025-12-10,success
+ENSP00000351318,PLEKHG1,Ensembl_API,pleckstrin homology and RhoGEF domain containing G1 [Source:HGNC Symbol;Acc:HGNC:20884],2025-12-10,success
+ENSP00000351473,GIMAP5,Ensembl_API,"GTPase, IMAP family member 5 [Source:HGNC Symbol;Acc:HGNC:18005]",2025-12-10,success
+ENSP00000484390,DAPK2,Ensembl_API,death associated protein kinase 2 [Source:HGNC Symbol;Acc:HGNC:2675],2025-12-10,success
+ENSP00000493015,OR51L1,Ensembl_API,olfactory receptor family 51 subfamily L member 1 [Source:HGNC Symbol;Acc:HGNC:14759],2025-12-10,success
+ENSP00000372042,PPP2R2C,Ensembl_API,protein phosphatase 2 regulatory subunit Bgamma [Source:HGNC Symbol;Acc:HGNC:9306],2025-12-10,success
+ENSP00000436713,KBTBD4,Ensembl_API,kelch repeat and BTB domain containing 4 [Source:HGNC Symbol;Acc:HGNC:23761],2025-12-10,success
+ENSP00000305769,SMAD1,Ensembl_API,SMAD family member 1 [Source:HGNC Symbol;Acc:HGNC:6767],2025-12-10,success
+ENSP00000496158,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000490029,CCDC195,Ensembl_API,coiled-coil domain containing 195 [Source:HGNC Symbol;Acc:HGNC:53441],2025-12-10,success
+ENSP00000484810,ZNF274,Ensembl_API,zinc finger protein 274 [Source:HGNC Symbol;Acc:HGNC:13068],2025-12-10,success
+ENSP00000497072,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000295900,ATXN7,Ensembl_API,ataxin 7 [Source:HGNC Symbol;Acc:HGNC:10560],2025-12-10,success
+ENSP00000383301,ZNF74,Ensembl_API,zinc finger protein 74 [Source:HGNC Symbol;Acc:HGNC:13144],2025-12-10,success
+ENSP00000492745,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000464512,HELZ,Ensembl_API,helicase with zinc finger [Source:HGNC Symbol;Acc:HGNC:16878],2025-12-10,success
+ENSP00000448387,BRF1,Ensembl_API,BRF1 general transcription factor IIIB subunit [Source:HGNC Symbol;Acc:HGNC:11551],2025-12-10,success
+ENSP00000356984,DEDD,Ensembl_API,death effector domain containing [Source:HGNC Symbol;Acc:HGNC:2755],2025-12-10,success
+ENSP00000327213,NRIP1,Ensembl_API,nuclear receptor interacting protein 1 [Source:HGNC Symbol;Acc:HGNC:8001],2025-12-10,success
+ENSP00000385886,RASGRP3,Ensembl_API,RAS guanyl releasing protein 3 [Source:HGNC Symbol;Acc:HGNC:14545],2025-12-10,success
+ENSP00000499803,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000266579,SLC38A4,Ensembl_API,solute carrier family 38 member 4 [Source:HGNC Symbol;Acc:HGNC:14679],2025-12-10,success
+ENSP00000489320,C1ORF232,Ensembl_API,chromosome 1 open reading frame 230 [Source:HGNC Symbol;Acc:HGNC:53426],2025-12-10,success
+ENSP00000362160,SLC25A25,Ensembl_API,solute carrier family 25 member 25 [Source:HGNC Symbol;Acc:HGNC:20663],2025-12-10,success
+ENSP00000494788,CASK,Ensembl_API,calcium/calmodulin dependent serine protein kinase [Source:HGNC Symbol;Acc:HGNC:1497],2025-12-10,success
+ENSP00000431010,SDR16C5,Ensembl_API,short chain dehydrogenase/reductase family 16C member 5 [Source:HGNC Symbol;Acc:HGNC:30311],2025-12-10,success
+ENSP00000490280,SPMIP1,Ensembl_API,sperm microtubule inner protein 1 [Source:HGNC Symbol;Acc:HGNC:52392],2025-12-10,success
+ENSP00000495266,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000363241,ZNF618,Ensembl_API,zinc finger protein 618 [Source:HGNC Symbol;Acc:HGNC:29416],2025-12-10,success
+ENSP00000498490,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000490139,PNMA8C,Ensembl_API,PNMA family member 8C [Source:HGNC Symbol;Acc:HGNC:53427],2025-12-10,success
+ENSP00000442047,UTY,Ensembl_API,"ubiquitously transcribed tetratricopeptide repeat containing, Y-linked [Source:HGNC Symbol;Acc:HGNC:12638]",2025-12-10,success
+ENSP00000490842,ZNF654,Ensembl_API,zinc finger protein 654 [Source:HGNC Symbol;Acc:HGNC:25612],2025-12-10,success
+ENSP00000368358,POLA1,Ensembl_API,"DNA polymerase alpha 1, catalytic subunit [Source:HGNC Symbol;Acc:HGNC:9173]",2025-12-10,success
+ENSP00000438574,PIAS1,Ensembl_API,protein inhibitor of activated STAT 1 [Source:HGNC Symbol;Acc:HGNC:2752],2025-12-10,success
+ENSP00000206262,RGS17,Ensembl_API,regulator of G protein signaling 17 [Source:HGNC Symbol;Acc:HGNC:14088],2025-12-10,success
+ENSP00000350195,MAP3K6,Ensembl_API,mitogen-activated protein kinase kinase kinase 6 [Source:HGNC Symbol;Acc:HGNC:6858],2025-12-10,success
+ENSP00000490116,LCOR,Ensembl_API,ligand dependent nuclear receptor corepressor [Source:HGNC Symbol;Acc:HGNC:29503],2025-12-10,success
+ENSP00000490587,C2ORF92,Ensembl_API,chromosome 2 open reading frame 92 [Source:HGNC Symbol;Acc:HGNC:49272],2025-12-10,success
+ENSP00000460475,NLRP1,Ensembl_API,NLR family pyrin domain containing 1 [Source:HGNC Symbol;Acc:HGNC:14374],2025-12-10,success
+ENSP00000490424,CHD9NB,Ensembl_API,CHD9 neighbor [Source:HGNC Symbol;Acc:HGNC:53436],2025-12-10,success
+ENSP00000496779,LZTR1,Ensembl_API,leucine zipper like post translational regulator 1 [Source:HGNC Symbol;Acc:HGNC:6742],2025-12-10,success
+ENSP00000488251,SPATA31D4,Ensembl_API,SPATA31 subfamily D member 4 [Source:HGNC Symbol;Acc:HGNC:38601],2025-12-10,success
+ENSP00000496150,CYP2D6,Ensembl_API,cytochrome P450 family 2 subfamily D member 6 (gene/pseudogene) [Source:HGNC Symbol;Acc:HGNC:2625],2025-12-10,success
+ENSP00000481316,ZNF761,Ensembl_API,zinc finger protein 761 [Source:HGNC Symbol;Acc:HGNC:23179],2025-12-10,success
+ENSP00000493323,OR51G2,Ensembl_API,olfactory receptor family 51 subfamily G member 2 [Source:HGNC Symbol;Acc:HGNC:15198],2025-12-10,success
+ENSP00000488117,SPATA31D3,Ensembl_API,SPATA31 subfamily D member 3 [Source:HGNC Symbol;Acc:HGNC:38603],2025-12-10,success
+ENSP00000462980,TAF4B,Ensembl_API,TATA-box binding protein associated factor 4b [Source:HGNC Symbol;Acc:HGNC:11538],2025-12-10,success
+ENSP00000359469,ZNF644,Ensembl_API,zinc finger protein 644 [Source:HGNC Symbol;Acc:HGNC:29222],2025-12-10,success
+ENSP00000421021,HERC3,Ensembl_API,HECT and RLD domain containing E3 ubiquitin protein ligase 3 [Source:HGNC Symbol;Acc:HGNC:4876],2025-12-10,success
+ENSP00000498010,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000353922,ZNF711,Ensembl_API,zinc finger protein 711 [Source:HGNC Symbol;Acc:HGNC:13128],2025-12-10,success
+ENSP00000345984,TRAF3IP2,Ensembl_API,TRAF3 interacting protein 2 [Source:HGNC Symbol;Acc:HGNC:1343],2025-12-10,success
+ENSP00000490174,NPY4R2,Ensembl_API,neuropeptide Y receptor Y4-2 [Source:HGNC Symbol;Acc:HGNC:52383],2025-12-10,success
+ENSP00000485033,DOCK1,Ensembl_API,dedicator of cytokinesis 1 [Source:HGNC Symbol;Acc:HGNC:2987],2025-12-10,success
+ENSP00000482870,DOC2A,Ensembl_API,double C2 domain alpha [Source:HGNC Symbol;Acc:HGNC:2985],2025-12-10,success
+ENSP00000492019,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000391269,RBFOX1,Ensembl_API,RNA binding fox-1 homolog 1 [Source:HGNC Symbol;Acc:HGNC:18222],2025-12-10,success
+ENSP00000489407,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000481893,CNOT6,Ensembl_API,CCR4-NOT transcription complex subunit 6 [Source:HGNC Symbol;Acc:HGNC:14099],2025-12-10,success
+ENSP00000390394,SLC4A7,Ensembl_API,solute carrier family 4 member 7 [Source:HGNC Symbol;Acc:HGNC:11033],2025-12-10,success
+ENSP00000491567,ZNF888,Ensembl_API,zinc finger protein 888 [Source:HGNC Symbol;Acc:HGNC:38695],2025-12-10,success
+ENSP00000489149,TMEM275,Ensembl_API,transmembrane protein 275 [Source:HGNC Symbol;Acc:HGNC:53938],2025-12-10,success
+ENSP00000488929,CCDC149,Ensembl_API,coiled-coil domain containing 149 [Source:HGNC Symbol;Acc:HGNC:25405],2025-12-10,success
+ENSP00000379387,ZNF445,Ensembl_API,zinc finger protein 445 [Source:HGNC Symbol;Acc:HGNC:21018],2025-12-10,success
+ENSP00000321636,TOP3A,Ensembl_API,DNA topoisomerase III alpha [Source:HGNC Symbol;Acc:HGNC:11992],2025-12-10,success
+ENSP00000481271,ZNF761,Ensembl_API,zinc finger protein 761 [Source:HGNC Symbol;Acc:HGNC:23179],2025-12-10,success
+ENSP00000498934,GPRASP1,Ensembl_API,G protein-coupled receptor associated sorting protein 1 [Source:HGNC Symbol;Acc:HGNC:24834],2025-12-10,success
+ENSP00000475224,ASDURF,Ensembl_API,ASNSD1 upstream open reading frame [Source:HGNC Symbol;Acc:HGNC:53619],2025-12-10,success
+ENSP00000391381,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000490579,CCDC192,Ensembl_API,coiled-coil domain containing 192 [Source:HGNC Symbol;Acc:HGNC:49566],2025-12-10,success
+ENSP00000363275,LRRC18,Ensembl_API,leucine rich repeat containing 18 [Source:HGNC Symbol;Acc:HGNC:23199],2025-12-10,success
+ENSP00000045083,RIPOR3,Ensembl_API,RIPOR family member 3 [Source:HGNC Symbol;Acc:HGNC:16168],2025-12-10,success
+ENSP00000486891,TCF7L2,Ensembl_API,transcription factor 7 like 2 [Source:HGNC Symbol;Acc:HGNC:11641],2025-12-10,success
+ENSP00000489675,DNAH10,Ensembl_API,dynein axonemal heavy chain 10 [Source:HGNC Symbol;Acc:HGNC:2941],2025-12-10,success
+ENSP00000275233,SHPRH,Ensembl_API,SNF2 histone linker PHD RING helicase [Source:HGNC Symbol;Acc:HGNC:19336],2025-12-10,success
+ENSP00000272839,METTL21A,Ensembl_API,"methyltransferase 21A, HSPA lysine [Source:HGNC Symbol;Acc:HGNC:30476]",2025-12-10,success
+ENSP00000445595,KCNS1,Ensembl_API,potassium voltage-gated channel modifier subfamily S member 1 [Source:HGNC Symbol;Acc:HGNC:6300],2025-12-10,success
+ENSP00000496151,CFAP97D2,Ensembl_API,CFAP97 domain containing 2 [Source:HGNC Symbol;Acc:HGNC:53789],2025-12-10,success
+ENSP00000497351,GAN,Ensembl_API,gigaxonin [Source:HGNC Symbol;Acc:HGNC:4137],2025-12-10,success
+ENSP00000364397,TMEM94,Ensembl_API,transmembrane protein 94 [Source:HGNC Symbol;Acc:HGNC:28983],2025-12-10,success
+ENSP00000221315,ZNF432,Ensembl_API,zinc finger protein 432 [Source:HGNC Symbol;Acc:HGNC:20810],2025-12-10,success
+ENSP00000496593,ESPN,Ensembl_API,espin [Source:HGNC Symbol;Acc:HGNC:13281],2025-12-10,success
+ENSP00000419654,DENND2A,Ensembl_API,DENN domain containing 2A [Source:HGNC Symbol;Acc:HGNC:22212],2025-12-10,success
+ENSP00000493327,OR4N2,Ensembl_API,olfactory receptor family 4 subfamily N member 2 [Source:HGNC Symbol;Acc:HGNC:14742],2025-12-10,success
+ENSP00000250024,E2F8,Ensembl_API,E2F transcription factor 8 [Source:HGNC Symbol;Acc:HGNC:24727],2025-12-10,success
+ENSP00000469696,PDE4C,Ensembl_API,phosphodiesterase 4C [Source:HGNC Symbol;Acc:HGNC:8782],2025-12-10,success
+ENSP00000492971,OR4C11,Ensembl_API,olfactory receptor family 4 subfamily C member 11 [Source:HGNC Symbol;Acc:HGNC:15167],2025-12-10,success
+ENSP00000427018,RIMS2,Ensembl_API,regulating synaptic membrane exocytosis 2 [Source:HGNC Symbol;Acc:HGNC:17283],2025-12-10,success
+ENSP00000306340,CDKL2,Ensembl_API,cyclin dependent kinase like 2 [Source:HGNC Symbol;Acc:HGNC:1782],2025-12-10,success
+ENSP00000419619,ARL6,Ensembl_API,ARF like GTPase 6 [Source:HGNC Symbol;Acc:HGNC:13210],2025-12-10,success
+ENSP00000373691,DUOX2,Ensembl_API,dual oxidase 2 [Source:HGNC Symbol;Acc:HGNC:13273],2025-12-10,success
+ENSP00000302968,CDY1,Ensembl_API,chromodomain Y-linked 1 [Source:HGNC Symbol;Acc:HGNC:1809],2025-12-10,success
+ENSP00000303178,CDY1B,Ensembl_API,chromodomain Y-linked 1B [Source:HGNC Symbol;Acc:HGNC:23920],2025-12-10,success
+ENSP00000493386,OR4E2,Ensembl_API,olfactory receptor family 4 subfamily E member 2 [Source:HGNC Symbol;Acc:HGNC:8297],2025-12-10,success
+ENSP00000498424,CYP26C1,Ensembl_API,cytochrome P450 family 26 subfamily C member 1 [Source:HGNC Symbol;Acc:HGNC:20577],2025-12-10,success
+ENSP00000494147,DSE,Ensembl_API,dermatan sulfate epimerase [Source:HGNC Symbol;Acc:HGNC:21144],2025-12-10,success
+ENSP00000402280,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000441273,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000474725,FBXW7,Ensembl_API,F-box and WD repeat domain containing 7 [Source:HGNC Symbol;Acc:HGNC:16712],2025-12-10,success
+ENSP00000498611,ANKRD36,Ensembl_API,ankyrin repeat domain 36 [Source:HGNC Symbol;Acc:HGNC:24079],2025-12-10,success
+ENSP00000489898,CCDC196,Ensembl_API,coiled-coil domain containing 196 [Source:HGNC Symbol;Acc:HGNC:20100],2025-12-10,success
+ENSP00000338127,TESK1,Ensembl_API,testis associated actin remodelling kinase 1 [Source:HGNC Symbol;Acc:HGNC:11731],2025-12-10,success
+ENSP00000407442,HIPK1,Ensembl_API,homeodomain interacting protein kinase 1 [Source:HGNC Symbol;Acc:HGNC:19006],2025-12-10,success
+ENSP00000380061,ZSCAN32,Ensembl_API,zinc finger and SCAN domain containing 32 [Source:HGNC Symbol;Acc:HGNC:20812],2025-12-10,success
+ENSP00000492795,SPIN3,Ensembl_API,spindlin family member 3 [Source:HGNC Symbol;Acc:HGNC:27272],2025-12-10,success
+ENSP00000496007,SYNGAP1,Ensembl_API,synaptic Ras GTPase activating protein 1 [Source:HGNC Symbol;Acc:HGNC:11497],2025-12-10,success
+ENSP00000491285,C1ORF202,Ensembl_API,chromosome 1 open reading frame 202 [Source:HGNC Symbol;Acc:HGNC:56760],2025-12-10,success
+ENSP00000350786,ASIC4,Ensembl_API,acid sensing ion channel subunit family member 4 [Source:HGNC Symbol;Acc:HGNC:21263],2025-12-10,success
+ENSP00000359643,LPAR3,Ensembl_API,lysophosphatidic acid receptor 3 [Source:HGNC Symbol;Acc:HGNC:14298],2025-12-10,success
+ENSP00000362272,HDX,Ensembl_API,highly divergent homeobox [Source:HGNC Symbol;Acc:HGNC:26411],2025-12-10,success
+ENSP00000490517,C13ORF42,Ensembl_API,chromosome 13 open reading frame 42 [Source:HGNC Symbol;Acc:HGNC:42693],2025-12-10,success
+ENSP00000489770,PPP4R3C,Ensembl_API,protein phosphatase 4 regulatory subunit 3C [Source:HGNC Symbol;Acc:HGNC:33146],2025-12-10,success
+ENSP00000495860,TRPM7,Ensembl_API,transient receptor potential cation channel subfamily M member 7 [Source:HGNC Symbol;Acc:HGNC:17994],2025-12-10,success
+ENSP00000499676,ANKRD30B,Ensembl_API,ankyrin repeat domain 30B [Source:HGNC Symbol;Acc:HGNC:24165],2025-12-10,success
+ENSP00000471851,ADAMTS10,Ensembl_API,ADAM metallopeptidase with thrombospondin type 1 motif 10 [Source:HGNC Symbol;Acc:HGNC:13201],2025-12-10,success
+ENSP00000356237,SYT2,Ensembl_API,synaptotagmin 2 [Source:HGNC Symbol;Acc:HGNC:11510],2025-12-10,success
+ENSP00000498374,ALPK1,Ensembl_API,alpha kinase 1 [Source:HGNC Symbol;Acc:HGNC:20917],2025-12-10,success
+ENSP00000490412,REELD1,Ensembl_API,reeler domain containing 1 [Source:HGNC Symbol;Acc:HGNC:53638],2025-12-10,success
+ENSP00000479166,HOXA4,Ensembl_API,homeobox A4 [Source:HGNC Symbol;Acc:HGNC:5105],2025-12-10,success
+ENSP00000490806,PLEKHG4B,Ensembl_API,pleckstrin homology and RhoGEF domain containing G4B [Source:HGNC Symbol;Acc:HGNC:29399],2025-12-10,success
+ENSP00000476091,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000435389,PLEKHA7,Ensembl_API,pleckstrin homology domain containing A7 [Source:HGNC Symbol;Acc:HGNC:27049],2025-12-10,success
+ENSP00000501265,NWD1,Ensembl_API,NACHT and WD repeat domain containing 1 [Source:HGNC Symbol;Acc:HGNC:27619],2025-12-10,success
+ENSP00000464231,SLC25A35,Ensembl_API,solute carrier family 25 member 35 [Source:HGNC Symbol;Acc:HGNC:31921],2025-12-10,success
+ENSP00000493946,RPGRIP1L,Ensembl_API,RPGRIP1 like [Source:HGNC Symbol;Acc:HGNC:29168],2025-12-10,success
+ENSP00000337500,PCGF5,Ensembl_API,polycomb group ring finger 5 [Source:HGNC Symbol;Acc:HGNC:28264],2025-12-10,success
+ENSP00000354683,ZNF630,Ensembl_API,zinc finger protein 630 [Source:HGNC Symbol;Acc:HGNC:28855],2025-12-10,success
+ENSP00000497110,GRM6,Ensembl_API,glutamate metabotropic receptor 6 [Source:HGNC Symbol;Acc:HGNC:4598],2025-12-10,success
+ENSP00000345809,ZNF197,Ensembl_API,zinc finger protein 197 [Source:HGNC Symbol;Acc:HGNC:12988],2025-12-10,success
+ENSP00000384830,PSD,Ensembl_API,pleckstrin and Sec7 domain containing [Source:HGNC Symbol;Acc:HGNC:9507],2025-12-10,success
+ENSP00000260502,BCAR3,Ensembl_API,"BCAR3 adaptor protein, NSP family member [Source:HGNC Symbol;Acc:HGNC:973]",2025-12-10,success
+ENSP00000489796,POU5F2,Ensembl_API,"POU domain class 5, transcription factor 2 [Source:HGNC Symbol;Acc:HGNC:26367]",2025-12-10,success
+ENSP00000418647,KRBA1,Ensembl_API,KRAB-A domain containing 1 [Source:HGNC Symbol;Acc:HGNC:22228],2025-12-10,success
+ENSP00000349439,TXNDC11,Ensembl_API,thioredoxin domain containing 11 [Source:HGNC Symbol;Acc:HGNC:28030],2025-12-10,success
+ENSP00000497532,SLC25A38,Ensembl_API,solute carrier family 25 member 38 [Source:HGNC Symbol;Acc:HGNC:26054],2025-12-10,success
+ENSP00000497308,ZDBF2,Ensembl_API,zinc finger DBF-type containing 2 [Source:HGNC Symbol;Acc:HGNC:29313],2025-12-10,success
+ENSP00000491507,RTTN,Ensembl_API,rotatin [Source:HGNC Symbol;Acc:HGNC:18654],2025-12-10,success
+ENSP00000402723,PTH1R,Ensembl_API,parathyroid hormone 1 receptor [Source:HGNC Symbol;Acc:HGNC:9608],2025-12-10,success
+ENSP00000498784,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000384667,C22ORF23,Ensembl_API,chromosome 22 open reading frame 23 [Source:HGNC Symbol;Acc:HGNC:18589],2025-12-10,success
+ENSP00000401306,FSIP2,Ensembl_API,fibrous sheath interacting protein 2 [Source:HGNC Symbol;Acc:HGNC:21675],2025-12-10,success
+ENSP00000381430,MPP3,Ensembl_API,MAGUK p55 scaffold protein 3 [Source:HGNC Symbol;Acc:HGNC:7221],2025-12-10,success
+ENSP00000486502,ZIM2,Ensembl_API,zinc finger imprinted 2 [Source:HGNC Symbol;Acc:HGNC:12875],2025-12-10,success
+ENSP00000457044,ZFP1,Ensembl_API,ZFP1 zinc finger protein [Source:HGNC Symbol;Acc:HGNC:23328],2025-12-10,success
+ENSP00000498215,FANCB,Ensembl_API,FA complementation group B [Source:HGNC Symbol;Acc:HGNC:3583],2025-12-10,success
+ENSP00000489706,TMEM191C,Ensembl_API,transmembrane protein 191C [Source:HGNC Symbol;Acc:HGNC:33601],2025-12-10,success
+ENSP00000495242,MYO15B,Ensembl_API,myosin XVB [Source:HGNC Symbol;Acc:HGNC:14083],2025-12-10,success
+ENSP00000489225,CSMD1,Ensembl_API,CUB and Sushi multiple domains 1 [Source:HGNC Symbol;Acc:HGNC:14026],2025-12-10,success
+ENSP00000490802,FAM237A,Ensembl_API,family with sequence similarity 237 member A [Source:HGNC Symbol;Acc:HGNC:52388],2025-12-10,success
+ENSP00000415682,RNF10,Ensembl_API,ring finger protein 10 [Source:HGNC Symbol;Acc:HGNC:10055],2025-12-10,success
+ENSP00000358200,RAB11FIP2,Ensembl_API,RAB11 family interacting protein 2 [Source:HGNC Symbol;Acc:HGNC:29152],2025-12-10,success
+ENSP00000498410,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000488696,TEX13D,Ensembl_API,TEX13 family member D [Source:HGNC Symbol;Acc:HGNC:52278],2025-12-10,success
+ENSP00000367922,CFAP47,Ensembl_API,cilia and flagella associated protein 47 [Source:HGNC Symbol;Acc:HGNC:26708],2025-12-10,success
+ENSP00000442008,KIFC3,Ensembl_API,kinesin family member C3 [Source:HGNC Symbol;Acc:HGNC:6326],2025-12-10,success
+ENSP00000320017,PHYHIP,Ensembl_API,phytanoyl-CoA 2-hydroxylase interacting protein [Source:HGNC Symbol;Acc:HGNC:16865],2025-12-10,success
+ENSP00000491259,PRAMEF13,Ensembl_API,PRAME family member 13 [Source:HGNC Symbol;Acc:HGNC:13262],2025-12-10,success
+ENSP00000498408,PWWP4,Ensembl_API,PWWP domain containing 4 [Source:HGNC Symbol;Acc:HGNC:55197],2025-12-10,success
+ENSP00000401642,ZNF304,Ensembl_API,zinc finger protein 304 [Source:HGNC Symbol;Acc:HGNC:13505],2025-12-10,success
+ENSP00000377355,PDZD4,Ensembl_API,PDZ domain containing 4 [Source:HGNC Symbol;Acc:HGNC:21167],2025-12-10,success
+ENSP00000371729,SACS,Ensembl_API,sacsin molecular chaperone [Source:HGNC Symbol;Acc:HGNC:10519],2025-12-10,success
+ENSP00000496114,SCN7A,Ensembl_API,sodium voltage-gated channel alpha subunit 7 [Source:HGNC Symbol;Acc:HGNC:10594],2025-12-10,success
+ENSP00000496255,EYA1,Ensembl_API,EYA transcriptional coactivator and phosphatase 1 [Source:HGNC Symbol;Acc:HGNC:3519],2025-12-10,success
+ENSP00000487136,OXNAD1,Ensembl_API,oxidoreductase NAD binding domain containing 1 [Source:HGNC Symbol;Acc:HGNC:25128],2025-12-10,success
+ENSP00000456543,CCDC187,Ensembl_API,coiled-coil domain containing 187 [Source:HGNC Symbol;Acc:HGNC:30942],2025-12-10,success
+ENSP00000422834,FRAS1,Ensembl_API,Fraser extracellular matrix complex subunit 1 [Source:HGNC Symbol;Acc:HGNC:19185],2025-12-10,success
+ENSP00000498781,NBPF19,Ensembl_API,NBPF member 19 [Source:HGNC Symbol;Acc:HGNC:31999],2025-12-10,success
+ENSP00000495332,SLC12A1,Ensembl_API,solute carrier family 12 member 1 [Source:HGNC Symbol;Acc:HGNC:10910],2025-12-10,success
+ENSP00000490318,GOLGA6L7,Ensembl_API,golgin A6 family like 7 [Source:HGNC Symbol;Acc:HGNC:37442],2025-12-10,success
+ENSP00000386856,TBC1D8,Ensembl_API,TBC1 domain family member 8 [Source:HGNC Symbol;Acc:HGNC:17791],2025-12-10,success
+ENSP00000490726,FBF1,Ensembl_API,Fas binding factor 1 [Source:HGNC Symbol;Acc:HGNC:24674],2025-12-10,success
+ENSP00000496731,SERAC1,Ensembl_API,serine active site containing 1 [Source:HGNC Symbol;Acc:HGNC:21061],2025-12-10,success
+ENSP00000487358,THEMIS,Ensembl_API,thymocyte selection associated [Source:HGNC Symbol;Acc:HGNC:21569],2025-12-10,success
+ENSP00000481834,HPCAL4,Ensembl_API,hippocalcin like 4 [Source:HGNC Symbol;Acc:HGNC:18212],2025-12-10,success
+ENSP00000429993,TSPAN18,Ensembl_API,tetraspanin 18 [Source:HGNC Symbol;Acc:HGNC:20660],2025-12-10,success
+ENSP00000493107,OR1M1,Ensembl_API,olfactory receptor family 1 subfamily M member 1 [Source:HGNC Symbol;Acc:HGNC:8220],2025-12-10,success
+ENSP00000422793,INPP4B,Ensembl_API,inositol polyphosphate-4-phosphatase type II B [Source:HGNC Symbol;Acc:HGNC:6075],2025-12-10,success
+ENSP00000490573,TCAF2C,Ensembl_API,TRPM8 channel associated factor 2C [Source:HGNC Symbol;Acc:HGNC:53641],2025-12-10,success
+ENSP00000404265,TCAF2,Ensembl_API,TRPM8 channel associated factor 2 [Source:HGNC Symbol;Acc:HGNC:26878],2025-12-10,success
+ENSP00000457728,TRAPPC2L,Ensembl_API,trafficking protein particle complex subunit 2L [Source:HGNC Symbol;Acc:HGNC:30887],2025-12-10,success
+ENSP00000257724,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000265224,ANKRD7,Ensembl_API,ankyrin repeat domain 7 [Source:HGNC Symbol;Acc:HGNC:18588],2025-12-10,success
+ENSP00000493255,OR9G1,Ensembl_API,olfactory receptor family 9 subfamily G member 1 [Source:HGNC Symbol;Acc:HGNC:15319],2025-12-10,success
+ENSP00000488668,NHSL2,Ensembl_API,NHS like 2 [Source:HGNC Symbol;Acc:HGNC:33737],2025-12-10,success
+ENSP00000307254,AAMDC,Ensembl_API,adipogenesis associated Mth938 domain containing [Source:HGNC Symbol;Acc:HGNC:30205],2025-12-10,success
+ENSP00000448071,SLC16A7,Ensembl_API,solute carrier family 16 member 7 [Source:HGNC Symbol;Acc:HGNC:10928],2025-12-10,success
+ENSP00000346603,ZBTB45,Ensembl_API,zinc finger and BTB domain containing 45 [Source:HGNC Symbol;Acc:HGNC:23715],2025-12-10,success
+ENSP00000477878,ARID3B,Ensembl_API,AT-rich interaction domain 3B [Source:HGNC Symbol;Acc:HGNC:14350],2025-12-10,success
+ENSP00000459626,MRTFB,Ensembl_API,myocardin related transcription factor B [Source:HGNC Symbol;Acc:HGNC:29819],2025-12-10,success
+ENSP00000493026,OR7C1,Ensembl_API,olfactory receptor family 7 subfamily C member 1 [Source:HGNC Symbol;Acc:HGNC:8373],2025-12-10,success
+ENSP00000398035,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000498228,PLAAT1,Ensembl_API,phospholipase A and acyltransferase 1 [Source:HGNC Symbol;Acc:HGNC:14922],2025-12-10,success
+ENSP00000500034,ATP8B2,Ensembl_API,ATPase phospholipid transporting 8B2 [Source:HGNC Symbol;Acc:HGNC:13534],2025-12-10,success
+ENSP00000426983,CLOCK,Ensembl_API,clock circadian regulator [Source:HGNC Symbol;Acc:HGNC:2082],2025-12-10,success
+ENSP00000410552,SIMC1,Ensembl_API,SUMO interacting motifs containing 1 [Source:HGNC Symbol;Acc:HGNC:24779],2025-12-10,success
+ENSP00000490240,ZNF831,Ensembl_API,zinc finger protein 831 [Source:HGNC Symbol;Acc:HGNC:16167],2025-12-10,success
+ENSP00000365959,FBXO44,Ensembl_API,F-box protein 44 [Source:HGNC Symbol;Acc:HGNC:24847],2025-12-10,success
+ENSP00000295414,CCNYL1,Ensembl_API,cyclin Y like 1 [Source:HGNC Symbol;Acc:HGNC:26868],2025-12-10,success
+ENSP00000343377,CCDC18,Ensembl_API,coiled-coil domain containing 18 [Source:HGNC Symbol;Acc:HGNC:30370],2025-12-10,success
+ENSP00000489630,POU2AF2,Ensembl_API,POU class 2 homeobox associating factor 2 [Source:HGNC Symbol;Acc:HGNC:30527],2025-12-10,success
+ENSP00000501092,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000497256,KLHDC7B,Ensembl_API,kelch domain containing 7B [Source:HGNC Symbol;Acc:HGNC:25145],2025-12-10,success
+ENSP00000481780,MAPK8IP3,Ensembl_API,mitogen-activated protein kinase 8 interacting protein 3 [Source:HGNC Symbol;Acc:HGNC:6884],2025-12-10,success
+ENSP00000498999,FBXW8,Ensembl_API,F-box and WD repeat domain containing 8 [Source:HGNC Symbol;Acc:HGNC:13597],2025-12-10,success
+ENSP00000494051,SEPTIN3,Ensembl_API,septin 3 [Source:HGNC Symbol;Acc:HGNC:10750],2025-12-10,success
+ENSP00000497806,DLG4,Ensembl_API,discs large MAGUK scaffold protein 4 [Source:HGNC Symbol;Acc:HGNC:2903],2025-12-10,success
+ENSP00000488642,TENT4A,Ensembl_API,terminal nucleotidyltransferase 4A [Source:HGNC Symbol;Acc:HGNC:16705],2025-12-10,success
+ENSP00000493790,LRRC9,Ensembl_API,leucine rich repeat containing 9 [Source:HGNC Symbol;Acc:HGNC:19848],2025-12-10,success
+ENSP00000499569,SCN11A,Ensembl_API,sodium voltage-gated channel alpha subunit 11 [Source:HGNC Symbol;Acc:HGNC:10583],2025-12-10,success
+ENSP00000500339,ARHGEF18,Ensembl_API,Rho/Rac guanine nucleotide exchange factor 18 [Source:HGNC Symbol;Acc:HGNC:17090],2025-12-10,success
+ENSP00000354917,TOGARAM1,Ensembl_API,TOG array regulator of axonemal microtubules 1 [Source:HGNC Symbol;Acc:HGNC:19959],2025-12-10,success
+ENSP00000497310,ALX3,Ensembl_API,ALX homeobox 3 [Source:HGNC Symbol;Acc:HGNC:449],2025-12-10,success
+ENSP00000498217,ALX4,Ensembl_API,ALX homeobox 4 [Source:HGNC Symbol;Acc:HGNC:450],2025-12-10,success
+ENSP00000496416,CD8B2,Ensembl_API,CD8B family member 2 [Source:HGNC Symbol;Acc:HGNC:1708],2025-12-10,success
+ENSP00000480549,CDC42EP3,Ensembl_API,CDC42 effector protein 3 [Source:HGNC Symbol;Acc:HGNC:16943],2025-12-10,success
+ENSP00000498437,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000464215,CYB561,Ensembl_API,cytochrome b561 [Source:HGNC Symbol;Acc:HGNC:2571],2025-12-10,success
+ENSP00000490294,CXORF51B,Ensembl_API,chromosome X open reading frame 51B [Source:HGNC Symbol;Acc:HGNC:42787],2025-12-10,success
+ENSP00000489806,CXORF51A,Ensembl_API,chromosome X open reading frame 51A [Source:HGNC Symbol;Acc:HGNC:30533],2025-12-10,success
+ENSP00000498255,UBE2W,Ensembl_API,ubiquitin conjugating enzyme E2 W [Source:HGNC Symbol;Acc:HGNC:25616],2025-12-10,success
+ENSP00000338130,KLRD1,Ensembl_API,killer cell lectin like receptor D1 [Source:HGNC Symbol;Acc:HGNC:6378],2025-12-10,success
+ENSP00000493971,PDE8B,Ensembl_API,phosphodiesterase 8B [Source:NCBI gene (formerly Entrezgene);Acc:8622],2025-12-10,success
+ENSP00000379841,GPS2,Ensembl_API,G protein pathway suppressor 2 [Source:HGNC Symbol;Acc:HGNC:4550],2025-12-10,success
+ENSP00000471239,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000480941,C18ORF32,Ensembl_API,chromosome 18 open reading frame 32 [Source:HGNC Symbol;Acc:HGNC:31690],2025-12-10,success
+ENSP00000498702,GPR68,Ensembl_API,G protein-coupled receptor 68 [Source:HGNC Symbol;Acc:HGNC:4519],2025-12-10,success
+ENSP00000495614,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000429754,SLC20A2,Ensembl_API,solute carrier family 20 member 2 [Source:HGNC Symbol;Acc:HGNC:10947],2025-12-10,success
+ENSP00000492260,LIAS,Ensembl_API,lipoic acid synthetase [Source:HGNC Symbol;Acc:HGNC:16429],2025-12-10,success
+ENSP00000499883,ATP5MC2,Ensembl_API,ATP synthase membrane subunit c locus 2 [Source:HGNC Symbol;Acc:HGNC:842],2025-12-10,success
+ENSP00000424846,SH3BP2,Ensembl_API,SH3 domain binding protein 2 [Source:HGNC Symbol;Acc:HGNC:10825],2025-12-10,success
+ENSP00000354732,PRR5-ARHGAP8,Ensembl_API,PRR5-ARHGAP8 readthrough [Source:HGNC Symbol;Acc:HGNC:34512],2025-12-10,success
+ENSP00000489837,CTXND1,Ensembl_API,cortexin domain containing 1 [Source:HGNC Symbol;Acc:HGNC:50507],2025-12-10,success
+ENSP00000308937,PMP22,Ensembl_API,peripheral myelin protein 22 [Source:HGNC Symbol;Acc:HGNC:9118],2025-12-10,success
+ENSP00000498083,MKNK1,Ensembl_API,MAPK interacting serine/threonine kinase 1 [Source:HGNC Symbol;Acc:HGNC:7110],2025-12-10,success
+ENSP00000264409,GPAT3,Ensembl_API,glycerol-3-phosphate acyltransferase 3 [Source:HGNC Symbol;Acc:HGNC:28157],2025-12-10,success
+ENSP00000388744,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000447297,TGFBR1,Ensembl_API,transforming growth factor beta receptor 1 [Source:HGNC Symbol;Acc:HGNC:11772],2025-12-10,success
+ENSP00000498665,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000492033,NCBP2L,Ensembl_API,nuclear cap binding protein subunit 2 like [Source:HGNC Symbol;Acc:HGNC:31795],2025-12-10,success
+ENSP00000403888,DISC1,Ensembl_API,DISC1 scaffold protein [Source:HGNC Symbol;Acc:HGNC:2888],2025-12-10,success
+ENSP00000377245,KEAP1,Ensembl_API,kelch like ECH associated protein 1 [Source:HGNC Symbol;Acc:HGNC:23177],2025-12-10,success
+ENSP00000371188,CAMKK1,Ensembl_API,calcium/calmodulin dependent protein kinase kinase 1 [Source:HGNC Symbol;Acc:HGNC:1469],2025-12-10,success
+ENSP00000496817,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000376013,ZNF565,Ensembl_API,zinc finger protein 565 [Source:HGNC Symbol;Acc:HGNC:26726],2025-12-10,success
+ENSP00000350574,ZBTB44,Ensembl_API,zinc finger and BTB domain containing 44 [Source:HGNC Symbol;Acc:HGNC:25001],2025-12-10,success
+ENSP00000363895,RAP1GAP,Ensembl_API,RAP1 GTPase activating protein [Source:HGNC Symbol;Acc:HGNC:9858],2025-12-10,success
+ENSP00000395793,WDR20,Ensembl_API,WD repeat domain 20 [Source:HGNC Symbol;Acc:HGNC:19667],2025-12-10,success
+ENSP00000485428,OR5D13,Ensembl_API,olfactory receptor family 5 subfamily D member 13 [Source:HGNC Symbol;Acc:HGNC:15280],2025-12-10,success
+ENSP00000371291,SNPH,Ensembl_API,syntaphilin [Source:HGNC Symbol;Acc:HGNC:15931],2025-12-10,success
+ENSP00000433769,ZFTRAF1,Ensembl_API,zinc finger TRAF-type containing 1 [Source:HGNC Symbol;Acc:HGNC:17806],2025-12-10,success
+ENSP00000492233,PIGN,Ensembl_API,phosphatidylinositol glycan anchor biosynthesis class N [Source:HGNC Symbol;Acc:HGNC:8967],2025-12-10,success
+ENSP00000461032,ZNF594,Ensembl_API,zinc finger protein 594 [Source:HGNC Symbol;Acc:HGNC:29392],2025-12-10,success
+ENSP00000346901,FMO1,Ensembl_API,flavin containing dimethylaniline monoxygenase 1 [Source:HGNC Symbol;Acc:HGNC:3769],2025-12-10,success
+ENSP00000370270,ESRRB,Ensembl_API,estrogen related receptor beta [Source:HGNC Symbol;Acc:HGNC:3473],2025-12-10,success
+ENSP00000492944,OR5P3,Ensembl_API,olfactory receptor family 5 subfamily P member 3 [Source:HGNC Symbol;Acc:HGNC:14784],2025-12-10,success
+ENSP00000386830,MARCHF7,Ensembl_API,membrane associated ring-CH-type finger 7 [Source:HGNC Symbol;Acc:HGNC:17393],2025-12-10,success
+ENSP00000489774,DLGAP2,Ensembl_API,DLG associated protein 2 [Source:HGNC Symbol;Acc:HGNC:2906],2025-12-10,success
+ENSP00000492957,OR5AN1,Ensembl_API,olfactory receptor family 5 subfamily AN member 1 [Source:HGNC Symbol;Acc:HGNC:15255],2025-12-10,success
+ENSP00000496876,ZMYM1,Ensembl_API,zinc finger MYM-type containing 1 [Source:HGNC Symbol;Acc:HGNC:26253],2025-12-10,success
+ENSP00000364118,MSANTD2,Ensembl_API,Myb/SANT DNA binding domain containing 2 [Source:HGNC Symbol;Acc:HGNC:26266],2025-12-10,success
+ENSP00000449716,CMKLR1,Ensembl_API,chemerin chemokine-like receptor 1 [Source:HGNC Symbol;Acc:HGNC:2121],2025-12-10,success
+ENSP00000497734,OR51C1,Ensembl_API,olfactory receptor family 51 subfamily C member 1 [Source:HGNC Symbol;Acc:HGNC:15191],2025-12-10,success
+ENSP00000371842,ZNG1E,Ensembl_API,Zn regulated GTPase metalloprotein activator 1E [Source:HGNC Symbol;Acc:HGNC:24584],2025-12-10,success
+ENSP00000456477,CDIN1,Ensembl_API,CDAN1 interacting nuclease 1 [Source:HGNC Symbol;Acc:HGNC:26929],2025-12-10,success
+ENSP00000371425,IFNGR2,Ensembl_API,interferon gamma receptor 2 [Source:HGNC Symbol;Acc:HGNC:5440],2025-12-10,success
+ENSP00000440329,SLC29A2,Ensembl_API,solute carrier family 29 member 2 [Source:HGNC Symbol;Acc:HGNC:11004],2025-12-10,success
+ENSP00000481465,FAM83D,Ensembl_API,family with sequence similarity 83 member D [Source:HGNC Symbol;Acc:HGNC:16122],2025-12-10,success
+ENSP00000494277,PATJ,Ensembl_API,PATJ crumbs cell polarity complex component [Source:HGNC Symbol;Acc:HGNC:28881],2025-12-10,success
+ENSP00000492557,PMIS2,Ensembl_API,PMIS2 transmembrane protein [Source:HGNC Symbol;Acc:HGNC:53649],2025-12-10,success
+ENSP00000493434,OR2T27,Ensembl_API,olfactory receptor family 2 subfamily T member 27 [Source:HGNC Symbol;Acc:HGNC:31252],2025-12-10,success
+ENSP00000496355,TLR5,Ensembl_API,toll like receptor 5 [Source:HGNC Symbol;Acc:HGNC:11851],2025-12-10,success
+ENSP00000388792,ZNF683,Ensembl_API,zinc finger protein 683 [Source:HGNC Symbol;Acc:HGNC:28495],2025-12-10,success
+ENSP00000496939,KCNN4,Ensembl_API,potassium calcium-activated channel subfamily N member 4 [Source:HGNC Symbol;Acc:HGNC:6293],2025-12-10,success
+ENSP00000418096,SLC45A1,Ensembl_API,solute carrier family 45 member 1 [Source:HGNC Symbol;Acc:HGNC:17939],2025-12-10,success
+ENSP00000409594,ZFYVE27,Ensembl_API,zinc finger FYVE-type containing 27 [Source:HGNC Symbol;Acc:HGNC:26559],2025-12-10,success
+ENSP00000488520,NPHP3-ACAD11,Ensembl_API,NPHP3-ACAD11 readthrough (NMD candidate) [Source:HGNC Symbol;Acc:HGNC:48351],2025-12-10,success
+ENSP00000497178,GMCL2,Ensembl_API,"germ cell-less 2, spermatogenesis associated [Source:HGNC Symbol;Acc:HGNC:19717]",2025-12-10,success
+ENSP00000431012,ARHGEF10,Ensembl_API,Rho guanine nucleotide exchange factor 10 [Source:HGNC Symbol;Acc:HGNC:14103],2025-12-10,success
+ENSP00000495855,PJVK,Ensembl_API,pejvakin [Source:HGNC Symbol;Acc:HGNC:29502],2025-12-10,success
+ENSP00000329499,FAM187A,Ensembl_API,family with sequence similarity 187 member A [Source:HGNC Symbol;Acc:HGNC:35153],2025-12-10,success
+ENSP00000437360,ANAPC15,Ensembl_API,anaphase promoting complex subunit 15 [Source:HGNC Symbol;Acc:HGNC:24531],2025-12-10,success
+ENSP00000430947,HSF4,Ensembl_API,heat shock transcription factor 4 [Source:HGNC Symbol;Acc:HGNC:5227],2025-12-10,success
+ENSP00000478939,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000493207,OR2V2,Ensembl_API,olfactory receptor family 2 subfamily V member 2 [Source:HGNC Symbol;Acc:HGNC:15341],2025-12-10,success
+ENSP00000494162,CBLC,Ensembl_API,Cbl proto-oncogene C [Source:HGNC Symbol;Acc:HGNC:15961],2025-12-10,success
+ENSP00000497931,ABCB11,Ensembl_API,ATP binding cassette subfamily B member 11 [Source:HGNC Symbol;Acc:HGNC:42],2025-12-10,success
+ENSP00000384484,ADCY3,Ensembl_API,adenylate cyclase 3 [Source:HGNC Symbol;Acc:HGNC:234],2025-12-10,success
+ENSP00000491257,FIGNL2,Ensembl_API,fidgetin like 2 [Source:HGNC Symbol;Acc:HGNC:13287],2025-12-10,success
+ENSP00000494689,EPS8,Ensembl_API,"EGFR pathway substrate 8, signaling adaptor [Source:HGNC Symbol;Acc:HGNC:3420]",2025-12-10,success
+ENSP00000419652,TTC12,Ensembl_API,tetratricopeptide repeat domain 12 [Source:HGNC Symbol;Acc:HGNC:23700],2025-12-10,success
+ENSP00000485295,OR4C16,Ensembl_API,olfactory receptor family 4 subfamily C member 16 [Source:HGNC Symbol;Acc:HGNC:15172],2025-12-10,success
+ENSP00000491846,TAF11L11,Ensembl_API,TATA-box binding protein associated factor 11 like 11 [Source:HGNC Symbol;Acc:HGNC:53854],2025-12-10,success
+ENSP00000371116,NUTM2D,Ensembl_API,NUT family member 2D [Source:HGNC Symbol;Acc:HGNC:23447],2025-12-10,success
+ENSP00000493823,ST3GAL3,Ensembl_API,"ST3 beta-galactoside alpha-2,3-sialyltransferase 3 [Source:HGNC Symbol;Acc:HGNC:10866]",2025-12-10,success
+ENSP00000372547,SRY,Ensembl_API,sex determining region Y [Source:HGNC Symbol;Acc:HGNC:11311],2025-12-10,success
+ENSP00000487183,ZNF793,Ensembl_API,zinc finger protein 793 [Source:HGNC Symbol;Acc:HGNC:33115],2025-12-10,success
+ENSP00000493096,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000411242,FNDC3B,Ensembl_API,fibronectin type III domain containing 3B [Source:HGNC Symbol;Acc:HGNC:24670],2025-12-10,success
+ENSP00000497590,PNRC2,Ensembl_API,proline rich nuclear receptor coactivator 2 [Source:HGNC Symbol;Acc:HGNC:23158],2025-12-10,success
+ENSP00000385428,NLRC4,Ensembl_API,NLR family CARD domain containing 4 [Source:HGNC Symbol;Acc:HGNC:16412],2025-12-10,success
+ENSP00000435790,ANKRD42,Ensembl_API,ankyrin repeat domain 42 [Source:HGNC Symbol;Acc:HGNC:26752],2025-12-10,success
+ENSP00000419803,KLHL13,Ensembl_API,kelch like family member 13 [Source:HGNC Symbol;Acc:HGNC:22931],2025-12-10,success
+ENSP00000497479,MYT1L,Ensembl_API,myelin transcription factor 1 like [Source:HGNC Symbol;Acc:HGNC:7623],2025-12-10,success
+ENSP00000496625,CYP21A2,Ensembl_API,cytochrome P450 family 21 subfamily A member 2 [Source:HGNC Symbol;Acc:HGNC:2600],2025-12-10,success
+ENSP00000492902,OR10J1,Ensembl_API,olfactory receptor family 10 subfamily J member 1 [Source:HGNC Symbol;Acc:HGNC:8175],2025-12-10,success
+ENSP00000493354,OR10G4,Ensembl_API,olfactory receptor family 10 subfamily G member 4 [Source:HGNC Symbol;Acc:HGNC:14809],2025-12-10,success
+ENSP00000430818,SMIM23,Ensembl_API,small integral membrane protein 23 [Source:HGNC Symbol;Acc:HGNC:34440],2025-12-10,success
+ENSP00000492905,OR10G7,Ensembl_API,olfactory receptor family 10 subfamily G member 7 [Source:HGNC Symbol;Acc:HGNC:14842],2025-12-10,success
+ENSP00000420860,PRIMPOL,Ensembl_API,primase and DNA directed polymerase [Source:HGNC Symbol;Acc:HGNC:26575],2025-12-10,success
+ENSP00000493157,OR2A12,Ensembl_API,olfactory receptor family 2 subfamily A member 12 [Source:HGNC Symbol;Acc:HGNC:15082],2025-12-10,success
+ENSP00000488984,CT47C1,Ensembl_API,cancer/testis antigen family 47 member C1 [Source:HGNC Symbol;Acc:HGNC:53820],2025-12-10,success
+ENSP00000490518,IQCM,Ensembl_API,IQ motif containing M [Source:HGNC Symbol;Acc:HGNC:53443],2025-12-10,success
+ENSP00000499371,ERCC6L2,Ensembl_API,ERCC excision repair 6 like 2 [Source:HGNC Symbol;Acc:HGNC:26922],2025-12-10,success
+ENSP00000497915,IL21,Ensembl_API,interleukin 21 [Source:HGNC Symbol;Acc:HGNC:6005],2025-12-10,success
+ENSP00000335444,NME9,Ensembl_API,NME/NM23 family member 9 [Source:HGNC Symbol;Acc:HGNC:21343],2025-12-10,success
+ENSP00000379964,STK16,Ensembl_API,serine/threonine kinase 16 [Source:HGNC Symbol;Acc:HGNC:11394],2025-12-10,success
+ENSP00000344392,CLUAP1,Ensembl_API,clusterin associated protein 1 [Source:HGNC Symbol;Acc:HGNC:19009],2025-12-10,success
+ENSP00000493010,OR4D9,Ensembl_API,olfactory receptor family 4 subfamily D member 9 [Source:HGNC Symbol;Acc:HGNC:15178],2025-12-10,success
+ENSP00000500934,MFSD4B,Ensembl_API,major facilitator superfamily domain containing 4B [Source:HGNC Symbol;Acc:HGNC:21053],2025-12-10,success
+ENSP00000490638,MDFIC2,Ensembl_API,MyoD family inhibitor domain containing 2 [Source:HGNC Symbol;Acc:HGNC:53442],2025-12-10,success
+ENSP00000493234,OR4D1,Ensembl_API,olfactory receptor family 4 subfamily D member 1 [Source:HGNC Symbol;Acc:HGNC:8293],2025-12-10,success
+ENSP00000492752,LINC02218,Ensembl_API,long intergenic non-protein coding RNA 2218 [Source:HGNC Symbol;Acc:HGNC:53085],2025-12-10,success
+ENSP00000492874,TAF11L5,Ensembl_API,TATA-box binding protein associated factor 11 like 5 [Source:HGNC Symbol;Acc:HGNC:53848],2025-12-10,success
+ENSP00000491174,TAF11L8,Ensembl_API,TATA-box binding protein associated factor 11 like 8 [Source:HGNC Symbol;Acc:HGNC:53851],2025-12-10,success
+ENSP00000491332,TAF11L13,Ensembl_API,TATA-box binding protein associated factor 11 like 13 [Source:HGNC Symbol;Acc:HGNC:53856],2025-12-10,success
+ENSP00000491385,TAF11L6,Ensembl_API,TATA-box binding protein associated factor 11 like 6 [Source:HGNC Symbol;Acc:HGNC:53849],2025-12-10,success
+ENSP00000491351,TAF11L7,Ensembl_API,TATA-box binding protein associated factor 11 like 7 [Source:HGNC Symbol;Acc:HGNC:53850],2025-12-10,success
+ENSP00000492463,TAF11L9,Ensembl_API,TATA-box binding protein associated factor 11 like 9 [Source:HGNC Symbol;Acc:HGNC:53852],2025-12-10,success
+ENSP00000491873,TAF11L10,Ensembl_API,TATA-box binding protein associated factor 11 like 10 [Source:HGNC Symbol;Acc:HGNC:53853],2025-12-10,success
+ENSP00000491494,TAF11L4,Ensembl_API,TATA-box binding protein associated factor 11 like 4 [Source:HGNC Symbol;Acc:HGNC:53847],2025-12-10,success
+ENSP00000492787,TAF11L3,Ensembl_API,TATA-box binding protein associated factor 11 like 3 [Source:HGNC Symbol;Acc:HGNC:53846],2025-12-10,success
+ENSP00000491472,TAF11L14,Ensembl_API,TATA-box binding protein associated factor 11 like 14 [Source:HGNC Symbol;Acc:HGNC:53857],2025-12-10,success
+ENSP00000498258,GPR55,Ensembl_API,G protein-coupled receptor 55 [Source:HGNC Symbol;Acc:HGNC:4511],2025-12-10,success
+ENSP00000482030,ZNF2,Ensembl_API,zinc finger protein 2 [Source:HGNC Symbol;Acc:HGNC:12991],2025-12-10,success
+ENSP00000492047,TAF11L2,Ensembl_API,TATA-box binding protein associated factor 11 like 2 [Source:HGNC Symbol;Acc:HGNC:53845],2025-12-10,success
+ENSP00000500374,AGAP6,Ensembl_API,"ArfGAP with GTPase domain, ankyrin repeat and PH domain 6 [Source:HGNC Symbol;Acc:HGNC:23466]",2025-12-10,success
+ENSP00000400669,IQCD,Ensembl_API,IQ motif containing D [Source:HGNC Symbol;Acc:HGNC:25168],2025-12-10,success
+ENSP00000349593,ZHX1-C8ORF76,Ensembl_API,ZHX1-C8orf76 readthrough [Source:HGNC Symbol;Acc:HGNC:42975],2025-12-10,success
+ENSP00000490032,C13ORF46,Ensembl_API,chromosome 13 open reading frame 46 [Source:HGNC Symbol;Acc:HGNC:53786],2025-12-10,success
+ENSP00000493137,OR4D2,Ensembl_API,olfactory receptor family 4 subfamily D member 2 [Source:HGNC Symbol;Acc:HGNC:8294],2025-12-10,success
+ENSP00000498469,POLR3G,Ensembl_API,RNA polymerase III subunit G [Source:HGNC Symbol;Acc:HGNC:30075],2025-12-10,success
+ENSP00000447211,OTOGL,Ensembl_API,otogelin like [Source:HGNC Symbol;Acc:HGNC:26901],2025-12-10,success
+ENSP00000469158,SPHK2,Ensembl_API,sphingosine kinase 2 [Source:HGNC Symbol;Acc:HGNC:18859],2025-12-10,success
+ENSP00000491450,GIMD1,Ensembl_API,GIMAP family P-loop NTPase domain containing 1 [Source:HGNC Symbol;Acc:HGNC:44141],2025-12-10,success
+ENSP00000501191,SPATS1,Ensembl_API,spermatogenesis associated serine rich 1 [Source:HGNC Symbol;Acc:HGNC:22957],2025-12-10,success
+ENSP00000494485,OOSP1,Ensembl_API,oocyte secreted protein 1 [Source:HGNC Symbol;Acc:HGNC:49233],2025-12-10,success
+ENSP00000314484,MEIOB,Ensembl_API,meiosis specific with OB-fold [Source:HGNC Symbol;Acc:HGNC:28569],2025-12-10,success
+ENSP00000294702,GFI1,Ensembl_API,growth factor independent 1 transcriptional repressor [Source:HGNC Symbol;Acc:HGNC:4237],2025-12-10,success
+ENSP00000445323,ZNF559-ZNF177,Ensembl_API,ZNF559-ZNF177 readthrough [Source:HGNC Symbol;Acc:HGNC:42964],2025-12-10,success
+ENSP00000498071,CARD14,Ensembl_API,caspase recruitment domain family member 14 [Source:HGNC Symbol;Acc:HGNC:16446],2025-12-10,success
+ENSP00000466500,ZNF396,Ensembl_API,zinc finger protein 396 [Source:HGNC Symbol;Acc:HGNC:18824],2025-12-10,success
+ENSP00000301218,GRIK5,Ensembl_API,glutamate ionotropic receptor kainate type subunit 5 [Source:HGNC Symbol;Acc:HGNC:4583],2025-12-10,success
+ENSP00000490245,C17ORF113,Ensembl_API,chromosome 17 open reading frame 113 [Source:HGNC Symbol;Acc:HGNC:53437],2025-12-10,success
+ENSP00000494260,HOXA1,Ensembl_API,homeobox A1 [Source:HGNC Symbol;Acc:HGNC:5099],2025-12-10,success
+ENSP00000327687,GRIK1,Ensembl_API,glutamate ionotropic receptor kainate type subunit 1 [Source:HGNC Symbol;Acc:HGNC:4579],2025-12-10,success
+ENSP00000499375,JAKMIP3,Ensembl_API,Janus kinase and microtubule interacting protein 3 [Source:HGNC Symbol;Acc:HGNC:23523],2025-12-10,success
+ENSP00000384801,PCNX4,Ensembl_API,pecanex 4 [Source:HGNC Symbol;Acc:HGNC:20349],2025-12-10,success
+ENSP00000489262,RYR3,Ensembl_API,ryanodine receptor 3 [Source:HGNC Symbol;Acc:HGNC:10485],2025-12-10,success
+ENSP00000252482,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000357966,CEP57L1,Ensembl_API,centrosomal protein 57 like 1 [Source:HGNC Symbol;Acc:HGNC:21561],2025-12-10,success
+ENSP00000498589,ZNF266,Ensembl_API,zinc finger protein 266 [Source:HGNC Symbol;Acc:HGNC:13059],2025-12-10,success
+ENSP00000432504,ZNF202,Ensembl_API,zinc finger protein 202 [Source:HGNC Symbol;Acc:HGNC:12994],2025-12-10,success
+ENSP00000302455,ZNF17,Ensembl_API,zinc finger protein 17 [Source:HGNC Symbol;Acc:HGNC:12958],2025-12-10,success
+ENSP00000450567,RPS6KL1,Ensembl_API,ribosomal protein S6 kinase like 1 [Source:HGNC Symbol;Acc:HGNC:20222],2025-12-10,success
+ENSP00000498905,CRYBB2,Ensembl_API,crystallin beta B2 [Source:HGNC Symbol;Acc:HGNC:2398],2025-12-10,success
+ENSP00000392760,ARHGAP11B,Ensembl_API,Rho GTPase activating protein 11B [Source:HGNC Symbol;Acc:HGNC:15782],2025-12-10,success
+ENSP00000497236,ALAS2,Ensembl_API,5'-aminolevulinate synthase 2 [Source:HGNC Symbol;Acc:HGNC:397],2025-12-10,success
+ENSP00000350415,GJA9,Ensembl_API,gap junction protein alpha 9 [Source:HGNC Symbol;Acc:HGNC:19155],2025-12-10,success
+ENSP00000500891,MUTYH,Ensembl_API,mutY DNA glycosylase [Source:HGNC Symbol;Acc:HGNC:7527],2025-12-10,success
+ENSP00000344794,MOCS1,Ensembl_API,molybdenum cofactor synthesis 1 [Source:HGNC Symbol;Acc:HGNC:7190],2025-12-10,success
+ENSP00000498797,SPADH,Ensembl_API,spermadhesin family member [Source:HGNC Symbol;Acc:HGNC:55808],2025-12-10,success
+ENSP00000479261,UNC13B,Ensembl_API,unc-13 homolog B [Source:HGNC Symbol;Acc:HGNC:12566],2025-12-10,success
+ENSP00000376647,MAP3K19,Ensembl_API,mitogen-activated protein kinase kinase kinase 19 [Source:HGNC Symbol;Acc:HGNC:26249],2025-12-10,success
+ENSP00000378476,CDKL4,Ensembl_API,cyclin dependent kinase like 4 [Source:HGNC Symbol;Acc:HGNC:19287],2025-12-10,success
+ENSP00000481372,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000282753,GRM1,Ensembl_API,glutamate metabotropic receptor 1 [Source:HGNC Symbol;Acc:HGNC:4593],2025-12-10,success
+ENSP00000432163,KBTBD3,Ensembl_API,kelch repeat and BTB domain containing 3 [Source:HGNC Symbol;Acc:HGNC:22934],2025-12-10,success
+ENSP00000488302,PNMA6F,Ensembl_API,PNMA family member 6F [Source:HGNC Symbol;Acc:HGNC:53119],2025-12-10,success
+ENSP00000265602,AHI1,Ensembl_API,Abelson helper integration site 1 [Source:HGNC Symbol;Acc:HGNC:21575],2025-12-10,success
+ENSP00000349281,ARMCX2,Ensembl_API,armadillo repeat containing X-linked 2 [Source:HGNC Symbol;Acc:HGNC:16869],2025-12-10,success
+ENSP00000498630,IL31RA,Ensembl_API,interleukin 31 receptor A [Source:HGNC Symbol;Acc:HGNC:18969],2025-12-10,success
+ENSP00000435844,MS4A6A,Ensembl_API,membrane spanning 4-domains A6A [Source:HGNC Symbol;Acc:HGNC:13375],2025-12-10,success
+ENSP00000480240,LRMDA,Ensembl_API,leucine rich melanocyte differentiation associated [Source:HGNC Symbol;Acc:HGNC:23405],2025-12-10,success
+ENSP00000483619,CT45A2,Ensembl_API,cancer/testis antigen family 45 member A2 [Source:HGNC Symbol;Acc:HGNC:28400],2025-12-10,success
+ENSP00000497829,CHRNE,Ensembl_API,cholinergic receptor nicotinic epsilon subunit [Source:HGNC Symbol;Acc:HGNC:1966],2025-12-10,success
+ENSP00000497876,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000495607,PTPRQ,Ensembl_API,protein tyrosine phosphatase receptor type Q [Source:HGNC Symbol;Acc:HGNC:9679],2025-12-10,success
+ENSP00000293761,ALOX15,Ensembl_API,arachidonate 15-lipoxygenase [Source:HGNC Symbol;Acc:HGNC:433],2025-12-10,success
+ENSP00000483519,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000493970,ZNF746,Ensembl_API,zinc finger protein 746 [Source:HGNC Symbol;Acc:HGNC:21948],2025-12-10,success
+ENSP00000405004,ACVR1,Ensembl_API,activin A receptor type 1 [Source:HGNC Symbol;Acc:HGNC:171],2025-12-10,success
+ENSP00000498132,CAPN5,Ensembl_API,calpain 5 [Source:HGNC Symbol;Acc:HGNC:1482],2025-12-10,success
+ENSP00000492446,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000417960,CCDC39,Ensembl_API,coiled-coil domain 39 molecular ruler complex subunit [Source:HGNC Symbol;Acc:HGNC:25244],2025-12-10,success
+ENSP00000498616,MYT1,Ensembl_API,myelin transcription factor 1 [Source:HGNC Symbol;Acc:HGNC:7622],2025-12-10,success
+ENSP00000497896,ATP8B1,Ensembl_API,ATPase phospholipid transporting 8B1 [Source:HGNC Symbol;Acc:HGNC:3706],2025-12-10,success
+ENSP00000494009,SLC52A3,Ensembl_API,solute carrier family 52 member 3 [Source:HGNC Symbol;Acc:HGNC:16187],2025-12-10,success
+ENSP00000486291,SUGCT,Ensembl_API,succinyl-CoA:glutarate-CoA transferase [Source:HGNC Symbol;Acc:HGNC:16001],2025-12-10,success
+ENSP00000493715,OR2I1,Ensembl_API,olfactory receptor family 2 subfamily I member 1 (gene/pseudogene) [Source:HGNC Symbol;Acc:HGNC:8258],2025-12-10,success
+ENSP00000497070,FEZ1,Ensembl_API,fasciculation and elongation protein zeta 1 [Source:HGNC Symbol;Acc:HGNC:3659],2025-12-10,success
+ENSP00000485577,OR1B1,Ensembl_API,olfactory receptor family 1 subfamily B member 1 [Source:HGNC Symbol;Acc:HGNC:8181],2025-12-10,success
+ENSP00000490760,EXOC1L,Ensembl_API,exocyst complex component 1 like [Source:HGNC Symbol;Acc:HGNC:53433],2025-12-10,success
+ENSP00000483140,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000449038,MAP3K12,Ensembl_API,mitogen-activated protein kinase kinase kinase 12 [Source:HGNC Symbol;Acc:HGNC:6851],2025-12-10,success
+ENSP00000468643,ZNF121,Ensembl_API,zinc finger protein 121 [Source:HGNC Symbol;Acc:HGNC:12904],2025-12-10,success
+ENSP00000448047,WSCD2,Ensembl_API,WSC domain containing 2 [Source:HGNC Symbol;Acc:HGNC:29117],2025-12-10,success
+ENSP00000419834,KIAA2012,Ensembl_API,KIAA2012 [Source:HGNC Symbol;Acc:HGNC:51250],2025-12-10,success
+ENSP00000495537,RPGR,Ensembl_API,retinitis pigmentosa GTPase regulator [Source:HGNC Symbol;Acc:HGNC:10295],2025-12-10,success
+ENSP00000490609,CCDC200,Ensembl_API,coiled-coil domain containing 200 [Source:HGNC Symbol;Acc:HGNC:43658],2025-12-10,success
+ENSP00000253115,ZNF426,Ensembl_API,zinc finger protein 426 [Source:HGNC Symbol;Acc:HGNC:20725],2025-12-10,success
+ENSP00000386248,ELMOD3,Ensembl_API,ELMO domain containing 3 [Source:HGNC Symbol;Acc:HGNC:26158],2025-12-10,success
+ENSP00000493124,OR5M1,Ensembl_API,olfactory receptor family 5 subfamily M member 1 [Source:HGNC Symbol;Acc:HGNC:8352],2025-12-10,success
+ENSP00000402797,KCNK4,Ensembl_API,potassium two pore domain channel subfamily K member 4 [Source:HGNC Symbol;Acc:HGNC:6279],2025-12-10,success
+ENSP00000479735,RAPGEFL1,Ensembl_API,Rap guanine nucleotide exchange factor like 1 [Source:HGNC Symbol;Acc:HGNC:17428],2025-12-10,success
+ENSP00000493298,OR52A5,Ensembl_API,olfactory receptor family 52 subfamily A member 5 [Source:HGNC Symbol;Acc:HGNC:19580],2025-12-10,success
+ENSP00000492892,OR2B11,Ensembl_API,olfactory receptor family 2 subfamily B member 11 [Source:HGNC Symbol;Acc:HGNC:31249],2025-12-10,success
+ENSP00000419377,ZNF717,Ensembl_API,zinc finger protein 717 [Source:HGNC Symbol;Acc:HGNC:29448],2025-12-10,success
+ENSP00000329846,GALNT9,Ensembl_API,polypeptide N-acetylgalactosaminyltransferase 9 [Source:HGNC Symbol;Acc:HGNC:4131],2025-12-10,success
+ENSP00000499069,FAM219A,Ensembl_API,family with sequence similarity 219 member A [Source:HGNC Symbol;Acc:HGNC:19920],2025-12-10,success
+ENSP00000455566,DOK4,Ensembl_API,docking protein 4 [Source:HGNC Symbol;Acc:HGNC:19868],2025-12-10,success
+ENSP00000357169,FCRL3,Ensembl_API,Fc receptor like 3 [Source:HGNC Symbol;Acc:HGNC:18506],2025-12-10,success
+ENSP00000493190,OR52N5,Ensembl_API,olfactory receptor family 52 subfamily N member 5 [Source:HGNC Symbol;Acc:HGNC:15231],2025-12-10,success
+ENSP00000497679,NA,Ensembl_API,,2025-12-10,not_found
+ENSP00000493338,OR52N4,Ensembl_API,olfactory receptor family 52 subfamily N member 4 [Source:HGNC Symbol;Acc:HGNC:15230],2025-12-10,success
+ENSP00000424725,PKD2L2,Ensembl_API,"polycystin 2 like 2, transient receptor potential cation channel [Source:HGNC Symbol;Acc:HGNC:9012]",2025-12-10,success
+ENSP00000328968,SCN5A,Ensembl_API,sodium voltage-gated channel alpha subunit 5 [Source:HGNC Symbol;Acc:HGNC:10593],2025-12-10,success
+ENSP00000472530,NXF2B,Ensembl_API,nuclear RNA export factor 2B [Source:HGNC Symbol;Acc:HGNC:23984],2025-12-10,success
+ENSP00000492719,TRIM43B,Ensembl_API,tripartite motif containing 43B [Source:HGNC Symbol;Acc:HGNC:37146],2025-12-10,success

@@ -54,10 +54,10 @@ DATA_SOURCES <- list(
     file_path = "hpa/hpa_ms.csv",
     id_column = "Gene",
     gene_column = "Gene",
-    quant_column = "Concentration",
-    skip_rows = 1,
+    quant_column = "Conc [pg/L]",
+    skip_rows = 0,
     requires_id_mapping = FALSE,
-    abundance_type = "mg/L"
+    abundance_type = "pg/L"
   ),
   
   hpa_pea = list(
@@ -66,10 +66,11 @@ DATA_SOURCES <- list(
     file_path = "hpa/hpa_pea.csv", 
     id_column = "Gene",
     gene_column = "Gene",
-    quant_column = "median_npx",
+    quant_column = "samples_above_lod",
     skip_rows = 0,
     requires_id_mapping = FALSE,
-    abundance_type = "Median NPX"
+    abundance_type = "Samples Above LOD",
+    is_log_transformed = FALSE  # samples_above_lod is not logarithmic
   ),
   
   hpa_immunoassay = list(
